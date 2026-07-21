@@ -1,68 +1,72 @@
 # Audi A4 B5 1.9 TDI (AFN/EDC15) Diagnostics
 
-A native Linux automotive diagnostics application for the 1999 Audi A4 B5 with 1.9 TDI AFN engine and EDC15 ECU, using the proprietary VAG KW1281 protocol over K-Line (ISO 9141) via FTDI USB-KKL adapter.
+A native **Windows** automotive diagnostics application for the 1999 Audi A4 B5 with 1.9 TDI AFN engine and EDC15 ECU, using the proprietary VAG KW1281 protocol over K-Line (ISO 9141) via FTDI USB-KKL adapter.
 
 ## Features
 
 - **KW1281 Protocol Implementation**: Complete 5-baud initialization sequence → 10400 baud communication with block-level ACK/NAK handling
 - **Real-time Telemetry**: Polls Measuring Blocks 003 (MAF/RPM), 007 (Temperatures), 011 (MAP/Boost) at 10Hz
-- **PyQt6 Dashboard**: Native Wayland-compatible GUI with animated circular gauges (RPM, MAP Actual/Spec, MAF Actual/Spec, Boost, Temps, Wastegate, Engine Load)
+- **PyQt6 Dashboard**: Native Windows-compatible GUI with animated circular gauges (RPM, MAP Actual/Spec, MAF Actual/Spec, Boost, Temps, Wastegate, Engine Load)
 - **Async Architecture**: Serial communication runs in dedicated worker thread with Qt signals for thread-safe GUI updates
-- **MySQL Logging**: Buffered bulk INSERT (1s intervals, 100 rows/batch) with automatic reconnection and session management
+- **MySQL/MariaDB Logging**: Buffered bulk INSERT (1s intervals, 100 rows/batch) with automatic reconnection and session management
 - **Robust Error Handling**: Exponential backoff reconnection, checksum validation, timeout handling, protocol error recovery
+- **Packaged Executable**: PyInstaller `.exe` for distribution without Python installation
 
 ## Hardware Requirements
 
 - 1999 Audi A4 B5 1.9 TDI (AFN engine, EDC15 ECU)
-- FTDI-based USB-KKL cable (VAG KKL 409.1 compatible) → `/dev/ttyUSB0`
-- Linux system with Python 3.11+
+- FTDI-based USB-KKL cable (VAG KKL 409.1 compatible) → `COM3`, `COM4`, etc.
+- Windows 10/11 with Python 3.11+ (or use the standalone `.exe`)
 
-## Installation
+## Installation (Development)
 
-```bash
+```cmd
 # Clone repository
+git clone https://github.com/Pabloar7882/audi-diag.git
 cd audi_diag
 
 # Create virtual environment
-python3 -m venv venv
-source venv/bin/activate
+python -m venv venv
+venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Install MySQL client library (Ubuntu/Debian)
-sudo apt-get install libmysqlclient-dev
-
-# Or on Fedora/RHEL
-sudo dnf install mysql-devel
+# Install MySQL client library (for database logging)
+# Option 1: MariaDB Connector/C (recommended)
+# Download from: https://mariadb.com/downloads/connectors/
+# Or use MySQL Connector/C from: https://dev.mysql.com/downloads/connector/c/
 ```
 
-## Database Setup
+## Database Setup (MariaDB/MySQL)
 
 ```sql
--- Create database and user
+-- Run in MariaDB/MySQL client (HeidiSQL, DBeaver, MySQL Workbench, or CLI)
 CREATE DATABASE audi_diag CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE USER 'audi_diag'@'localhost' IDENTIFIED BY 'your_secure_password';
 GRANT ALL PRIVILEGES ON audi_diag.* TO 'audi_diag'@'localhost';
 FLUSH PRIVILEGES;
 
 -- Schema is auto-created on first run, or manually:
-mysql -u audi_diag -p audi_diag < sql/schema.sql
+mysql -u audi_diag -p audi_diag < sql\schema.sql
 ```
+
+> **Tip**: On Windows, [HeidiSQL](https://www.heidisql.com/) or [DBeaver](https://dbeaver.io/) are excellent free GUI tools for database management.
 
 ## Configuration
 
 Copy and edit the configuration file:
 
-```bash
-cp config/config.yaml config/config.local.yaml
-# Edit config.local.yaml with your settings
+```cmd
+copy config\config.yaml config\config.local.yaml
+# Edit config.local.yaml with your settings (Notepad, VS Code, etc.)
 ```
 
-Key settings:
+Key settings in `config.local.yaml`:
+
 ```yaml
 serial:
-  port: "/dev/ttyUSB0"      # Your KKL adapter port
+  port: "COM3"              # Your KKL adapter COM port (check Device Manager)
   baudrate: 10400           # KW1281 standard
   auto_detect: true         # Auto-find FTDI adapters
 
@@ -81,21 +85,25 @@ telemetry:
 ## Usage
 
 ### GUI Mode (Default)
-```bash
+```cmd
 python main.py
 ```
+Or run the standalone executable:
+```cmd
+dist\AudiDiag.exe
+```
 
-### Headless Logging Mode
-```bash
-# Log to database only (no GUI)
+### Headless Logging Mode (No GUI)
+```cmd
+# Log to database only
 python main.py --headless
 
 # With custom config
-python main.py --headless --config config/config.local.yaml
+python main.py --headless --config config\config.local.yaml
 ```
 
 ### Utility Commands
-```bash
+```cmd
 # List detected KKL adapters
 python main.py --list-ports
 
@@ -103,7 +111,7 @@ python main.py --list-ports
 python main.py --create-schema
 
 # Override serial port
-python main.py --port /dev/ttyUSB1 --baud 10400
+python main.py --port COM4 --baud 10400
 ```
 
 ## Measuring Blocks (EDC15 AFN)
@@ -113,6 +121,19 @@ python main.py --port /dev/ttyUSB1 --baud 10400
 | **003** | MAF/RPM | RPM, MAF Actual/Specified (mg/stroke), Engine Load (%), Throttle Position (%), IQ Actual/Specified |
 | **007** | Temperatures | Coolant, Intake Air, Fuel, Oil, Ambient, EGR (°C) |
 | **011** | MAP/Boost | MAP Actual/Specified (mbar), Boost Pressure (mbar), Wastegate Duty (%), N75 Valve Duty (%), EGR Duty (%) |
+
+## Building Standalone Executable
+
+```cmd
+# Install PyInstaller
+pip install pyinstaller
+
+# Build (uses AudiDiag.spec)
+pyinstaller AudiDiag.spec
+
+# Output: dist\AudiDiag.exe (single file, ~40MB)
+# Run on any Windows 10/11 machine without Python
+```
 
 ## Architecture
 
@@ -178,19 +199,21 @@ python main.py --port /dev/ttyUSB1 --baud 10400
 
 ## Development
 
-```bash
+```cmd
 # Install dev dependencies
-pip install -e ".[dev]"
-
-# Run tests
-pytest tests/
+pip install black ruff mypy pytest
 
 # Format code
-black src/
-ruff check src/
+black src\
+
+# Lint
+ruff check src\
 
 # Type checking
-mypy src/
+mypy src\
+
+# Run tests
+pytest tests\
 ```
 
 ## Project Structure
@@ -199,17 +222,19 @@ mypy src/
 audi_diag/
 ├── main.py                 # Entry point
 ├── requirements.txt        # Python dependencies
+├── AudiDiag.spec          # PyInstaller spec
+├── README.md              # This file
 ├── config/
-│   ├── config.yaml         # Default configuration
-│   └── config.local.yaml   # Local overrides (gitignored)
+│   ├── config.yaml        # Default configuration
+│   └── config.local.yaml  # Local overrides (gitignored)
 ├── sql/
-│   └── schema.sql          # MySQL schema
+│   └── schema.sql         # MySQL/MariaDB schema
 ├── src/
-│   ├── __init__.py         # Package exports
-│   ├── kw1281_handler.py   # KW1281 protocol implementation
+│   ├── __init__.py        # Package exports
+│   ├── kw1281_handler.py  # KW1281 protocol implementation
 │   ├── telemetry_worker.py # Async worker thread (Qt + asyncio)
 │   ├── database_logger.py  # MySQL bulk logging
-│   ├── main_window.py      # PyQt6 dashboard UI
+│   ├── main_window.py     # PyQt6 dashboard UI
 │   ├── config/
 │   │   ├── config_loader.py
 │   │   └── __init__.py
@@ -222,44 +247,55 @@ audi_diag/
 
 ## Troubleshooting
 
-### "Permission denied" on /dev/ttyUSB0
-```bash
-sudo usermod -a -G dialout $USER
-# Log out and back in
-```
+### "Access denied" or COM port not found
+1. Open **Device Manager** → **Ports (COM & LPT)**
+2. Look for **USB Serial Port (COMx)** — that's your KKL adapter
+3. Note the COM number (e.g., `COM3`) and update `config.local.yaml`
+4. If not visible: install [FTDI VCP Drivers](https://ftdichip.com/drivers/vcp-drivers/)
 
 ### No KKL adapter detected
-```bash
-# Check FTDI device
-lsusb | grep -i ftdi
-dmesg | grep ttyUSB
+```cmd
+# Check USB devices (PowerShell)
+Get-PnpDevice -Class USB | Where-Object {$_.FriendlyName -like "*FTDI*"}
 
-# Verify kernel modules
-lsmod | grep ftdi
+# Or use Device Manager → View → Devices by connection
 ```
 
 ### Connection fails at 5-baud init
-- Verify cable is connected to both laptop and car OBD port
-- Ignition ON (position 2, not cranking)
+- Verify cable is connected to **both** laptop and car OBD port
+- Ignition **ON** (position 2, dashboard lights on, **not cranking**)
 - Try different USB port or cable
-- Check `dmesg` for FTDI errors
+- Check Device Manager for FTDI errors (yellow triangle)
 
-### MySQL connection refused
-```bash
-# Check MySQL is running
-systemctl status mysql
+### MySQL/MariaDB connection refused
+```cmd
+# Check service is running
+sc query mariadb
+# or
+sc query mysql
 
-# Verify credentials
+# Start if stopped
+net start mariadb
+
+# Test connection
 mysql -u audi_diag -p audi_diag
+```
+
+### PyInstaller executable fails
+```cmd
+# Rebuild with clean
+pyinstaller --clean AudiDiag.spec
+
+# If antivirus flags it, add exclusion for dist\ folder
 ```
 
 ## License
 
-MIT License - See LICENSE file for details.
+MIT License — See LICENSE file for details.
 
 ## References
 
 - VAG KW1281 Protocol Specification (internal VW/Audi documentation)
-- ISO 9141-2 / ISO 14230 (KWP2000) - K-Line physical layer
+- ISO 9141-2 / ISO 14230 (KWP2000) — K-Line physical layer
 - EDC15 Bosch ECU measuring block definitions
 - FTDI FT232R/FT245R datasheet for USB-KKL adapter
