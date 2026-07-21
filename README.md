@@ -1,4 +1,4 @@
-#Test Version
+# TEST VERSION
 # Audi A4 B5 1.9 TDI (AFN/EDC15) Diagnostics
 
 A native **Windows** automotive diagnostics application for the 1999 Audi A4 B5 with 1.9 TDI AFN engine and EDC15 ECU, using the proprietary VAG KW1281 protocol over K-Line (ISO 9141) via FTDI USB-KKL adapter.
