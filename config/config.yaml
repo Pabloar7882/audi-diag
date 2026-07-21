@@ -1,0 +1,122 @@
+# Audi A4 B5 1.9 TDI (AFN/EDC15) Diagnostics Configuration
+
+# Serial Port Configuration
+serial:
+  port: "/dev/ttyUSB0"           # Linux: /dev/ttyUSB0, Windows: COM3
+  baudrate: 10400                # KW1281 standard baud rate
+  timeout: 1.0                   # Read timeout (seconds)
+  write_timeout: 1.0             # Write timeout (seconds)
+  auto_detect: true              # Auto-detect FTDI KKL adapters
+
+# KW1281 Protocol Timing (milliseconds)
+kw1281_timing:
+  five_baud_bit_ms: 200          # 5 baud = 200ms per bit
+  wakeup_pulse_ms: 25            # Initial break pulse
+  init_delay_ms: 50              # Delay after address byte
+  keyword_delay_ms: 5            # Delay between keyword bytes
+  baud_switch_delay_ms: 300      # Delay after init before 10400 baud
+  block_timeout_ms: 500          # Timeout waiting for block
+  inter_block_delay_ms: 5        # Delay between blocks
+
+# Telemetry Polling Configuration
+telemetry:
+  poll_interval_ms: 100          # Poll all blocks every N ms (10Hz default)
+  blocks: [3, 7, 11]             # Measuring blocks to poll
+  max_retries: 3                 # Retries per block before marking failed
+  retry_delay_ms: 10             # Delay between retries
+
+# Reconnection Strategy
+reconnection:
+  initial_delay_s: 1.0           # Initial reconnect delay
+  max_delay_s: 30.0              # Maximum reconnect delay
+  backoff_multiplier: 1.5        # Exponential backoff factor
+  max_attempts: 0                # 0 = infinite attempts
+
+# Database Configuration (MySQL)
+database:
+  host: "localhost"
+  port: 3306
+  database: "audi_diag"
+  user: "audi_diag"
+  password: "change_me"          # CHANGE THIS IN PRODUCTION
+  pool_size: 5                   # Connection pool size
+  bulk_insert_interval_s: 1.0    # Bulk insert every N seconds
+  bulk_batch_size: 100           # Max records per bulk insert
+  auto_create_schema: true       # Auto-create tables on startup
+
+# Logging Configuration
+logging:
+  level: "INFO"                  # DEBUG, INFO, WARNING, ERROR
+  file: "logs/audi_diag.log"     # Log file path (relative to app dir)
+  max_size_mb: 10                # Max log file size before rotation
+  backup_count: 5                # Number of rotated logs to keep
+  console: true                  # Also log to console
+
+# UI Configuration
+ui:
+  theme: "dark"                  # dark, light, auto
+  gauge_style: "modern"          # modern, classic, race
+  animation_enabled: true        # Smooth gauge animations
+  fullscreen_on_start: false     # Start in fullscreen
+  window_width: 1200
+  window_height: 800
+  show_debug_panel: false        # Show debug stats panel
+
+# ECU Specific (EDC15 AFN)
+ecu:
+  engine_code: "AFN"
+  ecu_type: "EDC15"
+  measuring_blocks:
+    3:
+      name: "MAF/RPM"
+      fields:
+        - {name: "rpm", offset: 0, size: 2, scale: 0.25, unit: "RPM"}
+        - {name: "maf_actual", offset: 2, size: 2, scale: 0.01, unit: "mg/stroke"}
+        - {name: "maf_specified", offset: 4, size: 2, scale: 0.01, unit: "mg/stroke"}
+        - {name: "engine_load", offset: 6, size: 1, scale: 1, unit: "%"}
+        - {name: "throttle_pos", offset: 7, size: 1, scale: 1, unit: "%"}
+        - {name: "iq_actual", offset: 8, size: 2, scale: 0.01, unit: "mg/stroke"}
+        - {name: "iq_specified", offset: 10, size: 2, scale: 0.01, unit: "mg/stroke"}
+    7:
+      name: "Temperatures"
+      fields:
+        - {name: "coolant", offset: 0, size: 1, scale: 1, offset_c: -40, unit: "°C"}
+        - {name: "intake_air", offset: 1, size: 1, scale: 1, offset_c: -40, unit: "°C"}
+        - {name: "fuel", offset: 2, size: 1, scale: 1, offset_c: -40, unit: "°C"}
+        - {name: "oil", offset: 3, size: 1, scale: 1, offset_c: -40, unit: "°C"}
+        - {name: "ambient", offset: 4, size: 1, scale: 1, offset_c: -40, unit: "°C"}
+        - {name: "egr", offset: 5, size: 1, scale: 1, offset_c: -40, unit: "°C"}
+    11:
+      name: "MAP/Boost"
+      fields:
+        - {name: "map_actual", offset: 0, size: 2, scale: 1, unit: "mbar"}
+        - {name: "map_specified", offset: 2, size: 2, scale: 1, unit: "mbar"}
+        - {name: "wastegate_duty", offset: 4, size: 1, scale: 1, unit: "%"}
+        - {name: "egr_duty", offset: 5, size: 1, scale: 1, unit: "%"}
+
+# Thresholds for Alerts/Color Changes
+thresholds:
+  rpm:
+    warning: 4500
+    critical: 5200
+  map_actual:
+    warning: 2200
+    critical: 2400
+  maf_actual:
+    warning: 1000
+    critical: 1150
+  boost:
+    warning: 1200
+    critical: 1400
+  coolant_temp:
+    warning: 100
+    critical: 115
+  intake_temp:
+    warning: 60
+    critical: 70
+  wastegate_duty:
+    warning: 85
+    critical: 95
+  engine_load:
+    warning: 90
+    critical: 100
