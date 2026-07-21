@@ -248,14 +248,38 @@ def main() -> int:
     
     # Handle list-ports
     if args.list_ports:
-        from kw1281_handler import find_kkl_adapters
-        adapters = find_kkl_adapters()
-        if adapters:
-            print("Found KKL adapters:")
-            for a in adapters:
-                print(f"  {a['device']} - {a['description']} (VID:PID={a['vid']:04X}:{a['pid']:04X})")
+        from kw1281_handler import list_all_com_ports, find_kkl_adapters
+
+        all_ports = list_all_com_ports()
+        kkl_adapters = find_kkl_adapters()
+
+        print("=" * 60)
+        print("  PORTAS COM DETETADAS NO WINDOWS")
+        print("=" * 60)
+
+        if all_ports:
+            for i, p in enumerate(all_ports, 1):
+                tag = " ← RECOMENDADO (FTDI KKL)" if p['is_kkl_candidate'] else ""
+                print(f"  [{p['device']}] {p['description']}{tag}")
+                if p['serial']:
+                    print(f"              Serial: {p['serial']}")
+                if p['vid']:
+                    print(f"              VID:PID={p['vid']:04X}:{p['pid']:04X}")
+                print()
         else:
-            print("No FTDI KKL adapters found")
+            print("  Nenhuma porta COM detetada.")
+            print("  Verifique se o cabo KKL está ligado.")
+            print()
+
+        print("-" * 60)
+        if kkl_adapters:
+            print(f"  Adaptadores KKL FTDI encontrados: {len(kkl_adapters)}")
+            for a in kkl_adapters:
+                print(f"  → Use {a['device']} na configuração")
+        else:
+            print("  Nenhum adaptador FTDI KKL encontrado.")
+            print("  Instale drivers FTDI: https://ftdichip.com/drivers/vcp-drivers/")
+        print("=" * 60)
         return 0
     
     # Handle create-schema

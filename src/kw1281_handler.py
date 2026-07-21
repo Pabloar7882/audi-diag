@@ -625,12 +625,36 @@ class KW1281Handler:
         await self.disconnect()
 
 
-# Convenience function for scanning ports
+# FTDI VID/PIDs commonly used in KKL cables
+_FTDI_VIDS_PIDS = {
+    0x0403: (0x6001, 0x6010, 0x6011, 0x6014, 0x6015),
+}
+
+
+def list_all_com_ports() -> list[dict]:
+    """List ALL available COM ports on Windows (or serial devices on Linux)."""
+    ports_info = []
+    for port in serial.tools.list_ports.comports():
+        is_ftdi = (port.vid and port.vid in _FTDI_VIDS_PIDS and
+                   port.pid and port.pid in _FTDI_VIDS_PIDS[port.vid])
+        ports_info.append({
+            'device': port.device,
+            'description': port.description,
+            'vid': port.vid,
+            'pid': port.pid,
+            'serial': port.serial_number,
+            'manufacturer': getattr(port, 'manufacturer', '') or '',
+            'is_ftdi': is_ftdi,
+            'is_kkl_candidate': is_ftdi,  # FTDI = likely KKL cable
+        })
+    return ports_info
+
+
 def find_kkl_adapters() -> list[dict]:
-    """Find FTDI-based KKL adapters."""
+    """Find FTDI-based KKL adapters (subset of all COM ports)."""
     adapters = []
     for port in serial.tools.list_ports.comports():
-        if port.vid == 0x0403 and port.pid in (0x6001, 0x6010, 0x6011, 0x6014, 0x6015):
+        if port.vid and port.vid in _FTDI_VIDS_PIDS and port.pid and port.pid in _FTDI_VIDS_PIDS[port.vid]:
             adapters.append({
                 'device': port.device,
                 'description': port.description,
