@@ -13,7 +13,7 @@ from enum import Enum
 
 from PyQt6.QtCore import (
     Qt, QTimer, QRectF, QPointF, QSize, QEasingCurve, QPropertyAnimation,
-    pyqtSignal, pyqtSlot, QObject, QThread
+    pyqtSignal, pyqtSlot, pyqtProperty, QObject, QThread
 )
 from PyQt6.QtGui import (
     QPainter, QColor, QPen, QBrush, QFont, QFontMetrics, QLinearGradient,
@@ -217,14 +217,16 @@ class CircularGauge(QWidget):
         # Enable antialiasing
         self.setAttribute(Qt.WidgetAttribute.WA_OpaquePaintEvent, False)
     
-    @property
-    def value(self) -> float:
+    def _get_value(self) -> float:
         return self._value
     
-    @value.setter
-    def value(self, v: float) -> None:
+    def _set_value(self, v: float) -> None:
         self._value = max(self.config.min_value, min(self.config.max_value, v))
         self.update()
+    
+    # PyQt precisa disto registado como pyqtProperty (não um @property normal do
+    # Python) para o QPropertyAnimation conseguir animar o valor da agulha.
+    value = pyqtProperty(float, _get_value, _set_value)
     
     def set_value(self, value: float, animated: bool = True) -> None:
         """Set gauge value with optional animation."""
