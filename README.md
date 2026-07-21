@@ -1,16 +1,25 @@
-# TEST VERSION
+# ⚠️ IN DEVELOPMENT / TESTING PHASE
+
+> This project is actively under development and **still in testing phase**.
+> Not all features have been validated on a real car yet, and you may run
+> into bugs, unstable connections, or incorrect block readings. Use at your
+> own risk — do not rely on this for definitive vehicle diagnostics.
+
 # Audi A4 B5 1.9 TDI (AFN/EDC15) Diagnostics
 
 A native **Windows** automotive diagnostics application for the 1999 Audi A4 B5 with 1.9 TDI AFN engine and EDC15 ECU, using the proprietary VAG KW1281 protocol over K-Line (ISO 9141) via FTDI USB-KKL adapter.
 
+> **Platform:** this application is built and tested exclusively for **Windows 10/11**. There is no Linux/macOS support.
+
 ## Features
 
 - **KW1281 Protocol Implementation**: Complete 5-baud initialization sequence → 10400 baud communication with block-level ACK/NAK handling
-- **Real-time Telemetry**: Polls Measuring Blocks 003 (MAF/RPM), 007 (Temperatures), 011 (MAP/Boost) at 10Hz
-- **PyQt6 Dashboard**: Native Windows-compatible GUI with animated circular gauges (RPM, MAP Actual/Spec, MAF Actual/Spec, Boost, Temps, Wastegate, Engine Load)
-- **Async Architecture**: Serial communication runs in dedicated worker thread with Qt signals for thread-safe GUI updates
+- **Real-time Telemetry**: Polls Measuring Blocks 003 (MAF/RPM), 007 (Temperatures), 011 (MAP/Boost) at 10Hz — limited to 3 blocks per cycle to match older ECU capabilities
+- **Port Selector**: Dropdown listing every serial (COM) port currently present on the system, auto-populated on startup and via "Refresh" — recognized FTDI KKL adapters are flagged `(KKL)` and listed first; no more manual typing
+- **PyQt6 Dashboard**: Native Windows GUI with animated circular gauges (RPM, MAP Actual/Spec, MAF Actual/Spec, Boost, Temps, Wastegate, Engine Load)
+- **Async Architecture**: Serial communication runs in a dedicated worker thread with Qt signals for thread-safe GUI updates
 - **MySQL/MariaDB Logging**: Buffered bulk INSERT (1s intervals, 100 rows/batch) with automatic reconnection and session management
-- **Robust Error Handling**: Exponential backoff reconnection, checksum validation, timeout handling, protocol error recovery
+- **Robust Error Handling**: Exponential backoff reconnection, checksum validation, timeout handling, protocol error recovery, plus a global exception handler — unexpected errors show a dialog and get written to `logs/audi_diag.log` instead of silently closing the app
 - **Packaged Executable**: PyInstaller `.exe` for distribution without Python installation
 
 ## Hardware Requirements
@@ -67,7 +76,9 @@ Key settings in `config.local.yaml`:
 
 ```yaml
 serial:
-  port: "COM3"              # Your KKL adapter COM port (check Device Manager)
+  port: "COM3"              # Optional default - the app now shows a live dropdown
+                             # of every detected COM port at startup, so you can
+                             # also just pick it from the "Port" selector in the GUI
   baudrate: 10400           # KW1281 standard
   auto_detect: true         # Auto-find FTDI adapters
 
@@ -80,7 +91,7 @@ database:
 
 telemetry:
   poll_interval_ms: 100     # 10Hz polling
-  blocks: [3, 7, 11]        # MB003, MB007, MB011
+  blocks: [3, 7, 11]        # MB003, MB007, MB011 - max 3 blocks per cycle (older ECU limit)
 ```
 
 ## Usage
@@ -129,12 +140,16 @@ python main.py --port COM4 --baud 10400
 # Install PyInstaller
 pip install pyinstaller
 
-# Build (uses AudiDiag.spec)
-pyinstaller AudiDiag.spec
+# Clean rebuild (recommended - avoids stale cached modules from previous builds)
+rmdir /s /q build
+rmdir /s /q dist
+pyinstaller AudiDiag.spec --clean --noconfirm
 
 # Output: dist\AudiDiag.exe (single file, ~40MB)
 # Run on any Windows 10/11 machine without Python
 ```
+
+> `AudiDiag.spec` adds `src` via `pathex`, so PyInstaller analyzes `main_window.py`, `telemetry_worker.py`, `kw1281_handler.py`, etc. as real code and follows their imports automatically (instead of just copying them as raw data files). If you add a new third-party import inside `src/`, you generally don't need to touch `hiddenimports` — a clean `--clean` rebuild should pick it up.
 
 ## Architecture
 
@@ -232,10 +247,9 @@ audi_diag/
 │   └── schema.sql         # MySQL/MariaDB schema
 ├── src/
 │   ├── __init__.py        # Package exports
-│   ├── kw1281_handler.py  # KW1281 protocol implementation
+│   ├── kw1281_handler.py  # KW1281 protocol implementation (also exposes list_serial_ports() for the port selector)
 │   ├── telemetry_worker.py # Async worker thread (Qt + asyncio)
-│   ├── database_logger.py  # MySQL bulk logging
-│   ├── main_window.py     # PyQt6 dashboard UI
+│   ├── main_window.py     # PyQt6 dashboard UI (port selector, gauges, global exception handler)
 │   ├── config/
 │   │   ├── config_loader.py
 │   │   └── __init__.py
@@ -247,6 +261,16 @@ audi_diag/
 ```
 
 ## Troubleshooting
+
+### App closes with no error message
+As of the latest build, unhandled errors are caught by a global exception
+handler: you should now see an error dialog, and full details get written to
+`logs\audi_diag.log`. If the app still disappears with no dialog at all:
+1. Check `logs\audi_diag.log` for a traceback around the time it happened
+2. Try running `python main.py` from a terminal instead of the `.exe` — this
+   keeps a console open and shows the crash directly
+3. If neither shows anything, it's likely a low-level crash outside Python's
+   control (e.g. a broken/virtual COM port driver) — try a different port
 
 ### "Access denied" or COM port not found
 1. Open **Device Manager** → **Ports (COM & LPT)**

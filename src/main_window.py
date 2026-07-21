@@ -6,6 +6,7 @@ PyQt6 native Wayland-compatible gauges for RPM, MAP, MAF.
 from __future__ import annotations
 import sys
 import time
+import logging
 from dataclasses import dataclass
 from typing import Optional
 from enum import Enum
@@ -743,7 +744,7 @@ class MainDashboard(QMainWindow):
         self.port_combo = QComboBox()
         self.port_combo.setMinimumWidth(200)
         self.port_combo.addItem("/dev/ttyUSB0")
-        self.port_combo.setEditable(True)
+        self.port_combo.setEditable(False)
         
         self.baud_combo = QComboBox()
         self.baud_combo.addItems(["10400", "9600", "38400", "57600"])
@@ -909,35 +910,58 @@ class MainDashboard(QMainWindow):
         self._session_start_time = 0
     
     def _detect_adapters(self) -> None:
-        """Detect FTDI KKL adapters."""
-        from kw1281_handler import find_kkl_adapters
-        
-        adapters = find_kkl_adapters()
-        current = self.port_combo.currentText()
-        
+        """Preenche o seletor com todas as portas série presentes no sistema."""
+        from kw1281_handler import list_serial_ports
+
+        ports = list_serial_ports()
+        current_device = self._current_port()
+
         self.port_combo.clear()
-        for adapter in adapters:
-            self.port_combo.addItem(adapter['device'], adapter)
-        
-        # Add manual entry option
-        self.port_combo.addItem("/dev/ttyUSB0")
-        self.port_combo.addItem("/dev/ttyUSB1")
-        self.port_combo.addItem("COM3")
-        self.port_combo.addItem("COM4")
-        
-        # Restore selection if possible
-        index = self.port_combo.findText(current)
-        if index >= 0:
-            self.port_combo.setCurrentIndex(index)
-        
-        if adapters:
-            self.status_label.setText(f"Found {len(adapters)} KKL adapter(s)")
+
+        if not ports:
+            self.status_label.setText(
+                "Nenhuma porta série encontrada - liga o cabo KKL e clica em Refresh"
+            )
+            return
+
+        kkl_count = 0
+        for p in ports:
+            # Windows já costuma incluir "(COM3)" na descrição — não repetir
+            desc = p['description'] or ''
+            desc = desc.replace(f"({p['device']})", "").strip()
+            if p['is_kkl']:
+                label = f"{p['device']}  —  {desc}  (KKL)" if desc else f"{p['device']}  (KKL)"
+                kkl_count += 1
+            else:
+                label = f"{p['device']}  —  {desc}" if desc else p['device']
+            self.port_combo.addItem(label, p['device'])
+
+        restored = False
+        for i in range(self.port_combo.count()):
+            if self.port_combo.itemData(i) == current_device:
+                self.port_combo.setCurrentIndex(i)
+                restored = True
+                break
+        if not restored:
+            self.port_combo.setCurrentIndex(0)
+
+        if kkl_count:
+            self.status_label.setText(f"Encontrado(s) {kkl_count} adaptador(es) KKL")
         else:
-            self.status_label.setText("No FTDI KKL adapters detected - enter port manually")
+            self.status_label.setText(
+                f"{len(ports)} porta(s) série encontrada(s) - nenhuma reconhecida como KKL, seleciona manualmente"
+            )
+
+    def _current_port(self) -> str:
+        """Devolve o nome real da porta selecionada, independente do texto mostrado."""
+        data = self.port_combo.currentData()
+        if data:
+            return data
+        return self.port_combo.currentText().strip().split("  —  ")[0].strip()
     
     def _on_connect_clicked(self) -> None:
         """Handle connect button click."""
-        port = self.port_combo.currentText().strip()
+        port = self._current_port()
         baud = int(self.baud_combo.currentText())
         
         if not port:
@@ -952,25 +976,40 @@ class MainDashboard(QMainWindow):
         self.conn_status.set_status("connecting", "Initializing...")
         self.status_label.setText(f"Connecting to {port} at {baud} baud...")
         
-        # Create and start worker thread
-        self._worker_thread = TelemetryThread(
-            port=port,
-            baudrate=baud,
-            poll_interval_ms=100,
-            blocks=[3, 7, 11],
-        )
-        
-        # Connect signals
-        self._worker_thread.telemetry_updated.connect(self._on_telemetry)
-        self._worker_thread.ecu_identified.connect(self._on_ecu_identified)
-        self._worker_thread.connection_state_changed.connect(self._on_state_changed)
-        self._worker_thread.error_occurred.connect(self._on_error)
-        self._worker_thread.stats_updated.connect(self._on_stats)
-        self._worker_thread.log_message.connect(self._on_log_message)
-        
-        self._worker_thread.start()
-        self._session_start_time = time.time()
-        self._uptime_timer.start(1000)
+        try:
+            # Create and start worker thread
+            self._worker_thread = TelemetryThread(
+                port=port,
+                baudrate=baud,
+                poll_interval_ms=100,
+                blocks=[3, 7, 11],
+            )
+            
+            # Connect signals
+            self._worker_thread.telemetry_updated.connect(self._on_telemetry)
+            self._worker_thread.ecu_identified.connect(self._on_ecu_identified)
+            self._worker_thread.connection_state_changed.connect(self._on_state_changed)
+            self._worker_thread.error_occurred.connect(self._on_error)
+            self._worker_thread.stats_updated.connect(self._on_stats)
+            self._worker_thread.log_message.connect(self._on_log_message)
+            
+            self._worker_thread.start()
+            self._session_start_time = time.time()
+            self._uptime_timer.start(1000)
+        except Exception as e:
+            # Não deixar isto propagar para fora do slot - mostra erro e repõe a UI
+            logging.getLogger(__name__).exception("Falha ao iniciar ligação")
+            QMessageBox.critical(
+                self, "Erro ao ligar",
+                f"Não foi possível iniciar a ligação a {port}:\n\n{type(e).__name__}: {e}"
+            )
+            self._worker_thread = None
+            self.connect_btn.setEnabled(True)
+            self.disconnect_btn.setEnabled(False)
+            self.port_combo.setEnabled(True)
+            self.baud_combo.setEnabled(True)
+            self.conn_status.set_status("disconnected")
+            self.status_label.setText("Ready - Select port and click Connect")
     
     def _on_disconnect_clicked(self) -> None:
         """Handle disconnect button click."""
@@ -1122,12 +1161,53 @@ class MainDashboard(QMainWindow):
         event.accept()
 
 
+def _install_exception_handler() -> None:
+    """
+    Instala um sys.excepthook global.
+
+    Sem isto, o PyQt6 aborta o processo INTEIRO em silêncio sempre que
+    acontece uma exceção não apanhada dentro de um slot (ex: ao clicar
+    "Connect" com uma porta problemática). Em modo janela (sem consola),
+    isso parece a aplicação a fechar-se sozinha sem dizer nada.
+
+    Com isto instalado, o erro fica registado no logs/audi_diag.log e
+    é mostrado ao utilizador numa caixa de diálogo, e a app continua a correr.
+    """
+    import logging
+    import traceback
+
+    err_logger = logging.getLogger("uncaught")
+
+    def handle_exception(exc_type, exc_value, exc_tb):
+        if issubclass(exc_type, KeyboardInterrupt):
+            sys.__excepthook__(exc_type, exc_value, exc_tb)
+            return
+
+        tb_text = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
+        err_logger.error("Erro não tratado:\n%s", tb_text)
+
+        try:
+            QMessageBox.critical(
+                None,
+                "Erro inesperado",
+                f"Ocorreu um erro inesperado:\n\n"
+                f"{exc_type.__name__}: {exc_value}\n\n"
+                f"Detalhes completos em logs/audi_diag.log",
+            )
+        except Exception:
+            pass  # se nem a caixa de diálogo abrir, pelo menos ficou no log
+
+    sys.excepthook = handle_exception
+
+
 def main():
     """Application entry point."""
     app = QApplication(sys.argv)
     app.setApplicationName("Audi A4 B5 Diagnostics")
     app.setApplicationVersion("1.0.0")
     app.setOrganizationName("AudiDiag")
+    
+    _install_exception_handler()
     
     # Set default font
     font = QFont("Inter", 9)
