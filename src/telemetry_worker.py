@@ -24,6 +24,7 @@ from kw1281_handler import (
     KW1281ProtocolError,
     KW1281ConnectionError,
     ECUIdentification,
+    MeasuringValue,
 )
 
 logger = logging.getLogger(__name__)
@@ -51,9 +52,8 @@ class MeasuringBlock003:
     throttle_position_pct: int = 0
     iq_actual_mg_stroke: float = 0.0
     iq_specified_mg_stroke: float = 0.0
-    raw_data: bytes = b""
+    raw_fields: list = field(default_factory=list)  # list[MeasuringValue], see kw1281_handler
     timestamp: float = 0.0
-    checksum_valid: bool = True
 
 
 @dataclass(slots=True)
@@ -65,9 +65,8 @@ class MeasuringBlock007:
     oil_temp_c: int = 0
     ambient_temp_c: int = 0
     egr_temp_c: int = 0
-    raw_data: bytes = b""
+    raw_fields: list = field(default_factory=list)
     timestamp: float = 0.0
-    checksum_valid: bool = True
 
 
 @dataclass(slots=True)
@@ -79,9 +78,8 @@ class MeasuringBlock011:
     wastegate_duty_pct: int = 0
     n75_valve_duty_pct: int = 0
     egr_duty_pct: int = 0
-    raw_data: bytes = b""
+    raw_fields: list = field(default_factory=list)
     timestamp: float = 0.0
-    checksum_valid: bool = True
 
 
 @dataclass(slots=True)
@@ -357,112 +355,94 @@ class TelemetryWorker(QObject):
         await asyncio.sleep(self._reconnect_delay)
         self._reconnect_delay = min(self._reconnect_delay * 1.5, self._max_reconnect_delay)
     
-    def _parse_block_003(self, data: bytes) -> MeasuringBlock003:
+    def _parse_block_003(self, values: list[MeasuringValue]) -> MeasuringBlock003:
         """
-        Parse Measuring Block 003 (MAF/RPM) for EDC15 AFN.
-        
-        Typical 12-byte layout (EDC15):
-        Byte 0-1: RPM (word, little-endian, * 0.25 or direct)
-        Byte 2-3: MAF Actual (mg/stroke * 100 or * 10)
-        Byte 4-5: MAF Specified (mg/stroke * 100)
-        Byte 6: Engine Load (%)
-        Byte 7: Throttle Position (%)
-        Byte 8-9: IQ Actual (mg/stroke * 100)
-        Byte 10-11: IQ Specified (mg/stroke * 100)
+        Build MeasuringBlock003 from a decoded group-reading response.
+
+        Kennzahl 1 (Engine Speed) is a confirmed field type per the public
+        KW1281 reference table, so RPM is mapped confidently wherever it
+        appears in the group. The remaining fields are NOT reliably
+        identifiable from the kennzahl alone (multiple physical quantities
+        can share a kennzahl depending on the ECU) - they're assigned by
+        position as a best-effort guess. Cross-check raw_fields against the
+        real car before trusting anything except RPM here.
         """
-        mb = MeasuringBlock003(raw_data=data, timestamp=time.time())
-        
-        if len(data) >= 12:
-            # RPM: word at offset 0, typically 0.25 RPM per bit for EDC15
-            rpm_raw = int.from_bytes(data[0:2], 'little')
-            mb.rpm = rpm_raw // 4 if rpm_raw > 8000 else rpm_raw  # Handle both scalings
-            
-            # MAF Actual (mg/stroke * 100)
-            maf_act_raw = int.from_bytes(data[2:4], 'little')
-            mb.maf_actual_mg_stroke = maf_act_raw / 100.0
-            
-            # MAF Specified (mg/stroke * 100)
-            maf_spec_raw = int.from_bytes(data[4:6], 'little')
-            mb.maf_specified_mg_stroke = maf_spec_raw / 100.0
-            
-            # Engine Load (%)
-            mb.engine_load_pct = data[6] if len(data) > 6 else 0
-            
-            # Throttle Position (%)
-            mb.throttle_position_pct = data[7] if len(data) > 7 else 0
-            
-            # IQ Actual (mg/stroke * 100)
-            if len(data) >= 10:
-                iq_act_raw = int.from_bytes(data[8:10], 'little')
-                mb.iq_actual_mg_stroke = iq_act_raw / 100.0
-            
-            # IQ Specified (mg/stroke * 100)
-            if len(data) >= 12:
-                iq_spec_raw = int.from_bytes(data[10:12], 'little')
-                mb.iq_specified_mg_stroke = iq_spec_raw / 100.0
-        
+        mb = MeasuringBlock003(raw_fields=values, timestamp=time.time())
+
+        remaining = []
+        for mv in values:
+            if mv.kennzahl == 1 and mb.rpm == 0:
+                mb.rpm = int(round(mv.value))
+            else:
+                remaining.append(mv)
+
+        if len(remaining) > 0:
+            mb.maf_actual_mg_stroke = remaining[0].value
+        if len(remaining) > 1:
+            mb.maf_specified_mg_stroke = remaining[1].value
+        if len(remaining) > 2:
+            mb.engine_load_pct = int(round(remaining[2].value))
+        if len(remaining) > 3:
+            mb.throttle_position_pct = int(round(remaining[3].value))
+
         return mb
     
-    def _parse_block_007(self, data: bytes) -> MeasuringBlock007:
+    def _parse_block_007(self, values: list[MeasuringValue]) -> MeasuringBlock007:
         """
-        Parse Measuring Block 007 (Temperatures) for EDC15.
-        
-        Typical layout (signed bytes, °C with 1°C resolution, offset -40):
-        Byte 0: Coolant Temp
-        Byte 1: Intake Air Temp
-        Byte 2: Fuel Temp
-        Byte 3: Oil Temp
-        Byte 4: Ambient Temp
-        Byte 5: EGR Temp (if available)
+        Build MeasuringBlock007 from a decoded group-reading response.
+
+        Kennzahl 5 (Temperature) is confirmed as *a* temperature per the
+        reference table, but the same kennzahl is documented to mean
+        different sensors (coolant vs. oil vs. ambient, etc.) on different
+        ECUs/groups - there is no way to tell them apart from the kennzahl
+        alone. Fields are assigned by position as a best-effort guess;
+        verify against the real car (e.g. coolant should track known engine
+        warm-up behavior) before trusting which gauge is which sensor.
         """
-        mb = MeasuringBlock007(raw_data=data, timestamp=time.time())
-        
-        if len(data) >= 6:
-            # Temperatures are typically signed bytes with -40°C offset
-            # Value 0x00 = -40°C, 0x28 = 0°C, 0x64 = 60°C, 0xC8 = 160°C
-            def decode_temp(b: int) -> int:
-                return b - 40 if b <= 200 else b - 256 - 40
-            
-            mb.coolant_temp_c = decode_temp(data[0])
-            mb.intake_air_temp_c = decode_temp(data[1])
-            mb.fuel_temp_c = decode_temp(data[2])
-            mb.oil_temp_c = decode_temp(data[3])
-            mb.ambient_temp_c = decode_temp(data[4])
-            mb.egr_temp_c = decode_temp(data[5])
-        
+        mb = MeasuringBlock007(raw_fields=values, timestamp=time.time())
+
+        temps = [mv for mv in values if mv.kennzahl == 5]
+        others = [mv for mv in values if mv.kennzahl != 5]
+        ordered = temps + others  # temperature fields first, whatever's left after
+
+        if len(ordered) > 0:
+            mb.coolant_temp_c = int(round(ordered[0].value))
+        if len(ordered) > 1:
+            mb.intake_air_temp_c = int(round(ordered[1].value))
+        if len(ordered) > 2:
+            mb.fuel_temp_c = int(round(ordered[2].value))
+        if len(ordered) > 3:
+            mb.oil_temp_c = int(round(ordered[3].value))
+
         return mb
     
-    def _parse_block_011(self, data: bytes) -> MeasuringBlock011:
+    def _parse_block_011(self, values: list[MeasuringValue]) -> MeasuringBlock011:
         """
-        Parse Measuring Block 011 (MAP/Boost) for EDC15 AFN.
-        
-        Typical layout:
-        Byte 0-1: MAP Actual (mbar, word little-endian)
-        Byte 2-3: MAP Specified (mbar, word little-endian)
-        Byte 4: Wastegate/N75 Duty Cycle (%)
-        Byte 5: EGR Duty Cycle (%)
-        Byte 6-7: Additional data (varies)
+        Build MeasuringBlock011 from a decoded group-reading response.
+
+        Kennzahl 18 (Absolute Pressure) is confirmed as *a* pressure per
+        the reference table, but which one (MAP actual vs specified vs
+        atmospheric) again depends on group position, which is ECU/label
+        specific and not reliably guessable. Assigned by position as a
+        best-effort guess - verify against the real car.
         """
-        mb = MeasuringBlock011(raw_data=data, timestamp=time.time())
-        
-        if len(data) >= 6:
-            # MAP Actual (mbar)
-            mb.map_actual_mbar = int.from_bytes(data[0:2], 'little')
-            
-            # MAP Specified (mbar)
-            mb.map_specified_mbar = int.from_bytes(data[2:4], 'little')
-            
-            # Boost = MAP - Atmospheric (~1000 mbar)
-            mb.boost_pressure_mbar = mb.map_actual_mbar - 1000
-            
-            # Wastegate Duty (%)
-            mb.wastegate_duty_pct = data[4]
-            
-            # EGR Duty (%)
-            mb.egr_duty_pct = data[5]
-            
-            # N75 Valve Duty (often same as wastegate on EDC15)
-            mb.n75_valve_duty_pct = data[4]
+        mb = MeasuringBlock011(raw_fields=values, timestamp=time.time())
+
+        pressures = [mv for mv in values if mv.kennzahl == 18]
+        others = [mv for mv in values if mv.kennzahl != 18]
+        ordered = pressures + others
+
+        if len(ordered) > 0:
+            mb.map_actual_mbar = int(round(ordered[0].value))
+            mb.boost_pressure_mbar = mb.map_actual_mbar - 1000  # vs. ~1000 mbar atmospheric
+        if len(ordered) > 1:
+            mb.map_specified_mbar = int(round(ordered[1].value))
+        if len(ordered) > 2:
+            mb.wastegate_duty_pct = int(round(ordered[2].value))
+        if len(ordered) > 3:
+            mb.egr_duty_pct = int(round(ordered[3].value))
+            mb.n75_valve_duty_pct = mb.wastegate_duty_pct
+
         
         return mb
     
@@ -602,38 +582,11 @@ class AsyncTelemetryWorker:
         
         return snapshot
     
-    def _parse_block_003(self, data: bytes) -> MeasuringBlock003:
-        mb = MeasuringBlock003(raw_data=data, timestamp=time.time())
-        if len(data) >= 12:
-            rpm_raw = int.from_bytes(data[0:2], 'little')
-            mb.rpm = rpm_raw // 4 if rpm_raw > 8000 else rpm_raw
-            mb.maf_actual_mg_stroke = int.from_bytes(data[2:4], 'little') / 100.0
-            mb.maf_specified_mg_stroke = int.from_bytes(data[4:6], 'little') / 100.0
-            mb.engine_load_pct = data[6]
-            mb.throttle_position_pct = data[7]
-            mb.iq_actual_mg_stroke = int.from_bytes(data[8:10], 'little') / 100.0
-            mb.iq_specified_mg_stroke = int.from_bytes(data[10:12], 'little') / 100.0
-        return mb
-    
-    def _parse_block_007(self, data: bytes) -> MeasuringBlock007:
-        mb = MeasuringBlock007(raw_data=data, timestamp=time.time())
-        if len(data) >= 6:
-            def decode(b): return b - 40 if b <= 200 else b - 256 - 40
-            mb.coolant_temp_c = decode(data[0])
-            mb.intake_air_temp_c = decode(data[1])
-            mb.fuel_temp_c = decode(data[2])
-            mb.oil_temp_c = decode(data[3])
-            mb.ambient_temp_c = decode(data[4])
-            mb.egr_temp_c = decode(data[5])
-        return mb
-    
-    def _parse_block_011(self, data: bytes) -> MeasuringBlock011:
-        mb = MeasuringBlock011(raw_data=data, timestamp=time.time())
-        if len(data) >= 6:
-            mb.map_actual_mbar = int.from_bytes(data[0:2], 'little')
-            mb.map_specified_mbar = int.from_bytes(data[2:4], 'little')
-            mb.boost_pressure_mbar = mb.map_actual_mbar - 1000
-            mb.wastegate_duty_pct = data[4]
-            mb.egr_duty_pct = data[5]
-            mb.n75_valve_duty_pct = data[4]
-        return mb
+    def _parse_block_003(self, values: list[MeasuringValue]) -> MeasuringBlock003:
+        return TelemetryWorker._parse_block_003(self, values)
+
+    def _parse_block_007(self, values: list[MeasuringValue]) -> MeasuringBlock007:
+        return TelemetryWorker._parse_block_007(self, values)
+
+    def _parse_block_011(self, values: list[MeasuringValue]) -> MeasuringBlock011:
+        return TelemetryWorker._parse_block_011(self, values)

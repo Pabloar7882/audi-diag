@@ -14,11 +14,13 @@ from kw1281_handler import (
     KW1281ProtocolError,
     KW1281ConnectionError,
     ECUIdentification,
-    BlockType,
-    KWP1281Commands,
-    KWP1281Address,
+    KW1281BlockTitle,
+    KW1281Address,
     KW1281Block,
+    MeasuringValue,
+    FaultCode,
     find_kkl_adapters,
+    list_serial_ports,
 )
 
 from telemetry_worker import (
@@ -32,7 +34,7 @@ from telemetry_worker import (
     WorkerState,
 )
 
-from database_logger import (
+from db.database_logger import (
     DatabaseLogger,
     SyncDatabaseLogger,
     DBConfig,
@@ -49,11 +51,13 @@ __all__ = [
     "KW1281ProtocolError",
     "KW1281ConnectionError",
     "ECUIdentification",
-    "BlockType",
-    "KWP1281Commands",
-    "KWP1281Address",
+    "KW1281BlockTitle",
+    "KW1281Address",
     "KW1281Block",
+    "MeasuringValue",
+    "FaultCode",
     "find_kkl_adapters",
+    "list_serial_ports",
     
     # Telemetry
     "TelemetryWorker",

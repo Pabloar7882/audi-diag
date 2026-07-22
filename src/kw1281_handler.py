@@ -1,6 +1,30 @@
 """
 KW1281 Protocol Handler for VAG EDC15 ECU (1999 Audi A4 B5 1.9 TDI AFN)
-Implements 5-baud init sequence, 10400 baud communication, block reading with ACK handling.
+
+Implements the REAL classic VAG KW1281 protocol:
+- 5-baud wakeup (address byte sent by tester, ECU replies with sync+keyword)
+- Byte-by-byte handshake at communication baud rate: every byte is
+  acknowledged by the receiver echoing its one's-complement (0xFF - byte),
+  except the block-end byte (0x03).
+- Block framing: [length][counter][title][data...][0x03 block-end]
+  (length counts everything after itself, INCLUDING the block-end byte,
+  but NOT itself)
+
+Reference: https://www.blafusel.de/obd/obd2_kw1281.html (the canonical,
+widely-cited public writeup of this protocol, also used by the open-source
+kw1281test tool: https://github.com/gmenounos/kw1281test)
+
+IMPORTANT / KNOWN LIMITATIONS (please read before trusting live values):
+- The 5-baud address byte, block framing, byte-complement handshake, block
+  titles (0x05/0x06/0x07/0x09/0x29/0xE7/0xF6/0xFC) and the "Kennzahl"
+  (field-type) formula table below are all taken directly from the public
+  reference above and are shared across VAG modules in general.
+- HOWEVER: which Kennzahl appears in which position within measuring
+  groups 003/007/011 is ECU/label-file specific and NOT something that can
+  be reliably guessed without either (a) testing against the real car, or
+  (b) the exact Ross-Tech .LBL file for this ECU's part number. Treat any
+  RPM/temp/pressure gauge value as "probably in the right unit, position
+  not yet verified" until confirmed on the real vehicle.
 """
 
 from __future__ import annotations
@@ -10,7 +34,6 @@ import time
 from dataclasses import dataclass, field
 from enum import IntEnum
 from typing import Optional, Callable, Awaitable
-from collections import deque
 
 import serial
 import serial.tools.list_ports
@@ -18,64 +41,74 @@ import serial.tools.list_ports
 logger = logging.getLogger(__name__)
 
 
-class KWP1281Address(IntEnum):
-    """KW1281 Address bytes"""
-    ECU = 0x11
-    TESTER = 0xF1
+class KW1281Address(IntEnum):
+    """Module address sent at 5-baud (VAG-COM style controller numbers)."""
+    ENGINE = 0x01
+    ABS = 0x03
+    AIRBAG = 0x15
+    INSTRUMENTS = 0x17
 
 
-class KWP1281Commands(IntEnum):
-    """KW1281 Service IDs (per VAG KW1281 spec)"""
-    START_COMMUNICATION = 0x81
-    STOP_COMMUNICATION = 0x82
-    READ_DATA_BY_LOCAL_ID = 0x21
-    READ_ECU_IDENTIFICATION = 0x1A
-    READ_MEASURING_BLOCKS = 0x1B
-    SECURITY_ACCESS = 0x27
-    CONTROL_MODULE_SELF_TEST = 0x04
-
-
-class KWP1281ResponseCodes(IntEnum):
-    """Response codes"""
-    POSITIVE_RESPONSE = 0x40  # Base for positive responses (command + 0x40)
-    NEGATIVE_RESPONSE = 0x7F
-    NRC_SUB_FUNCTION_NOT_SUPPORTED = 0x12
-    NRC_INCORRECT_MESSAGE_LENGTH = 0x13
-    NRC_CONDITIONS_NOT_CORRECT = 0x22
-    NRC_REQUEST_SEQUENCE_ERROR = 0x24
-    NRC_SECURITY_ACCESS_DENIED = 0x33
-    NRC_INVALID_KEY = 0x35
-    NRC_EXCEEDED_ATTEMPTS = 0x36
-
-
-class BlockType(IntEnum):
-    """KW1281 Block types"""
-    ACK = 0x00
-    DATA = 0x01
-    END_OF_COMMUNICATION = 0x02
-    NEGATIVE_ACK = 0x03
+class KW1281BlockTitle(IntEnum):
+    """
+    Real KW1281 block titles (per blafusel.de reference).
+    These identify the PURPOSE of a block, not a request/response pair of
+    generic "commands" - there is no checksum-based framing in this protocol.
+    """
+    CLEAR_FAULT_CODES = 0x05
+    END_OUTPUT = 0x06
+    GET_FAULT_CODES = 0x07
+    ACK = 0x09
+    GROUP_READING = 0x29
+    GROUP_READING_RESPONSE = 0xE7
+    ASCII_DATA = 0xF6
+    FAULT_CODES_RESPONSE = 0xFC
 
 
 @dataclass(slots=True)
 class KW1281Block:
-    """Parsed KW1281 block"""
-    block_type: BlockType
-    block_counter: int
+    """A single parsed KW1281 block."""
+    counter: int
+    title: int
     data: bytes
-    checksum_valid: bool
-    raw_bytes: bytes
 
 
 @dataclass(slots=True)
 class ECUIdentification:
-    """Parsed ECU identification from block 0x1A response"""
+    """ECU identification, assembled from the 0xF6 ASCII blocks sent right after wakeup."""
     part_number: str = ""
+    component: str = ""
     software_version: str = ""
-    engine_code: str = ""
-    vehicle_identification: str = ""
-    date_of_manufacture: str = ""
-    coding: str = ""
-    raw_data: bytes = b""
+    additional: list[str] = field(default_factory=list)
+    raw_blocks: list[str] = field(default_factory=list)
+
+    @property
+    def engine_code(self) -> str:
+        # Best-effort: engine code sometimes appears inside the component string
+        return self.component
+
+
+@dataclass(slots=True)
+class MeasuringValue:
+    """One decoded field from a group-reading (measuring block) response."""
+    kennzahl: int
+    raw_a: int
+    raw_b: int
+    value: float
+    unit: str
+    label: str
+    confirmed: bool  # True only for Kennzahl entries marked "checked" in the reference table
+
+
+@dataclass(slots=True)
+class FaultCode:
+    """One VAG fault code (DTC) from a get-fault-codes response."""
+    code: int
+    status_byte: int
+
+    @property
+    def code_str(self) -> str:
+        return f"{self.code:05d}"
 
 
 class KW1281Error(Exception):
@@ -89,12 +122,13 @@ class KW1281TimeoutError(KW1281Error):
 
 
 class KW1281ChecksumError(KW1281Error):
-    """Checksum verification failed"""
+    """Byte-complement handshake mismatch (this protocol has no separate checksum byte -
+    the per-byte complement echo IS the error-detection mechanism)."""
     pass
 
 
 class KW1281ProtocolError(KW1281Error):
-    """Protocol violation (unexpected block type, counter mismatch, etc.)"""
+    """Protocol violation (unexpected block title, malformed block, etc.)"""
     pass
 
 
@@ -103,189 +137,199 @@ class KW1281ConnectionError(KW1281Error):
     pass
 
 
+# ---------------------------------------------------------------------------
+# Kennzahl (field type) -> decoding formula table.
+# Source: blafusel.de/obd/obd2_kw1281.html, itself based on "Value-calculation.txt"
+# from the old Yahoo! opendiag group. The author explicitly marked which
+# entries they had personally verified (√); everything else is "unconfirmed"
+# in the original source too - we carry that flag through honestly rather
+# than pretending every formula is certain.
+# a = first value byte, b = second value byte
+# ---------------------------------------------------------------------------
+def _f(formula, unit, label, confirmed=False):
+    return (formula, unit, label, confirmed)
+
+
+KENNZAHL_TABLE: dict[int, tuple] = {
+    1:  _f(lambda a, b: 0.2 * a * b, "rpm", "Engine Speed", True),
+    2:  _f(lambda a, b: a * 0.002 * b, "%", "Throttle Position (abs.)"),
+    3:  _f(lambda a, b: 0.002 * a * b, "deg", "Angle"),
+    4:  _f(lambda a, b: abs(b - 127) * 0.01 * a, "deg", "Timing (ATDC/BTDC)"),
+    5:  _f(lambda a, b: a * (b - 100) * 0.1, "C", "Temperature", True),
+    6:  _f(lambda a, b: 0.001 * a * b, "V", "ECU Supply Voltage", True),
+    7:  _f(lambda a, b: 0.01 * a * b, "km/h", "Vehicle Speed", True),
+    9:  _f(lambda a, b: (b - 127) * 0.02 * a, "deg", "Angle"),
+    12: _f(lambda a, b: 0.001 * a * b, "Ohm", "Resistance"),
+    13: _f(lambda a, b: (b - 127) * 0.001 * a, "mm", "Displacement"),
+    14: _f(lambda a, b: 0.005 * a * b, "bar", "Pressure"),
+    18: _f(lambda a, b: 0.04 * a * b, "mbar", "Absolute Pressure (MAP/Atmospheric/Intake)"),
+    19: _f(lambda a, b: a * b * 0.01, "l", "Fuel Tank Content", True),
+    20: _f(lambda a, b: a * (b - 128) / 128, "%", "Ratio"),
+    21: _f(lambda a, b: 0.001 * a * b, "V", "Sensor Voltage"),
+    22: _f(lambda a, b: 0.001 * a * b, "ms", "Time"),
+    23: _f(lambda a, b: b / 256 * a, "%", "EGR Valve / Injection Timing Duty Cycle"),
+    24: _f(lambda a, b: 0.001 * a * b, "A", "Current"),
+    25: _f(lambda a, b: (b * 1.421) + (a / 182), "g/s", "Air Mass Flow"),
+    26: _f(lambda a, b: b - a, "C", "Temperature Difference"),
+    33: _f(lambda a, b: (100 * b / a) if a != 0 else (100 * b), "%", "Accelerator Pedal Position", True),
+    34: _f(lambda a, b: (b - 128) * 0.01 * a, "kW", "Power"),
+    35: _f(lambda a, b: 0.01 * a * b, "l/h", "Fuel Consumption", True),
+    36: _f(lambda a, b: a * 2560 + b * 10, "km", "Total Mileage", True),
+    39: _f(lambda a, b: b / 256 * a, "mg/h", "Injection Quantity"),
+    44: _f(lambda a, b: a + b / 60.0, "h", "Time of Day (h:m)", True),
+    49: _f(lambda a, b: (b / 4) * a * 0.1, "mg/h", "Air Mass / Rev."),
+    53: _f(lambda a, b: (b - 128) * 1.4222 + 0.006 * a, "g/s", "Mass Air Flow"),
+    54: _f(lambda a, b: a * 256 + b, "count", "Counter"),
+    60: _f(lambda a, b: (a * 256 + b) * 0.01, "s", "Time"),
+    64: _f(lambda a, b: a + b, "Ohm", "Resistance", True),
+    66: _f(lambda a, b: (a * b) / 511.12, "V", "Voltage"),
+}
+
+
+def decode_measuring_value(kennzahl: int, a: int, b: int) -> MeasuringValue:
+    """Decode a single (kennzahl, a, b) triple from a group-reading response."""
+    entry = KENNZAHL_TABLE.get(kennzahl)
+    if entry is None:
+        return MeasuringValue(
+            kennzahl=kennzahl, raw_a=a, raw_b=b,
+            value=float(a * 256 + b), unit="raw", label=f"Unknown field type {kennzahl}",
+            confirmed=False,
+        )
+    formula, unit, label, confirmed = entry
+    try:
+        value = float(formula(a, b))
+    except ZeroDivisionError:
+        value = 0.0
+    return MeasuringValue(
+        kennzahl=kennzahl, raw_a=a, raw_b=b,
+        value=value, unit=unit, label=label, confirmed=confirmed,
+    )
+
+
 class KW1281Handler:
     """
-    KW1281 Protocol Handler for EDC15 ECU over K-Line (FTDI USB-KKL adapter).
-    
-    Implements:
-    - 5-baud wakeup sequence (ISO 9141-2 / KWP1281)
-    - Baud rate switch to 10400 baud
-    - Block-level communication with ACK/NAK handling
-    - Measuring block reading (003, 007, 011)
-    - ECU identification reading
+    KW1281 Protocol Handler for a VAG module over K-Line (FTDI USB-KKL adapter).
     """
-    
-    # Timing constants (milliseconds)
+
+    # Timing constants (seconds unless noted)
     T_5BAUD_BIT_MS = 200  # 5 baud = 200ms per bit
-    T_WAKEUP_PULSE_MS = 25  # Initial low pulse
-    T_INIT_DELAY_MS = 50  # Delay after address byte
-    T_KEYWORD_DELAY_MS = 5  # Delay between keyword bytes
-    T_10400_SWITCH_DELAY_MS = 300  # Delay after init before switching baud
-    T_BLOCK_TIMEOUT_MS = 500  # Timeout waiting for block
-    T_INTER_BLOCK_DELAY_MS = 5  # Delay between blocks
-    
-    # 5-baud init sequence: 0x33 (00110011) at 5 baud
-    INIT_ADDRESS_BYTE = 0x33
-    KEYWORD_1 = 0x01
-    KEYWORD_2 = 0x8A  # 10400 baud keyword
-    
+    T_KEYWORD_TIMEOUT_S = 2.0
+    T_BLOCK_TIMEOUT_S = 2.0
+    T_INTER_BYTE_DELAY_S = 0.005  # ~5ms between bytes, per reference doc
+
     def __init__(
         self,
-        port: str = "/dev/ttyUSB0",
+        port: str = "COM3",
         baudrate: int = 10400,
-        timeout: float = 1.0,
-        write_timeout: float = 1.0,
+        timeout: float = 2.0,
+        write_timeout: float = 2.0,
+        ecu_address: int = KW1281Address.ENGINE,
     ):
         self.port = port
         self.baudrate = baudrate
         self.timeout = timeout
         self.write_timeout = write_timeout
-        
+        self.ecu_address = ecu_address
+
         self._serial: Optional[serial.Serial] = None
         self._connected = False
-        self._block_counter = 0
-        self._expected_counter = 0
-        self._last_block_time = 0.0
-        self._lock = asyncio.Lock()
-        
-        # Callbacks for async events
+        self._counter = 0  # shared block counter, incremented every block either direction
+
         self.on_block_received: Optional[Callable[[KW1281Block], Awaitable[None]]] = None
         self.on_error: Optional[Callable[[Exception], Awaitable[None]]] = None
-        self.on_event: Optional[Callable[[str, dict], Awaitable[None]]] = None
-    
+
     @property
     def is_connected(self) -> bool:
         return self._connected and self._serial is not None and self._serial.is_open
-    
+
+    # ------------------------------------------------------------------
+    # Connection lifecycle
+    # ------------------------------------------------------------------
+
     async def connect(self) -> ECUIdentification:
         """
-        Full connection sequence: 5-baud init -> 10400 baud -> Start Communication -> Read ECU ID.
-        Returns parsed ECU identification.
+        Full connection sequence: 5-baud init -> keyword exchange -> read the
+        ECU's self-introduction (one or more 0xF6 ASCII blocks) until it
+        sends an ACK block on its own, signaling steady-state.
         """
-        async with self._lock:
-            if self.is_connected:
-                logger.warning("Already connected, disconnecting first")
-                await self.disconnect()
-            
-            # Phase 1: 5-baud initialization
-            await self._five_baud_init()
-            
-            # Phase 2: Switch to 10400 baud and start communication
-            await self._start_communication()
-            
-            # Phase 3: Read ECU identification
-            ecu_id = await self.read_ecu_identification()
-            
-            self._connected = True
-            logger.info(f"Connected to ECU: {ecu_id.part_number} SW: {ecu_id.software_version}")
-            return ecu_id
-    
-    async def _five_baud_init(self) -> None:
+        if self.is_connected:
+            logger.warning("Already connected, disconnecting first")
+            await self.disconnect()
+
+        await self._five_baud_init_and_keyword_exchange()
+
+        ecu_id = ECUIdentification()
+        max_intro_blocks = 16  # safety cap
+        for _ in range(max_intro_blocks):
+            block = await self._read_block()
+            if block.title == KW1281BlockTitle.ASCII_DATA:
+                text = block.data.decode("ascii", errors="replace").strip("\x00").strip()
+                ecu_id.raw_blocks.append(text)
+                await self._send_ack_block()
+            elif block.title == KW1281BlockTitle.ACK:
+                # ECU is done introducing itself and handed the turn to us
+                break
+            else:
+                raise KW1281ProtocolError(
+                    f"Unexpected block title 0x{block.title:02X} during ECU introduction"
+                )
+        else:
+            raise KW1281ProtocolError("ECU kept sending introduction blocks past safety limit")
+
+        self._fill_ecu_identification(ecu_id)
+        self._connected = True
+        logger.info(f"Connected to ECU: {ecu_id.part_number or ecu_id.raw_blocks}")
+        return ecu_id
+
+    def _fill_ecu_identification(self, ecu_id: ECUIdentification) -> None:
+        """Best-effort split of the raw introduction strings into named fields.
+        Typical order (per reference doc): part number, component name,
+        software version, workshop/importer code. Not guaranteed for every ECU."""
+        blocks = ecu_id.raw_blocks
+        if len(blocks) > 0:
+            ecu_id.part_number = blocks[0]
+        if len(blocks) > 1:
+            ecu_id.component = blocks[1]
+        if len(blocks) > 2:
+            ecu_id.software_version = blocks[2]
+        if len(blocks) > 3:
+            ecu_id.additional = blocks[3:]
+
+    async def _five_baud_init_and_keyword_exchange(self) -> None:
         """
-        Execute 5-baud initialization sequence per ISO 9141-2 / VAG KW1281.
-        
-        Sequence:
-        1. Open serial at 5 baud, 8N1
-        2. Send address byte 0x33 (00110011) at 5 baud
-        3. Wait for ECU to echo 0x55 (synchronization)
-        4. Send Keyword 1 (0x01) and Keyword 2 (0x8A for 10400 baud)
-        5. Wait for ECU to acknowledge with inverted keywords
-        6. Close 5-baud connection, wait, reopen at 10400 baud
+        5-baud wakeup: tester sends the module address at 5 baud, then the
+        ECU replies (at the TARGET baud rate, not 5 baud) with a sync byte
+        and a 2-byte keyword; tester echoes the complement of the 2nd
+        keyword byte to confirm.
         """
-        logger.info(f"Starting 5-baud init on {self.port}")
-        
-        # Open at 5 baud
-        ser = serial.Serial(
+        logger.info(f"Starting 5-baud init on {self.port} (address 0x{self.ecu_address:02X})")
+
+        # Step 1: bit-bang the address byte out at 5 baud on its own connection
+        five_baud_ser = serial.Serial(
             port=self.port,
             baudrate=5,
             bytesize=serial.EIGHTBITS,
             parity=serial.PARITY_NONE,
             stopbits=serial.STOPBITS_ONE,
-            timeout=2.0,  # Generous timeout for 5 baud
+            timeout=2.0,
             write_timeout=2.0,
         )
-        
         try:
-            # Clear buffers
-            ser.reset_input_buffer()
-            ser.reset_output_buffer()
-            
-            # Step 1: Send wakeup pulse (optional, some adapters need it)
-            ser.set_break(True)
-            await asyncio.sleep(self.T_WAKEUP_PULSE_MS / 1000)
-            ser.set_break(False)
-            await asyncio.sleep(0.05)
-            
-            # Step 2: Send address byte 0x33 at 5 baud
-            logger.debug("Sending address byte 0x33 at 5 baud")
-            ser.write(bytes([self.INIT_ADDRESS_BYTE]))
-            await self._drain_at_baud(ser, 5, 1)
-            
-            # Step 3: Wait for sync byte 0x55 from ECU (with timeout)
-            sync_byte = await self._read_byte_with_timeout(ser, timeout=1.0)
-            if sync_byte != 0x55:
-                raise KW1281ConnectionError(
-                    f"Expected sync byte 0x55, got 0x{sync_byte:02X}" if sync_byte is not None 
-                    else "Timeout waiting for sync byte 0x55"
-                )
-            logger.debug("Received sync byte 0x55")
-            
-            # Step 4: Send Keyword 1 (0x01)
-            await asyncio.sleep(self.T_KEYWORD_DELAY_MS / 1000)
-            ser.write(bytes([self.KEYWORD_1]))
-            await self._drain_at_baud(ser, 5, 1)
-            
-            # Step 5: Wait for inverted Keyword 1 (0xFE)
-            kw1_echo = await self._read_byte_with_timeout(ser, timeout=0.5)
-            if kw1_echo != 0xFE:
-                raise KW1281ConnectionError(
-                    f"Expected inverted KW1 0xFE, got 0x{kw1_echo:02X}" if kw1_echo is not None
-                    else "Timeout waiting for inverted KW1"
-                )
-            logger.debug("Received inverted KW1 (0xFE)")
-            
-            # Step 6: Send Keyword 2 (0x8A for 10400 baud)
-            await asyncio.sleep(self.T_KEYWORD_DELAY_MS / 1000)
-            ser.write(bytes([self.KEYWORD_2]))
-            await self._drain_at_baud(ser, 5, 1)
-            
-            # Step 7: Wait for inverted Keyword 2 (0x75)
-            kw2_echo = await self._read_byte_with_timeout(ser, timeout=0.5)
-            if kw2_echo != 0x75:
-                raise KW1281ConnectionError(
-                    f"Expected inverted KW2 0x75, got 0x{kw2_echo:02X}" if kw2_echo is not None
-                    else "Timeout waiting for inverted KW2"
-                )
-            logger.debug("Received inverted KW2 (0x75) - 10400 baud confirmed")
-            
-            # Step 8: Wait for ECU to switch baud rate
-            await asyncio.sleep(self.T_10400_SWITCH_DELAY_MS / 1000)
-            
+            five_baud_ser.reset_input_buffer()
+            five_baud_ser.reset_output_buffer()
+            five_baud_ser.write(bytes([self.ecu_address]))
+            # Give the (very slow) transmission time to actually go out
+            # 10 bits (1 start + 8 data + 1 stop) at 5 baud = 2s
+            await asyncio.sleep(2.2)
         finally:
-            ser.close()
-        
-        logger.info("5-baud initialization complete, switching to 10400 baud")
-    
-    async def _drain_at_baud(self, ser: serial.Serial, baudrate: int, byte_count: int) -> None:
-        """Wait for bytes to be transmitted at given baudrate."""
-        # Time for byte_count bytes at baudrate (10 bits per byte: 1 start + 8 data + 1 stop)
-        bit_time = 1.0 / baudrate
-        byte_time = bit_time * 10 * byte_count
-        await asyncio.sleep(byte_time * 1.5)  # 1.5x safety margin
-    
-    async def _read_byte_with_timeout(self, ser: serial.Serial, timeout: float) -> Optional[int]:
-        """Read a single byte with timeout."""
-        start = time.monotonic()
-        while time.monotonic() - start < timeout:
-            if ser.in_waiting > 0:
-                data = ser.read(1)
-                if data:
-                    return data[0]
-            await asyncio.sleep(0.001)
-        return None
-    
-    async def _start_communication(self) -> None:
-        """Open 10400 baud connection and send Start Communication (0x81)."""
+            five_baud_ser.close()
+
+        # NOTE: some FTDI chips cannot reliably generate true 5-baud framing
+        # in hardware. If wakeup keeps failing here, that's the most likely
+        # cause - see README troubleshooting.
+
+        # Step 2: reopen at the target communication baud rate to receive
+        # the ECU's reply, which arrives at THIS baud rate (not 5 baud).
         self._serial = serial.Serial(
             port=self.port,
             baudrate=self.baudrate,
@@ -295,319 +339,29 @@ class KW1281Handler:
             timeout=self.timeout,
             write_timeout=self.write_timeout,
         )
-        
         self._serial.reset_input_buffer()
         self._serial.reset_output_buffer()
-        
-        # Send Start Communication (0x81) with tester address
-        await self._send_block(
-            address=KWP1281Address.TESTER,
-            command=KWP1281Commands.START_COMMUNICATION,
-            data=bytes([0x10, 0x01, 0x00])  # Diagnostic session type
-        )
-        
-        # Wait for positive response (0xC1 = 0x81 + 0x40)
-        block = await self._read_block()
-        if block.block_type != BlockType.DATA or block.data[0] != 0xC1:
-            raise KW1281ProtocolError(f"StartCommunication failed: {block}")
-        
-        logger.debug("Start Communication successful")
-        self._block_counter = 0
-        self._expected_counter = 1
-    
-    async def _send_block(
-        self,
-        address: int,
-        command: int,
-        data: bytes = b"",
-        block_type: BlockType = BlockType.DATA
-    ) -> None:
-        """Send a KW1281 block with proper framing and checksum."""
-        if not self._serial or not self._serial.is_open:
-            raise KW1281ConnectionError("Serial port not open")
-        
-        # Build block: [Length][Address][Command][Data...][Checksum]
-        # Length includes Address + Command + Data + Checksum (but not Length byte itself)
-        payload = bytes([address, command]) + data
-        length = len(payload) + 1  # +1 for checksum
-        checksum = self._calculate_checksum(payload)
-        
-        block = bytes([length]) + payload + bytes([checksum])
-        
-        logger.debug(f"TX: {block.hex(' ').upper()}")
-        
-        # Write with thread safety
-        loop = asyncio.get_event_loop()
-        await loop.run_in_executor(None, self._serial.write, block)
-        await loop.run_in_executor(None, self._serial.flush)
-        
-        # Inter-block delay
-        await asyncio.sleep(self.T_INTER_BLOCK_DELAY_MS / 1000)
-    
-    async def _read_block(self, timeout: Optional[float] = None) -> KW1281Block:
-        """Read a complete KW1281 block with timeout."""
-        if not self._serial or not self._serial.is_open:
-            raise KW1281ConnectionError("Serial port not open")
-        
-        timeout = timeout or (self.T_BLOCK_TIMEOUT_MS / 1000)
-        start_time = time.monotonic()
-        
-        # Read length byte
-        length_byte = await self._read_byte_async(timeout)
-        if length_byte is None:
-            raise KW1281TimeoutError("Timeout reading block length")
-        
-        length = length_byte
-        if length < 3 or length > 260:  # Min: addr+cmd+checksum, Max: KWP1281 max
-            raise KW1281ProtocolError(f"Invalid block length: {length}")
-        
-        # Read remaining bytes (length - 1 because length byte already read)
-        remaining = length
-        payload = bytearray()
-        
-        while len(payload) < remaining:
-            elapsed = time.monotonic() - start_time
-            if elapsed > timeout:
-                raise KW1281TimeoutError(f"Timeout reading block payload ({len(payload)}/{remaining} bytes)")
-            
-            chunk = await self._read_bytes_async(remaining - len(payload), timeout - elapsed)
-            if not chunk:
-                raise KW1281TimeoutError("Connection closed during block read")
-            payload.extend(chunk)
-        
-        # Parse block
-        return self._parse_block(bytes([length_byte]) + payload)
-    
-    async def _read_byte_async(self, timeout: float) -> Optional[int]:
-        """Read a single byte asynchronously."""
-        loop = asyncio.get_event_loop()
-        start = time.monotonic()
-        
-        while time.monotonic() - start < timeout:
-            if self._serial.in_waiting > 0:
-                data = await loop.run_in_executor(None, self._serial.read, 1)
-                if data:
-                    return data[0]
-            await asyncio.sleep(0.001)
-        return None
-    
-    async def _read_bytes_async(self, count: int, timeout: float) -> bytes:
-        """Read multiple bytes asynchronously."""
-        loop = asyncio.get_event_loop()
-        start = time.monotonic()
-        result = bytearray()
-        
-        while len(result) < count and time.monotonic() - start < timeout:
-            available = self._serial.in_waiting
-            if available > 0:
-                to_read = min(available, count - len(result))
-                data = await loop.run_in_executor(None, self._serial.read, to_read)
-                if data:
-                    result.extend(data)
-            else:
-                await asyncio.sleep(0.001)
-        
-        return bytes(result)
-    
-    def _calculate_checksum(self, data: bytes) -> int:
-        """Calculate KW1281 checksum (8-bit sum of all bytes, inverted + 1)."""
-        # Checksum = 0x100 - (sum of bytes & 0xFF)
-        return (0x100 - (sum(data) & 0xFF)) & 0xFF
-    
-    def _verify_checksum(self, block: bytes) -> bool:
-        """Verify block checksum."""
-        if len(block) < 3:
-            return False
-        # Checksum is last byte, data is everything except length and checksum
-        data = block[1:-1]
-        expected = self._calculate_checksum(data)
-        return block[-1] == expected
-    
-    def _parse_block(self, raw: bytes) -> KW1281Block:
-        """Parse raw block into KW1281Block."""
-        if len(raw) < 4:
-            raise KW1281ProtocolError(f"Block too short: {len(raw)} bytes")
-        
-        length = raw[0]
-        address = raw[1]
-        command_or_type = raw[2]
-        data = raw[3:-1] if len(raw) > 4 else b""
-        checksum_valid = self._verify_checksum(raw)
-        
-        # Determine block type from address/command
-        if address == KWP1281Address.ECU:
-            if command_or_type == 0x00:
-                block_type = BlockType.ACK
-            elif command_or_type == 0x03:
-                block_type = BlockType.NEGATIVE_ACK
-            else:
-                block_type = BlockType.DATA
-        else:
-            block_type = BlockType.DATA
-        
-        # Extract block counter from data if present (usually first byte of data for data blocks)
-        block_counter = 0
-        if block_type == BlockType.DATA and len(data) > 0:
-            block_counter = data[0]
-        
-        return KW1281Block(
-            block_type=block_type,
-            block_counter=block_counter,
-            data=data,
-            checksum_valid=checksum_valid,
-            raw_bytes=raw
-        )
-    
-    async def read_ecu_identification(self) -> ECUIdentification:
-        """Read ECU identification (Service 0x1A)."""
-        await self._send_block(
-            address=KWP1281Address.TESTER,
-            command=KWP1281Commands.READ_ECU_IDENTIFICATION,
-            data=b""
-        )
-        
-        # Read identification blocks (multiple blocks possible)
-        id_data = bytearray()
-        while True:
-            block = await self._read_block()
-            
-            if not block.checksum_valid:
-                raise KW1281ChecksumError(f"Checksum error in ID block: {block.raw_bytes.hex()}")
-            
-            if block.block_type == BlockType.ACK:
-                # Send next block request
-                await self._send_ack()
-                continue
-            elif block.block_type == BlockType.DATA:
-                id_data.extend(block.data[1:])  # Skip block counter
-                await self._send_ack()
-            elif block.block_type == BlockType.END_OF_COMMUNICATION:
-                break
-            else:
-                raise KW1281ProtocolError(f"Unexpected block type in ID read: {block.block_type}")
-        
-        return self._parse_ecu_identification(bytes(id_data))
-    
-    def _parse_ecu_identification(self, data: bytes) -> ECUIdentification:
-        """Parse raw ECU identification data (ASCII/BCD mixed)."""
-        ecu = ECUIdentification(raw_data=data)
-        
-        if not data:
-            return ecu
-        
-        # EDC15 identification format (VAG-specific)
-        # Typically: Part Number (10 bytes ASCII), SW Version (6 bytes ASCII), etc.
-        try:
-            # Try to decode as ASCII where possible
-            text = data.decode('ascii', errors='ignore')
-            
-            # Common patterns in VAG ECU ID strings
-            lines = text.split('\x00')
-            lines = [l.strip() for l in lines if l.strip()]
-            
-            for line in lines:
-                if len(line) >= 10 and line[:3].isdigit():
-                    ecu.part_number = line[:10]
-                elif 'SW' in line.upper() or 'VERSION' in line.upper():
-                    ecu.software_version = line
-                elif line in ('AFN', 'AHU', '1Z', 'AFK', 'ALE', 'ALH'):
-                    ecu.engine_code = line
-                elif len(line) == 17:  # VIN-like
-                    ecu.vehicle_identification = line
-                    
-        except Exception as e:
-            logger.warning(f"Failed to parse ECU ID text: {e}")
-        
-        # Fallback: extract from known offsets (EDC15 typical layout)
-        if len(data) >= 32:
-            if not ecu.part_number:
-                ecu.part_number = data[0:10].decode('ascii', errors='ignore').strip()
-            if not ecu.software_version:
-                ecu.software_version = data[10:16].decode('ascii', errors='ignore').strip()
-            if not ecu.engine_code:
-                ecu.engine_code = data[16:20].decode('ascii', errors='ignore').strip()
-        
-        return ecu
-    
-    async def read_measuring_block(self, block_number: int) -> bytes:
-        """
-        Read a measuring block (Service 0x1B / 0x21).
-        Returns raw block data (12 bytes typical for EDC15).
-        """
-        if not 1 <= block_number <= 255:
-            raise ValueError(f"Invalid block number: {block_number}")
-        
-        # Request measuring block using ReadDataByLocalIdentifier (0x21)
-        # Block number is the local identifier
-        await self._send_block(
-            address=KWP1281Address.TESTER,
-            command=KWP1281Commands.READ_DATA_BY_LOCAL_ID,
-            data=bytes([block_number])
-        )
-        
-        # Read response blocks
-        block_data = bytearray()
-        while True:
-            block = await self._read_block()
-            
-            if not block.checksum_valid:
-                raise KW1281ChecksumError(f"Checksum error in MB {block_number}: {block.raw_bytes.hex()}")
-            
-            if block.block_type == BlockType.ACK:
-                await self._send_ack()
-                continue
-            elif block.block_type == BlockType.DATA:
-                # First byte of data is block counter, rest is payload
-                if len(block.data) > 1:
-                    block_data.extend(block.data[1:])
-                await self._send_ack()
-            elif block.block_type == BlockType.END_OF_COMMUNICATION:
-                break
-            elif block.block_type == BlockType.NEGATIVE_ACK:
-                raise KW1281ProtocolError(f"NAK received for block {block_number}")
-            else:
-                raise KW1281ProtocolError(f"Unexpected block type: {block.block_type}")
-        
-        return bytes(block_data)
-    
-    async def _send_ack(self) -> None:
-        """Send ACK block (BlockType.ACK with current counter)."""
-        ack_block = bytes([
-            0x03,  # Length: addr + type + counter + checksum = 3
-            KWP1281Address.TESTER,
-            BlockType.ACK,
-            self._expected_counter & 0xFF,
-            0x00  # Placeholder, will be replaced by _send_block
-        ])
-        # Calculate proper checksum
-        payload = ack_block[1:-1]
-        checksum = self._calculate_checksum(payload)
-        ack_block = ack_block[:-1] + bytes([checksum])
-        
-        loop = asyncio.get_event_loop()
-        await loop.run_in_executor(None, self._serial.write, ack_block)
-        await loop.run_in_executor(None, self._serial.flush)
-        
-        self._expected_counter = (self._expected_counter + 1) & 0xFF
-    
-    async def stop_communication(self) -> None:
-        """Send Stop Communication (0x82) and close connection."""
-        if self._serial and self._serial.is_open:
-            try:
-                await self._send_block(
-                    address=KWP1281Address.TESTER,
-                    command=KWP1281Commands.STOP_COMMUNICATION,
-                    data=b""
-                )
-                # Read final ACK
-                await self._read_block(timeout=0.5)
-            except Exception as e:
-                logger.debug(f"Error during stop communication: {e}")
-        
-        await self.disconnect()
-    
+
+        sync_byte = await self._read_byte_raw(self.T_KEYWORD_TIMEOUT_S)
+        if sync_byte != 0x55:
+            raise KW1281ConnectionError(
+                f"Expected sync byte 0x55, got 0x{sync_byte:02X}"
+            )
+        logger.debug("Received sync byte 0x55")
+
+        kw_lsb = await self._read_byte_raw(self.T_KEYWORD_TIMEOUT_S)
+        kw_msb = await self._read_byte_raw(self.T_KEYWORD_TIMEOUT_S)
+        logger.debug(f"Received keyword 0x{kw_lsb:02X} 0x{kw_msb:02X}")
+
+        # Tester confirms receipt of the 2nd keyword byte with its complement
+        complement = (0xFF - kw_msb) & 0xFF
+        await self._write_byte_raw(complement)
+
+        self._counter = 0
+        logger.info("5-baud wakeup complete, entering block exchange")
+
     async def disconnect(self) -> None:
-        """Close serial connection."""
+        """Close serial connection without notifying the ECU (use stop_communication() for a clean end)."""
         if self._serial:
             try:
                 self._serial.close()
@@ -616,14 +370,202 @@ class KW1281Handler:
             self._serial = None
         self._connected = False
         logger.info("Disconnected from ECU")
-    
-    async def __aenter__(self) -> KW1281Handler:
+
+    async def stop_communication(self) -> None:
+        """Send a clean End Output block, then close the connection."""
+        if self._serial and self._serial.is_open:
+            try:
+                await self._send_block(KW1281BlockTitle.END_OUTPUT)
+            except Exception as e:
+                logger.debug(f"Error sending end-output block: {e}")
+        await self.disconnect()
+
+    async def __aenter__(self) -> "KW1281Handler":
         await self.connect()
         return self
-    
+
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
         await self.disconnect()
 
+    # ------------------------------------------------------------------
+    # Low-level byte I/O with the complement handshake
+    # ------------------------------------------------------------------
+
+    async def _read_byte_raw(self, timeout: float) -> int:
+        loop = asyncio.get_event_loop()
+        start = time.monotonic()
+        while time.monotonic() - start < timeout:
+            if self._serial.in_waiting > 0:
+                data = await loop.run_in_executor(None, self._serial.read, 1)
+                if data:
+                    return data[0]
+            await asyncio.sleep(0.001)
+        raise KW1281TimeoutError("Timeout waiting for byte")
+
+    async def _write_byte_raw(self, byte: int) -> None:
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(None, self._serial.write, bytes([byte & 0xFF]))
+        await loop.run_in_executor(None, self._serial.flush)
+
+    async def _read_byte_and_send_complement(self, timeout: float) -> int:
+        """Read a byte from the peer, then answer with its 0xFF-complement."""
+        b = await self._read_byte_raw(timeout)
+        await self._write_byte_raw((0xFF - b) & 0xFF)
+        return b
+
+    async def _write_byte_and_verify_complement(self, byte: int, timeout: float) -> None:
+        """Send a byte, then verify the peer echoes back its 0xFF-complement."""
+        await self._write_byte_raw(byte)
+        await asyncio.sleep(self.T_INTER_BYTE_DELAY_S)
+        echo = await self._read_byte_raw(timeout)
+        expected = (0xFF - byte) & 0xFF
+        if echo != expected:
+            raise KW1281ChecksumError(
+                f"Complement mismatch: sent 0x{byte:02X}, expected complement "
+                f"0x{expected:02X}, got 0x{echo:02X}"
+            )
+
+    # ------------------------------------------------------------------
+    # Block-level I/O
+    # ------------------------------------------------------------------
+
+    async def _send_block(self, title: int, data: bytes = b"") -> None:
+        """Send a complete block: length, counter, title, data, then block-end (uncomplemented)."""
+        if not self._serial or not self._serial.is_open:
+            raise KW1281ConnectionError("Serial port not open")
+
+        payload = bytes([self._counter & 0xFF, title]) + data
+        length = len(payload) + 1  # +1 for the block-end byte that follows
+
+        logger.debug(f"TX block: len=0x{length:02X} counter=0x{self._counter:02X} title=0x{title:02X} data={data.hex()}")
+
+        await self._write_byte_and_verify_complement(length, self.timeout)
+        for b in payload:
+            await self._write_byte_and_verify_complement(b, self.timeout)
+
+        # Block-end byte: sent as-is, NOT complemented
+        await self._write_byte_raw(0x03)
+
+        self._counter = (self._counter + 1) & 0xFF
+
+    async def _read_block(self, timeout: Optional[float] = None) -> KW1281Block:
+        """Read a complete block, complementing every byte except the block-end byte."""
+        if not self._serial or not self._serial.is_open:
+            raise KW1281ConnectionError("Serial port not open")
+
+        timeout = timeout or self.T_BLOCK_TIMEOUT_S
+
+        length = await self._read_byte_and_send_complement(timeout)
+        if length < 2:
+            raise KW1281ProtocolError(f"Invalid block length: {length}")
+
+        payload = bytearray()
+        for _ in range(length):
+            payload.append(await self._read_byte_and_send_complement(timeout))
+
+        end_byte = await self._read_byte_raw(timeout)
+        if end_byte != 0x03:
+            raise KW1281ProtocolError(f"Expected block-end 0x03, got 0x{end_byte:02X}")
+
+        counter = payload[0]
+        title = payload[1]
+        data = bytes(payload[2:])
+
+        self._counter = (counter + 1) & 0xFF  # stay in sync with ECU's counter
+
+        block = KW1281Block(counter=counter, title=title, data=data)
+        logger.debug(f"RX block: counter=0x{counter:02X} title=0x{title:02X} data={data.hex()}")
+        return block
+
+    async def _send_ack_block(self) -> None:
+        await self._send_block(KW1281BlockTitle.ACK)
+
+    # ------------------------------------------------------------------
+    # High-level requests
+    # ------------------------------------------------------------------
+
+    async def read_group(self, group_number: int) -> list[MeasuringValue]:
+        """
+        Request a "group reading" (measuring block) and return its decoded
+        fields. A group can contain up to 4 fields; the ECU decides which
+        physical values live in which group.
+        """
+        if not 1 <= group_number <= 255:
+            raise ValueError(f"Invalid group number: {group_number}")
+
+        await self._send_block(KW1281BlockTitle.GROUP_READING, bytes([group_number]))
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"Expected group reading response (0xE7), got 0x{block.title:02X}"
+            )
+        await self._send_ack_block()
+
+        values: list[MeasuringValue] = []
+        data = block.data
+        for i in range(0, len(data) - 2, 3):
+            kennzahl, a, b = data[i], data[i + 1], data[i + 2]
+            values.append(decode_measuring_value(kennzahl, a, b))
+        return values
+
+    async def read_measuring_block(self, block_number: int) -> list[MeasuringValue]:
+        """Alias of read_group(), kept for backwards compatibility with existing callers."""
+        return await self.read_group(block_number)
+
+    async def read_fault_codes(self) -> list[FaultCode]:
+        """
+        Request all stored fault codes. May span multiple 0xFC blocks if
+        there are more than 4 codes (each block holds up to 4 codes, 3
+        bytes each: high byte, low byte, status byte).
+        """
+        await self._send_block(KW1281BlockTitle.GET_FAULT_CODES)
+
+        codes: list[FaultCode] = []
+        max_blocks = 16  # safety cap against a malformed/looping exchange
+        for _ in range(max_blocks):
+            block = await self._read_block()
+
+            if block.title == KW1281BlockTitle.ACK:
+                break
+
+            if block.title != KW1281BlockTitle.FAULT_CODES_RESPONSE:
+                raise KW1281ProtocolError(
+                    f"Expected fault codes response (0xFC), got 0x{block.title:02X}"
+                )
+
+            data = block.data
+            n_triples = len(data) // 3
+            for i in range(n_triples):
+                hi, lo, status = data[i * 3], data[i * 3 + 1], data[i * 3 + 2]
+                code = (hi << 8) | lo
+                if code == 0xFFFF:
+                    continue  # "no fault" marker
+                codes.append(FaultCode(code=code, status_byte=status))
+
+            await self._send_ack_block()
+
+            if n_triples < 4:
+                # Short block = last one; ECU should hand back an ACK next,
+                # but some ECUs go straight back to steady-state instead.
+                break
+
+        return codes
+
+    async def clear_fault_codes(self) -> bool:
+        """Clear all stored fault codes. Returns True if the ECU acknowledged."""
+        await self._send_block(KW1281BlockTitle.CLEAR_FAULT_CODES)
+        block = await self._read_block()
+        if block.title != KW1281BlockTitle.ACK:
+            raise KW1281ProtocolError(
+                f"Clear fault codes not acknowledged (got 0x{block.title:02X})"
+            )
+        return True
+
+
+# ---------------------------------------------------------------------------
+# Serial port discovery helpers (unrelated to the protocol fix above)
+# ---------------------------------------------------------------------------
 
 # FTDI VID/PIDs commonly used in KKL cables
 _FTDI_VIDS_PIDS = {
@@ -644,6 +586,7 @@ def find_kkl_adapters() -> list[dict]:
                 'serial': port.serial_number,
             })
     return adapters
+
 
 def list_serial_ports() -> list[dict]:
     """

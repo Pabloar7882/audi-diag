@@ -24,7 +24,8 @@ from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,
     QLabel, QPushButton, QComboBox, QCheckBox, QGroupBox, QStatusBar,
     QProgressBar, QMessageBox, QSplitter, QFrame, QScrollArea, QSizePolicy,
-    QToolBar, QStyle, QDial
+    QToolBar, QStyle, QDial, QDialog, QDialogButtonBox, QTableWidget,
+    QTableWidgetItem, QHeaderView, QSpinBox, QAbstractItemView, QStackedWidget
 )
 
 from telemetry_worker import (
@@ -36,6 +37,7 @@ from telemetry_worker import (
     WorkerState,
     ECUIdentification,
 )
+from kw1281_handler import FaultCode, MeasuringValue
 
 
 class GaugeStyle(Enum):
@@ -589,6 +591,272 @@ class StatusIndicator(QWidget):
             self._detail.setText(message)
 
 
+class FaultCodesDialog(QDialog):
+    """Modal dialog showing the DTCs (fault codes) currently stored on the ECU."""
+
+    def __init__(self, codes: list[FaultCode], parent: Optional[QWidget] = None):
+        super().__init__(parent)
+        self.setWindowTitle("Fault Codes (DTCs)")
+        self.resize(480, 320)
+
+        layout = QVBoxLayout(self)
+
+        if not codes:
+            label = QLabel("No fault codes stored. ✓")
+            label.setStyleSheet("font-size: 14px; color: #00cc66; padding: 24px;")
+            label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            layout.addWidget(label)
+        else:
+            info = QLabel(
+                f"{len(codes)} fault code(s) found. Status byte meaning (sporadic/permanent, "
+                f"signal range, etc.) is ECU-specific - shown raw for now."
+            )
+            info.setWordWrap(True)
+            info.setStyleSheet("color: #aaa; padding: 4px;")
+            layout.addWidget(info)
+
+            table = QTableWidget(len(codes), 2)
+            table.setHorizontalHeaderLabels(["DTC Code", "Status Byte"])
+            table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+            table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
+            table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+            table.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
+
+            for row, fc in enumerate(codes):
+                table.setItem(row, 0, QTableWidgetItem(fc.code_str))
+                table.setItem(row, 1, QTableWidgetItem(f"0x{fc.status_byte:02X}"))
+
+            layout.addWidget(table)
+
+        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
+        buttons.rejected.connect(self.reject)
+        buttons.accepted.connect(self.accept)
+        layout.addWidget(buttons)
+
+
+class TrendChart(QWidget):
+    """
+    Lightweight rolling line chart (no external plotting library needed).
+    Tracks up to a handful of named series, each with its own color and value range.
+    """
+
+    def __init__(self, max_points: int = 300, parent: Optional[QWidget] = None):
+        super().__init__(parent)
+        self.setMinimumHeight(140)
+        self._max_points = max_points
+        self._series: dict[str, dict] = {}  # name -> {color, min, max, values: list[float]}
+
+    def add_series(self, name: str, color: str, min_value: float, max_value: float) -> None:
+        self._series[name] = {
+            "color": QColor(color),
+            "min": min_value,
+            "max": max_value,
+            "values": [],
+        }
+
+    def push(self, name: str, value: float) -> None:
+        s = self._series.get(name)
+        if s is None:
+            return
+        s["values"].append(value)
+        if len(s["values"]) > self._max_points:
+            s["values"].pop(0)
+        self.update()
+
+    def clear_history(self) -> None:
+        for s in self._series.values():
+            s["values"].clear()
+        self.update()
+
+    def paintEvent(self, event: QPaintEvent) -> None:
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+        rect = self.rect().adjusted(8, 8, -8, -8)
+        painter.fillRect(self.rect(), QColor("#1a1a1a"))
+
+        # Grid lines
+        painter.setPen(QPen(QColor("#333"), 1))
+        for i in range(1, 4):
+            y = rect.top() + rect.height() * i / 4
+            painter.drawLine(QPointF(rect.left(), y), QPointF(rect.right(), y))
+
+        for name, s in self._series.items():
+            values = s["values"]
+            if len(values) < 2:
+                continue
+            vmin, vmax = s["min"], s["max"]
+            span = (vmax - vmin) or 1.0
+
+            painter.setPen(QPen(s["color"], 2))
+            points = []
+            n = len(values)
+            for i, v in enumerate(values):
+                x = rect.left() + rect.width() * i / max(1, self._max_points - 1)
+                norm = max(0.0, min(1.0, (v - vmin) / span))
+                y = rect.bottom() - norm * rect.height()
+                points.append(QPointF(x, y))
+            for i in range(len(points) - 1):
+                painter.drawLine(points[i], points[i + 1])
+
+        # Legend
+        legend_x = rect.left()
+        painter.setFont(QFont("Inter", 8))
+        for name, s in self._series.items():
+            painter.setPen(QPen(s["color"], 2))
+            painter.drawLine(QPointF(legend_x, rect.top() + 4), QPointF(legend_x + 14, rect.top() + 4))
+            painter.setPen(QColor("#ccc"))
+            current = f"{s['values'][-1]:.0f}" if s["values"] else "--"
+            painter.drawText(int(legend_x + 18), int(rect.top() + 8), f"{name}: {current}")
+            legend_x += 110
+
+
+class DigitalCard(QWidget):
+    """
+    Flat 'digital dashboard' style readout - an alternative look to the
+    analog CircularGauge, showing the same value/thresholds as a big
+    number + colored fill bar instead of a needle.
+    """
+
+    def __init__(self, config: GaugeConfig, parent: Optional[QWidget] = None):
+        super().__init__(parent)
+        self.config = config
+        self._value = config.min_value
+        self.setMinimumSize(170, 110)
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+
+    def set_value(self, value: float, animated: bool = True) -> None:
+        # 'animated' kept for API parity with CircularGauge.set_value; unused here
+        self._value = max(self.config.min_value, min(self.config.max_value, value))
+        self.update()
+
+    @property
+    def value(self) -> float:
+        return self._value
+
+    def _color_for_value(self) -> QColor:
+        if self.config.critical_threshold is not None and self._value >= self.config.critical_threshold:
+            return QColor("#ff4444")
+        if self.config.warning_threshold is not None and self._value >= self.config.warning_threshold:
+            return QColor("#ffaa00")
+        return QColor("#00cc88")
+
+    def paintEvent(self, event: QPaintEvent) -> None:
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        rect = QRectF(self.rect().adjusted(1, 1, -1, -1))
+        color = self._color_for_value()
+
+        # Card background
+        painter.setPen(QPen(QColor("#2a2a3a"), 1))
+        painter.setBrush(QBrush(QColor("#181820")))
+        painter.drawRoundedRect(rect, 10, 10)
+
+        # Title
+        painter.setPen(QColor("#999"))
+        painter.setFont(QFont("Inter", 9))
+        painter.drawText(
+            QRectF(rect.left() + 14, rect.top() + 8, rect.width() - 28, 16),
+            Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter,
+            self.config.title.upper(),
+        )
+
+        # Big digital value + unit
+        value_font = QFont("Inter", 26, QFont.Weight.Bold)
+        painter.setFont(value_font)
+        painter.setPen(color)
+        value_str = f"{self._value:.{self.config.decimals}f}"
+        value_rect = QRectF(rect.left() + 14, rect.top() + 26, rect.width() - 28, rect.height() - 56)
+        painter.drawText(value_rect, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, value_str)
+
+        fm_value = QFontMetrics(value_font)
+        value_width = fm_value.horizontalAdvance(value_str)
+        painter.setFont(QFont("Inter", 10))
+        painter.setPen(QColor("#777"))
+        painter.drawText(
+            QRectF(rect.left() + 18 + value_width, rect.top() + 26, rect.width() - value_width - 32, rect.height() - 56),
+            Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom,
+            self.config.unit,
+        )
+
+        # Bottom fill bar (position within min..max)
+        bar_rect = QRectF(rect.left() + 14, rect.bottom() - 16, rect.width() - 28, 6)
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(QColor("#2a2a3a"))
+        painter.drawRoundedRect(bar_rect, 3, 3)
+
+        span = (self.config.max_value - self.config.min_value) or 1.0
+        frac = max(0.0, min(1.0, (self._value - self.config.min_value) / span))
+        if frac > 0:
+            fill_rect = QRectF(bar_rect.left(), bar_rect.top(), bar_rect.width() * frac, bar_rect.height())
+            painter.setBrush(color)
+            painter.drawRoundedRect(fill_rect, 3, 3)
+
+
+class CustomGroupsDialog(QDialog):
+    """
+    Non-modal dialog letting the user query any KW1281 measuring group (not
+    just the default 003/007/011), showing the raw decoded fields. Useful
+    for exploring what parameters this ECU actually reports where.
+    """
+
+    request_group = pyqtSignal(int)
+
+    def __init__(self, parent: Optional[QWidget] = None):
+        super().__init__(parent)
+        self.setWindowTitle("Custom Measuring Groups")
+        self.resize(520, 360)
+        self.setModal(False)
+
+        layout = QVBoxLayout(self)
+
+        info = QLabel(
+            "Query any group number (1-255). The car can only be asked for one group "
+            "at a time, so this pauses briefly between requests rather than flooding it."
+        )
+        info.setWordWrap(True)
+        info.setStyleSheet("color: #aaa;")
+        layout.addWidget(info)
+
+        row = QHBoxLayout()
+        row.addWidget(QLabel("Group #:"))
+        self.group_spin = QSpinBox()
+        self.group_spin.setRange(1, 255)
+        self.group_spin.setValue(1)
+        row.addWidget(self.group_spin)
+
+        self.query_btn = QPushButton("Query")
+        self.query_btn.clicked.connect(self._on_query_clicked)
+        row.addWidget(self.query_btn)
+        row.addStretch()
+        layout.addLayout(row)
+
+        self.table = QTableWidget(0, 5)
+        self.table.setHorizontalHeaderLabels(["Field", "Kennzahl", "Raw (a,b)", "Value", "Confirmed?"])
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        layout.addWidget(self.table)
+
+        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
+        buttons.rejected.connect(self.reject)
+        buttons.accepted.connect(self.accept)
+        layout.addWidget(buttons)
+
+    def _on_query_clicked(self) -> None:
+        self.request_group.emit(self.group_spin.value())
+
+    def show_group_result(self, group_number: int, values: list[MeasuringValue]) -> None:
+        if group_number != self.group_spin.value():
+            return  # a different query was in flight; ignore stale results
+        self.table.setRowCount(len(values))
+        for row, mv in enumerate(values):
+            self.table.setItem(row, 0, QTableWidgetItem(mv.label))
+            self.table.setItem(row, 1, QTableWidgetItem(str(mv.kennzahl)))
+            self.table.setItem(row, 2, QTableWidgetItem(f"{mv.raw_a}, {mv.raw_b}"))
+            self.table.setItem(row, 3, QTableWidgetItem(f"{mv.value:.2f} {mv.unit}"))
+            self.table.setItem(row, 4, QTableWidgetItem("yes" if mv.confirmed else "unverified"))
+
+
 class MainDashboard(QMainWindow):
     """
     Main application window with telemetry gauges and controls.
@@ -605,6 +873,8 @@ class MainDashboard(QMainWindow):
         # Worker thread
         self._worker_thread: Optional[TelemetryThread] = None
         self._session_id: Optional[int] = None
+        self._custom_groups_dialog: Optional["CustomGroupsDialog"] = None
+        self._active_alerts: set[str] = set()  # metric names currently past critical threshold
         
         # UI setup
         self._setup_ui()
@@ -849,7 +1119,23 @@ class MainDashboard(QMainWindow):
         
         # Set splitter sizes (60% top, 40% bottom)
         splitter.setSizes([480, 200])
-        main_layout.addWidget(splitter, 1)
+
+        # Two interchangeable interfaces sharing the same live data:
+        # index 0 = classic analog gauges (unchanged), index 1 = new digital-card view
+        self.view_stack = QStackedWidget()
+        self.view_stack.addWidget(splitter)
+        self.view_stack.addWidget(self._build_modern_view())
+        main_layout.addWidget(self.view_stack, 1)
+        
+        # Trend chart (RPM / Boost / Coolant history)
+        trend_group = QGroupBox("Trends")
+        trend_layout = QVBoxLayout(trend_group)
+        self.trend_chart = TrendChart()
+        self.trend_chart.add_series("RPM", "#4da6ff", 0, 6000)
+        self.trend_chart.add_series("Boost", "#ff9500", -1000, 1500)
+        self.trend_chart.add_series("Coolant", "#ff4444", -20, 130)
+        trend_layout.addWidget(self.trend_chart)
+        main_layout.addWidget(trend_group)
         
         # Bottom status row
         status_group = QGroupBox("Status")
@@ -869,6 +1155,25 @@ class MainDashboard(QMainWindow):
         
         main_layout.addWidget(status_group)
     
+    def _build_modern_view(self) -> QWidget:
+        """Build the alternative 'digital dashboard' interface (DigitalCard grid)."""
+        widget = QWidget()
+        grid = QGridLayout(widget)
+        grid.setSpacing(12)
+
+        keys = [
+            'rpm', 'map_actual', 'map_specified', 'maf_actual', 'maf_specified',
+            'boost', 'coolant_temp', 'intake_temp', 'wastegate', 'engine_load',
+        ]
+        self._digital_cards: dict[str, DigitalCard] = {}
+        cols = 5
+        for i, key in enumerate(keys):
+            card = DigitalCard(GAUGE_CONFIGS[key])
+            self._digital_cards[key] = card
+            grid.addWidget(card, i // cols, i % cols)
+
+        return widget
+    
     def _setup_toolbar(self) -> None:
         """Setup toolbar with actions."""
         toolbar = QToolBar("Main Toolbar")
@@ -883,14 +1188,28 @@ class MainDashboard(QMainWindow):
         
         toolbar.addSeparator()
         
-        # Clear errors
+        # Fault codes (DTCs)
+        read_errors_action = toolbar.addAction("Read Errors")
+        read_errors_action.triggered.connect(self._read_errors)
+        
         clear_action = toolbar.addAction("Clear Errors")
         clear_action.triggered.connect(self._clear_errors)
+        
+        toolbar.addSeparator()
+        
+        # Custom measuring groups explorer
+        custom_groups_action = toolbar.addAction("Custom Groups...")
+        custom_groups_action.triggered.connect(self._open_custom_groups_dialog)
         
         # Fullscreen
         fs_action = toolbar.addAction("Fullscreen")
         fs_action.setCheckable(True)
         fs_action.toggled.connect(self._toggle_fullscreen)
+        
+        # Alternative interface toggle
+        self.view_toggle_action = toolbar.addAction("New Interface")
+        self.view_toggle_action.setCheckable(True)
+        self.view_toggle_action.toggled.connect(self._toggle_interface)
     
     def _setup_statusbar(self) -> None:
         """Setup status bar."""
@@ -994,6 +1313,9 @@ class MainDashboard(QMainWindow):
             self._worker_thread.error_occurred.connect(self._on_error)
             self._worker_thread.stats_updated.connect(self._on_stats)
             self._worker_thread.log_message.connect(self._on_log_message)
+            self._worker_thread.fault_codes_received.connect(self._on_fault_codes_received)
+            self._worker_thread.fault_codes_cleared.connect(self._on_fault_codes_cleared)
+            self._worker_thread.group_reading_received.connect(self._on_group_reading_received)
             
             self._worker_thread.start()
             self._session_start_time = time.time()
@@ -1037,6 +1359,7 @@ class MainDashboard(QMainWindow):
     @pyqtSlot(object)
     def _on_telemetry(self, snapshot: TelemetrySnapshot) -> None:
         """Update gauges with new telemetry data."""
+        cards = self._digital_cards
         # MB003: RPM, MAF
         if snapshot.mb003:
             mb = snapshot.mb003
@@ -1044,12 +1367,20 @@ class MainDashboard(QMainWindow):
             self.maf_actual_gauge.set_value(mb.maf_actual_mg_stroke)
             self.maf_specified_gauge.set_value(mb.maf_specified_mg_stroke)
             self.load_gauge.set_value(mb.engine_load_pct)
+            self.trend_chart.push("RPM", mb.rpm)
+            cards['rpm'].set_value(mb.rpm)
+            cards['maf_actual'].set_value(mb.maf_actual_mg_stroke)
+            cards['maf_specified'].set_value(mb.maf_specified_mg_stroke)
+            cards['engine_load'].set_value(mb.engine_load_pct)
         
         # MB007: Temperatures
         if snapshot.mb007:
             mb = snapshot.mb007
             self.coolant_gauge.set_value(mb.coolant_temp_c)
             self.intake_gauge.set_value(mb.intake_air_temp_c)
+            self.trend_chart.push("Coolant", mb.coolant_temp_c)
+            cards['coolant_temp'].set_value(mb.coolant_temp_c)
+            cards['intake_temp'].set_value(mb.intake_air_temp_c)
         
         # MB011: MAP/Boost
         if snapshot.mb011:
@@ -1058,6 +1389,44 @@ class MainDashboard(QMainWindow):
             self.map_specified_gauge.set_value(mb.map_specified_mbar)
             self.boost_gauge.set_value(mb.boost_pressure_mbar)
             self.wastegate_gauge.set_value(mb.wastegate_duty_pct)
+            self.trend_chart.push("Boost", mb.boost_pressure_mbar)
+            cards['map_actual'].set_value(mb.map_actual_mbar)
+            cards['map_specified'].set_value(mb.map_specified_mbar)
+            cards['boost'].set_value(mb.boost_pressure_mbar)
+            cards['wastegate'].set_value(mb.wastegate_duty_pct)
+
+        self._check_alerts()
+
+    def _check_alerts(self) -> None:
+        """
+        Compare every gauge's current value against its configured
+        critical_threshold. Beeps once per NEW alert (not every poll cycle)
+        and keeps the status bar showing which metric(s) are critical.
+        """
+        gauges = {
+            'rpm': self.rpm_gauge,
+            'map_actual': self.map_actual_gauge,
+            'maf_actual': self.maf_actual_gauge,
+            'boost': self.boost_gauge,
+            'coolant_temp': self.coolant_gauge,
+            'intake_temp': self.intake_gauge,
+            'wastegate': self.wastegate_gauge,
+            'engine_load': self.load_gauge,
+        }
+
+        now_critical: set[str] = set()
+        for key, gauge in gauges.items():
+            cfg = GAUGE_CONFIGS[key]
+            if cfg.critical_threshold is not None and gauge.value >= cfg.critical_threshold:
+                now_critical.add(key)
+
+        newly_critical = now_critical - self._active_alerts
+        if newly_critical:
+            QApplication.beep()
+            names = ", ".join(GAUGE_CONFIGS[k].title for k in newly_critical)
+            self.status_label.setText(f"⚠ ALERT: {names} at critical level")
+
+        self._active_alerts = now_critical
     
     @pyqtSlot(object)
     def _on_ecu_identified(self, ecu_id: ECUIdentification) -> None:
@@ -1119,6 +1488,10 @@ class MainDashboard(QMainWindow):
                       self.maf_actual_gauge, self.maf_specified_gauge, self.boost_gauge,
                       self.coolant_gauge, self.intake_gauge, self.wastegate_gauge, self.load_gauge]:
             gauge.set_value(gauge.config.min_value, animated=False)
+        for card in self._digital_cards.values():
+            card.set_value(card.config.min_value)
+        self.trend_chart.clear_history()
+        self._active_alerts.clear()
     
     def _reset_ecu_info(self) -> None:
         self.ecu_part_label.setText("Part: —")
@@ -1144,10 +1517,64 @@ class MainDashboard(QMainWindow):
             self.log_action.setText("Start Logging")
             self.status_label.setText("Logging stopped")
     
+    def _read_errors(self) -> None:
+        """Request fault codes (DTCs) from the ECU."""
+        if not self._worker_thread or not self._worker_thread.isRunning():
+            QMessageBox.information(self, "Not connected", "Connect to the ECU first.")
+            return
+        self.status_label.setText("Reading fault codes...")
+        self._worker_thread.request_read_fault_codes()
+
+    @pyqtSlot(list)
+    def _on_fault_codes_received(self, codes: list) -> None:
+        if codes:
+            self.error_status.set_status("error", f"{len(codes)} fault(s) stored")
+        else:
+            self.error_status.set_status("connected", "No faults")
+        self.status_label.setText(f"Fault codes read: {len(codes)} found")
+        dialog = FaultCodesDialog(codes, self)
+        dialog.exec()
+
+    @pyqtSlot(bool)
+    def _on_fault_codes_cleared(self, success: bool) -> None:
+        if success:
+            self.error_status.set_status("unknown")
+            self.status_label.setText("Fault codes cleared")
+        else:
+            self.status_label.setText("Failed to clear fault codes")
+
     def _clear_errors(self) -> None:
-        """Clear error status."""
-        self.error_status.set_status("unknown")
-        self.status_label.setText("Errors cleared")
+        """Send the real Clear Fault Codes command to the ECU (block title 0x05)."""
+        if not self._worker_thread or not self._worker_thread.isRunning():
+            QMessageBox.information(self, "Not connected", "Connect to the ECU first.")
+            return
+        reply = QMessageBox.question(
+            self, "Clear fault codes?",
+            "This will permanently erase all fault codes stored on the ECU. Continue?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+        )
+        if reply == QMessageBox.StandardButton.Yes:
+            self.status_label.setText("Clearing fault codes...")
+            self._worker_thread.request_clear_fault_codes()
+
+    def _open_custom_groups_dialog(self) -> None:
+        """Open (or bring to front) the custom measuring-group explorer."""
+        if not self._worker_thread or not self._worker_thread.isRunning():
+            QMessageBox.information(self, "Not connected", "Connect to the ECU first.")
+            return
+        if self._custom_groups_dialog is None:
+            self._custom_groups_dialog = CustomGroupsDialog(self)
+            self._custom_groups_dialog.request_group.connect(
+                lambda n: self._worker_thread and self._worker_thread.request_group(n)
+            )
+        self._custom_groups_dialog.show()
+        self._custom_groups_dialog.raise_()
+        self._custom_groups_dialog.activateWindow()
+
+    @pyqtSlot(int, list)
+    def _on_group_reading_received(self, group_number: int, values: list) -> None:
+        if self._custom_groups_dialog is not None:
+            self._custom_groups_dialog.show_group_result(group_number, values)
     
     def _toggle_fullscreen(self, checked: bool) -> None:
         """Toggle fullscreen mode."""
@@ -1155,6 +1582,11 @@ class MainDashboard(QMainWindow):
             self.showFullScreen()
         else:
             self.showNormal()
+    
+    def _toggle_interface(self, checked: bool) -> None:
+        """Switch between the classic analog gauges and the new digital-card view."""
+        self.view_stack.setCurrentIndex(1 if checked else 0)
+        self.view_toggle_action.setText("Classic Interface" if checked else "New Interface")
     
     def closeEvent(self, event) -> None:
         """Handle window close."""
