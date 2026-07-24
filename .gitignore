@@ -23,3 +23,5 @@ logs/
 .idea/
 Thumbs.db
 .DS_Store
+
+config/config.yaml

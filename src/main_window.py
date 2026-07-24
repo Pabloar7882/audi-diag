@@ -202,16 +202,16 @@ class CircularGauge(QWidget):
         self._bg_color = QColor(15, 15, 20)
         self._rim_color = QColor(40, 40, 50)
         self._text_color = QColor(220, 220, 230)
-        self._accent_color = QColor(0, 180, 255)
+        self._accent_color = QColor(230, 169, 74)   # warm amber, matches new theme
         self._warning_color = QColor(255, 170, 0)
-        self._critical_color = QColor(255, 50, 50)
+        self._critical_color = QColor(239, 83, 80)  # softer red
         self._green_zone_color = QColor(0, 200, 100)
         
         # Fonts
-        self._title_font = QFont("Inter", 10, QFont.Weight.Medium)
-        self._value_font = QFont("Inter", 24, QFont.Weight.Bold)
-        self._unit_font = QFont("Inter", 9, QFont.Weight.Normal)
-        self._tick_font = QFont("Inter", 7, QFont.Weight.Normal)
+        self._title_font = QFont("Inter", 11, QFont.Weight.Medium)
+        self._value_font = QFont("Inter", 26, QFont.Weight.Bold)
+        self._unit_font = QFont("Inter", 10, QFont.Weight.Normal)
+        self._tick_font = QFont("Inter", 8, QFont.Weight.Normal)
         
         self.setMinimumSize(160, 160)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
@@ -529,9 +529,8 @@ class DualGauge(QWidget):
         self.actual_gauge = CircularGauge(actual_config)
         self.specified_gauge = CircularGauge(specified_config)
         
-        # Style specified gauge differently (subtle)
-        self.specified_gauge._accent_color = QColor(100, 200, 255)
-        self.specified_gauge._needle_color = QColor(100, 200, 255)
+        # Style specified gauge differently (subtle, muted gold)
+        self.specified_gauge._accent_color = QColor(200, 170, 120)
         
         layout.addWidget(self.actual_gauge)
         layout.addWidget(self.specified_gauge)
@@ -673,7 +672,7 @@ class TrendChart(QWidget):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         rect = self.rect().adjusted(8, 8, -8, -8)
-        painter.fillRect(self.rect(), QColor("#1a1a1a"))
+        painter.fillRect(self.rect(), QColor("#1c1c24"))
 
         # Grid lines
         painter.setPen(QPen(QColor("#333"), 1))
@@ -748,21 +747,21 @@ class DigitalCard(QWidget):
         color = self._color_for_value()
 
         # Card background
-        painter.setPen(QPen(QColor("#2a2a3a"), 1))
-        painter.setBrush(QBrush(QColor("#181820")))
+        painter.setPen(QPen(QColor("#33333f"), 1))
+        painter.setBrush(QBrush(QColor("#1e1e28")))
         painter.drawRoundedRect(rect, 10, 10)
 
         # Title
-        painter.setPen(QColor("#999"))
-        painter.setFont(QFont("Inter", 9))
+        painter.setPen(QColor("#a3a3b0"))
+        painter.setFont(QFont("Inter", 11, QFont.Weight.DemiBold))
         painter.drawText(
-            QRectF(rect.left() + 14, rect.top() + 8, rect.width() - 28, 16),
+            QRectF(rect.left() + 14, rect.top() + 8, rect.width() - 28, 18),
             Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter,
             self.config.title.upper(),
         )
 
         # Big digital value + unit
-        value_font = QFont("Inter", 26, QFont.Weight.Bold)
+        value_font = QFont("Inter", 30, QFont.Weight.Bold)
         painter.setFont(value_font)
         painter.setPen(color)
         value_str = f"{self._value:.{self.config.decimals}f}"
@@ -771,8 +770,8 @@ class DigitalCard(QWidget):
 
         fm_value = QFontMetrics(value_font)
         value_width = fm_value.horizontalAdvance(value_str)
-        painter.setFont(QFont("Inter", 10))
-        painter.setPen(QColor("#777"))
+        painter.setFont(QFont("Inter", 11))
+        painter.setPen(QColor("#9a9aa5"))
         painter.drawText(
             QRectF(rect.left() + 18 + value_width, rect.top() + 26, rect.width() - value_width - 32, rect.height() - 56),
             Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom,
@@ -782,7 +781,7 @@ class DigitalCard(QWidget):
         # Bottom fill bar (position within min..max)
         bar_rect = QRectF(rect.left() + 14, rect.bottom() - 16, rect.width() - 28, 6)
         painter.setPen(Qt.PenStyle.NoPen)
-        painter.setBrush(QColor("#2a2a3a"))
+        painter.setBrush(QColor("#33333f"))
         painter.drawRoundedRect(bar_rect, 3, 3)
 
         span = (self.config.max_value - self.config.min_value) or 1.0
@@ -929,8 +928,8 @@ class GaugePagePicker(QDialog):
             btn.setMinimumHeight(52)
             btn.setStyleSheet(
                 "QPushButton { text-align: left; padding: 10px 16px; font-size: 14px; "
-                "border: 1px solid #2a2a3a; border-radius: 8px; background: #1a1a24; color: white; } "
-                "QPushButton:hover { background: #23232f; border-color: #4da6ff; }"
+                "border: 1px solid #33333f; border-radius: 8px; background: #1e1e28; color: white; } "
+                "QPushButton:hover { background: #262632; border-color: #e6a94a; }"
             )
             btn.clicked.connect(lambda checked=False, p=preset: self._choose(p))
             layout.addWidget(btn)
@@ -960,7 +959,7 @@ class CatLinkButton(QWidget):
     def __init__(self, url: str, parent: Optional[QWidget] = None):
         super().__init__(parent)
         self._url = url
-        self.setFixedSize(52, 52)
+        self.setFixedSize(60, 60)
         self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.setToolTip("Open project on GitHub")
 
@@ -1015,8 +1014,9 @@ class CatLinkButton(QWidget):
 
 class LauncherWindow(QWidget):
     """
-    Start screen shown when the app opens. Pick a function instead of
-    landing straight in the full technical dashboard.
+    Start screen shown when the app opens. Big, simple, plain-language
+    buttons - pick what you want to do instead of landing in a technical
+    dashboard full of jargon.
     """
 
     GITHUB_URL = "https://github.com/Pabloar7882/audi-diag"
@@ -1024,34 +1024,34 @@ class LauncherWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Audi A4 B5 Diagnostics")
-        self.setMinimumSize(520, 520)
-        self.setStyleSheet("background-color: #12121a;")
+        self.setMinimumSize(600, 620)
+        self.setStyleSheet("background-color: #16161d;")
         self._dashboard: Optional["MainDashboard"] = None
 
         outer = QVBoxLayout(self)
-        outer.setContentsMargins(36, 32, 36, 20)
-        outer.setSpacing(4)
+        outer.setContentsMargins(44, 40, 44, 24)
+        outer.setSpacing(6)
 
-        title = QLabel("Audi A4 B5 · 1.9 TDI")
-        title.setStyleSheet("color: white; font-size: 26px; font-weight: bold;")
-        subtitle = QLabel("AFN / EDC15 — KW1281 Diagnostics")
-        subtitle.setStyleSheet("color: #888; font-size: 12px; margin-bottom: 20px;")
+        title = QLabel("🚗  Audi A4 B5 · 1.9 TDI")
+        title.setStyleSheet("color: #f5f5f7; font-size: 30px; font-weight: 800;")
+        subtitle = QLabel("Simple car check-up tool — pick what you want to do")
+        subtitle.setStyleSheet("color: #9a9aa5; font-size: 14px; margin-bottom: 26px;")
         outer.addWidget(title)
         outer.addWidget(subtitle)
 
         self._add_menu_button(
-            outer, "📊", "Live Dashboard",
-            "Real-time gauges — choose which sensor page to watch",
+            outer, "📊", "Watch the Engine Live",
+            "See the speed, temperature and pressure gauges update in real time",
             self._open_dashboard_with_picker,
         )
         self._add_menu_button(
-            outer, "⚠️", "Fault Codes",
-            "Read or clear stored DTCs (errors) on the ECU",
+            outer, "🔧", "Check for Problems",
+            "See if the car has found any issues, and clear them if needed",
             lambda: self._open_dashboard("fault_codes"),
         )
         self._add_menu_button(
-            outer, "🔍", "Explore Groups",
-            "Manually query any measuring group by number",
+            outer, "🔬", "Look at One Sensor",
+            "For advanced users - pick a specific measurement to inspect",
             lambda: self._open_dashboard("groups"),
         )
 
@@ -1059,7 +1059,9 @@ class LauncherWindow(QWidget):
 
         bottom_row = QHBoxLayout()
         exit_btn = QPushButton("Exit")
-        exit_btn.setStyleSheet("color: #999; padding: 8px 18px; border: none;")
+        exit_btn.setStyleSheet(
+            "color: #9a9aa5; padding: 10px 22px; border: none; font-size: 13px;"
+        )
         exit_btn.clicked.connect(self.close)
         bottom_row.addWidget(exit_btn)
         bottom_row.addStretch()
@@ -1071,17 +1073,18 @@ class LauncherWindow(QWidget):
     def _add_menu_button(self, layout: QVBoxLayout, icon: str, title: str,
                           subtitle: str, on_click) -> None:
         btn = QPushButton(f"{icon}   {title}")
-        btn.setMinimumHeight(58)
+        btn.setMinimumHeight(76)
         btn.setStyleSheet(
-            "QPushButton { text-align: left; padding: 12px 18px; font-size: 15px; "
-            "border: 1px solid #2a2a3a; border-radius: 10px; background: #1a1a24; color: white; } "
-            "QPushButton:hover { background: #23232f; border-color: #4da6ff; }"
+            "QPushButton { text-align: left; padding: 14px 22px; font-size: 18px; font-weight: 700; "
+            "border: 2px solid #2e2e3a; border-radius: 14px; background: #1e1e28; color: #f5f5f7; } "
+            "QPushButton:hover { background: #262632; border-color: #e6a94a; }"
         )
         btn.clicked.connect(on_click)
         layout.addWidget(btn)
 
         sub = QLabel(subtitle)
-        sub.setStyleSheet("color: #777; font-size: 11px; padding: 0 6px 14px 6px;")
+        sub.setWordWrap(True)
+        sub.setStyleSheet("color: #9a9aa5; font-size: 12.5px; padding: 2px 8px 18px 8px;")
         layout.addWidget(sub)
 
     def _open_dashboard_with_picker(self) -> None:
@@ -1155,11 +1158,11 @@ class MainDashboard(QMainWindow):
 
         if self._mode == "fault_codes":
             self.mode_placeholder.setText(
-                "⚠️  Connect to the ECU, then click \"Read Errors\" above\nto check for stored fault codes."
+                "🔧  Connect to the car below, then click \"Check for Problems\" above."
             )
         elif self._mode == "groups":
             self.mode_placeholder.setText(
-                "🔍  Connect to the ECU, then click \"Custom Groups\" above\nto query any measuring group."
+                "🔬  Connect to the car below, then click \"Look at a Sensor\" above."
             )
             # Open it right away so it's one less click
             QTimer.singleShot(200, self._open_custom_groups_dialog_if_connected)
@@ -1191,116 +1194,135 @@ class MainDashboard(QMainWindow):
             card.setVisible(key in visible)
     
     def _apply_dark_theme(self) -> None:
-        """Apply dark theme stylesheet."""
+        """Apply the app's visual theme - warm, high-contrast, big and simple."""
         self.setStyleSheet("""
             QMainWindow {
-                background-color: #121218;
-                color: #e0e0e8;
+                background-color: #16161d;
+                color: #f2f2f5;
             }
             QWidget {
-                background-color: #121218;
-                color: #e0e0e8;
+                background-color: #16161d;
+                color: #f2f2f5;
+                font-size: 13px;
             }
             QGroupBox {
-                border: 1px solid #2a2a3a;
-                border-radius: 6px;
-                margin-top: 12px;
-                padding-top: 8px;
-                font-weight: bold;
-                color: #cccccc;
+                border: 1px solid #33333f;
+                border-radius: 10px;
+                margin-top: 14px;
+                padding-top: 10px;
+                font-weight: 600;
+                font-size: 14px;
+                color: #e6a94a;
             }
             QGroupBox::title {
                 subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 5px;
+                left: 12px;
+                padding: 0 6px;
             }
             QPushButton {
-                background-color: #1e1e28;
-                border: 1px solid #3a3a4a;
-                border-radius: 4px;
-                padding: 8px 16px;
-                color: #e0e0e8;
-                font-weight: 500;
+                background-color: #23232e;
+                border: 1px solid #3d3d4d;
+                border-radius: 8px;
+                padding: 10px 20px;
+                color: #f2f2f5;
+                font-weight: 600;
+                font-size: 13px;
             }
             QPushButton:hover {
-                background-color: #2a2a3a;
-                border-color: #4a4a5a;
+                background-color: #2d2d3a;
+                border-color: #e6a94a;
             }
             QPushButton:pressed {
                 background-color: #3a3a4a;
             }
             QPushButton:disabled {
-                background-color: #1a1a22;
-                color: #666666;
-                border-color: #2a2a3a;
+                background-color: #1c1c24;
+                color: #666672;
+                border-color: #2a2a35;
             }
             QPushButton#connectBtn {
-                background-color: #006644;
-                border-color: #008855;
+                background-color: #2e7d32;
+                border-color: #43a047;
             }
             QPushButton#connectBtn:hover {
-                background-color: #008855;
+                background-color: #388e3c;
             }
             QPushButton#disconnectBtn {
-                background-color: #662222;
-                border-color: #883333;
+                background-color: #b23c3c;
+                border-color: #cc4f4f;
             }
             QPushButton#disconnectBtn:hover {
-                background-color: #883333;
+                background-color: #c94848;
             }
             QComboBox {
-                background-color: #1e1e28;
-                border: 1px solid #3a3a4a;
-                border-radius: 4px;
-                padding: 6px 12px;
-                color: #e0e0e8;
+                background-color: #23232e;
+                border: 1px solid #3d3d4d;
+                border-radius: 8px;
+                padding: 8px 14px;
+                color: #f2f2f5;
+                font-size: 13px;
             }
             QComboBox::drop-down {
                 border: none;
             }
             QComboBox QAbstractItemView {
-                background-color: #1e1e28;
-                border: 1px solid #3a3a4a;
-                selection-background-color: #004466;
+                background-color: #23232e;
+                border: 1px solid #3d3d4d;
+                selection-background-color: #4d3a1f;
             }
             QLabel {
-                color: #e0e0e8;
+                color: #f2f2f5;
             }
             QStatusBar {
-                background-color: #1a1a22;
-                border-top: 1px solid #2a2a3a;
-                color: #aaaaaa;
+                background-color: #1c1c24;
+                border-top: 1px solid #2a2a35;
+                color: #b8b8c2;
+                font-size: 12px;
             }
             QProgressBar {
-                border: 1px solid #3a3a4a;
-                border-radius: 3px;
-                background-color: #1e1e28;
+                border: 1px solid #3d3d4d;
+                border-radius: 4px;
+                background-color: #23232e;
                 text-align: center;
-                color: #e0e0e8;
+                color: #f2f2f5;
             }
             QProgressBar::chunk {
-                background-color: #0088aa;
-                border-radius: 2px;
+                background-color: #e6a94a;
+                border-radius: 3px;
             }
             QSplitter::handle {
-                background-color: #2a2a3a;
+                background-color: #2a2a35;
             }
             QScrollArea {
                 border: none;
                 background-color: transparent;
             }
             QScrollBar:vertical {
-                background: #1a1a22;
-                width: 8px;
+                background: #1c1c24;
+                width: 10px;
                 border: none;
             }
             QScrollBar::handle:vertical {
-                background: #3a3a4a;
-                border-radius: 4px;
+                background: #3d3d4d;
+                border-radius: 5px;
                 min-height: 30px;
             }
             QScrollBar::handle:vertical:hover {
-                background: #4a4a5a;
+                background: #4d4d5d;
+            }
+            QToolBar {
+                background-color: #1c1c24;
+                border: none;
+                padding: 6px;
+                spacing: 4px;
+            }
+            QToolButton {
+                font-size: 13px;
+                padding: 8px 14px;
+                border-radius: 8px;
+            }
+            QToolButton:hover {
+                background-color: #2d2d3a;
             }
         """)
     
@@ -1437,7 +1459,7 @@ class MainDashboard(QMainWindow):
         self.trend_group = QGroupBox("Trends")
         trend_layout = QVBoxLayout(self.trend_group)
         self.trend_chart = TrendChart()
-        self.trend_chart.add_series("RPM", "#4da6ff", 0, 6000)
+        self.trend_chart.add_series("RPM", "#e6a94a", 0, 6000)
         self.trend_chart.add_series("Boost", "#ff9500", -1000, 1500)
         self.trend_chart.add_series("Coolant", "#ff4444", -20, 130)
         trend_layout.addWidget(self.trend_chart)
@@ -1446,7 +1468,7 @@ class MainDashboard(QMainWindow):
         # Placeholder shown instead of gauges/trends in "fault_codes" / "groups" modes
         self.mode_placeholder = QLabel("")
         self.mode_placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.mode_placeholder.setStyleSheet("color: #666; font-size: 16px; padding: 60px;")
+        self.mode_placeholder.setStyleSheet("color: #9a9aa5; font-size: 19px; font-weight: 600; padding: 60px;")
         self.mode_placeholder.setVisible(False)
         main_layout.addWidget(self.mode_placeholder, 1)
         
@@ -1495,38 +1517,45 @@ class MainDashboard(QMainWindow):
         self.addToolBar(toolbar)
         
         # Back to launcher menu
-        back_action = toolbar.addAction("← Back to Menu")
+        back_action = toolbar.addAction("⬅  Menu")
+        back_action.setToolTip("Go back to the start screen")
         back_action.triggered.connect(self._back_to_menu)
         
         toolbar.addSeparator()
         
         # Logging toggle
-        self.log_action = toolbar.addAction("Start Logging")
+        self.log_action = toolbar.addAction("⏺  Record")
+        self.log_action.setToolTip("Save what the car is doing to a file")
         self.log_action.setCheckable(True)
         self.log_action.toggled.connect(self._on_logging_toggled)
         
         toolbar.addSeparator()
         
         # Fault codes (DTCs)
-        read_errors_action = toolbar.addAction("Read Errors")
+        read_errors_action = toolbar.addAction("📋  Check for Problems")
+        read_errors_action.setToolTip("Read stored fault codes from the car")
         read_errors_action.triggered.connect(self._read_errors)
         
-        clear_action = toolbar.addAction("Clear Errors")
+        clear_action = toolbar.addAction("🧹  Clear Problems")
+        clear_action.setToolTip("Erase stored fault codes from the car")
         clear_action.triggered.connect(self._clear_errors)
         
         toolbar.addSeparator()
         
         # Custom measuring groups explorer
-        custom_groups_action = toolbar.addAction("Custom Groups...")
+        custom_groups_action = toolbar.addAction("🔬  Look at a Sensor")
+        custom_groups_action.setToolTip("Advanced: inspect any measuring group by number")
         custom_groups_action.triggered.connect(self._open_custom_groups_dialog)
         
         # Fullscreen
-        fs_action = toolbar.addAction("Fullscreen")
+        fs_action = toolbar.addAction("⛶  Big Screen")
+        fs_action.setToolTip("Fill the whole screen")
         fs_action.setCheckable(True)
         fs_action.toggled.connect(self._toggle_fullscreen)
         
         # Alternative interface toggle
-        self.view_toggle_action = toolbar.addAction("New Interface")
+        self.view_toggle_action = toolbar.addAction("🔁  Switch Look")
+        self.view_toggle_action.setToolTip("Switch between dial gauges and big numbers")
         self.view_toggle_action.setCheckable(True)
         self.view_toggle_action.toggled.connect(self._toggle_interface)
     
@@ -1543,6 +1572,10 @@ class MainDashboard(QMainWindow):
         
         self.uptime_label = QLabel("Uptime: 00:00:00")
         self.status_bar.addPermanentWidget(self.uptime_label)
+        
+        # Cat badge - links to the project's GitHub page (kept consistent with the launcher)
+        self.cat_link = CatLinkButton(LauncherWindow.GITHUB_URL, self)
+        self.status_bar.addPermanentWidget(self.cat_link)
         
         # Uptime timer
         self._uptime_timer = QTimer(self)
@@ -1829,12 +1862,12 @@ class MainDashboard(QMainWindow):
     def _on_logging_toggled(self, checked: bool) -> None:
         """Handle logging toggle."""
         if checked:
-            self.log_action.setText("Stop Logging")
-            self.status_label.setText("Logging to database...")
+            self.log_action.setText("⏹  Stop Recording")
+            self.status_label.setText("Recording to file...")
             # TODO: Implement database logging
         else:
-            self.log_action.setText("Start Logging")
-            self.status_label.setText("Logging stopped")
+            self.log_action.setText("⏺  Record")
+            self.status_label.setText("Recording stopped")
     
     def _read_errors(self) -> None:
         """Request fault codes (DTCs) from the ECU."""
@@ -1905,7 +1938,7 @@ class MainDashboard(QMainWindow):
     def _toggle_interface(self, checked: bool) -> None:
         """Switch between the classic analog gauges and the new digital-card view."""
         self.view_stack.setCurrentIndex(1 if checked else 0)
-        self.view_toggle_action.setText("Classic Interface" if checked else "New Interface")
+        self.view_toggle_action.setText("🔁  Dial Gauges" if checked else "🔁  Switch Look")
     
     def _back_to_menu(self) -> None:
         """Stop any active connection and go back to the launcher menu."""
@@ -1973,7 +2006,7 @@ def main():
     _install_exception_handler()
     
     # Set default font
-    font = QFont("Inter", 9)
+    font = QFont("Inter", 11)
     app.setFont(font)
     
     launcher = LauncherWindow()

@@ -25,6 +25,7 @@ from kw1281_handler import (
     KW1281ConnectionError,
     ECUIdentification,
     MeasuringValue,
+    FaultCode,
 )
 
 logger = logging.getLogger(__name__)
@@ -92,6 +93,14 @@ class TelemetrySnapshot:
     timestamp: float = field(default_factory=time.time)
 
 
+@dataclass(slots=True)
+class _Command:
+    """One-off request submitted from the GUI thread to the worker's asyncio loop."""
+    kind: str  # "read_faults" | "clear_faults" | "read_group" | "read_ident" | "read_eeprom" | "write_eeprom" | "key_adaptation"
+    group_number: int = 0
+    extra: object = None
+
+
 class TelemetryWorker(QObject):
     """
     Qt-compatible worker that runs KW1281 communication in a background thread.
@@ -105,6 +114,9 @@ class TelemetryWorker(QObject):
     error_occurred = pyqtSignal(str, str)   # error_type, message
     stats_updated = pyqtSignal(dict)        # Statistics dict
     log_message = pyqtSignal(str, str)      # level, message
+    fault_codes_received = pyqtSignal(list)     # list[FaultCode]
+    fault_codes_cleared = pyqtSignal(bool)      # success
+    group_reading_received = pyqtSignal(int, list)  # group_number, list[MeasuringValue]
     
     # Default measuring blocks to poll (EDC15 AFN)
     DEFAULT_BLOCKS = [3, 7, 11]
@@ -152,6 +164,7 @@ class TelemetryWorker(QObject):
         self._stop_event = threading.Event()
         self._reconnect_delay = 1.0
         self._max_reconnect_delay = 30.0
+        self._command_queue: Optional[asyncio.Queue] = None
         
         # Mutex for thread-safe state access
         self._mutex = QMutex()
@@ -182,6 +195,42 @@ class TelemetryWorker(QObject):
         self._thread = threading.Thread(target=self._run_event_loop, daemon=True)
         self._thread.start()
         logger.info("Telemetry worker thread started")
+    
+    def request_read_fault_codes(self) -> None:
+        """Queue a fault-code read request (safe to call from the GUI thread)."""
+        self._submit_command(_Command(kind="read_faults"))
+
+    def request_read_identification(self) -> None:
+        """Queue an ECU identification read request (safe to call from the GUI thread)."""
+        self._submit_command(_Command(kind="read_ident"))
+
+    def request_read_eeprom(self, start_address: int, length: int) -> None:
+        """Queue an EEPROM read request (safe to call from the GUI thread)."""
+        self._submit_command(_Command(kind="read_eeprom", group_number=start_address, extra=length))
+
+    def request_write_eeprom(self, start_address: int, data: bytes) -> None:
+        """Queue an EEPROM write request (safe to call from the GUI thread)."""
+        self._submit_command(_Command(kind="write_eeprom", group_number=start_address, extra=data))
+
+    def request_key_adaptation(self, channel: int, key_count: int, login: int = 0) -> None:
+        """Queue a key adaptation request (safe to call from the GUI thread)."""
+        self._submit_command(_Command(kind="key_adaptation", group_number=channel, extra=(key_count, login)))
+
+    def request_group(self, group_number: int) -> None:
+        """Queue a one-off group/measuring-block read (safe to call from the GUI thread)."""
+        self._submit_command(_Command(kind="read_group", group_number=group_number))
+
+    def _submit_command(self, cmd: _Command) -> None:
+        if not self._loop or not self._loop.is_running():
+            logger.warning(f"Cannot submit command {cmd.kind}: worker loop not running")
+            self.error_occurred.emit("CommandError", "Not connected")
+            return
+
+        async def _put():
+            if self._command_queue is not None:
+                await self._command_queue.put(cmd)
+
+        asyncio.run_coroutine_threadsafe(_put(), self._loop)
     
     def stop(self) -> None:
         """Stop the worker gracefully."""
@@ -228,6 +277,7 @@ class TelemetryWorker(QObject):
     
     async def _main_loop(self) -> None:
         """Main async loop: connect -> poll blocks -> handle reconnection."""
+        self._command_queue = asyncio.Queue()
         while self._running and not self._stop_event.is_set():
             try:
                 await self._connect_and_identify()
@@ -235,6 +285,7 @@ class TelemetryWorker(QObject):
                 # Main polling loop
                 while self._running and not self._stop_event.is_set():
                     await self._poll_cycle()
+                    await self._process_commands()
                     await asyncio.sleep(self.poll_interval_ms / 1000)
                     
             except KW1281ConnectionError as e:
@@ -342,6 +393,44 @@ class TelemetryWorker(QObject):
         self.telemetry_updated.emit(snapshot)
         self.stats_updated.emit(self._stats.copy())
     
+    async     def _process_commands(self) -> None:
+        """Execute any queued one-off requests (fault codes, custom group reads)."""
+        if self._command_queue is None:
+            return
+        while not self._command_queue.empty():
+            cmd: _Command = self._command_queue.get_nowait()
+            try:
+                if cmd.kind == "read_faults":
+                    codes = await self._handler.read_fault_codes()
+                    self.fault_codes_received.emit(codes)
+                    self.log_message.emit("INFO", f"Fault codes read: {len(codes)} found")
+                elif cmd.kind == "clear_faults":
+                    ok = await self._handler.clear_fault_codes()
+                    self.fault_codes_cleared.emit(ok)
+                    self.log_message.emit("INFO", "Fault codes cleared")
+                elif cmd.kind == "read_ident":
+                    ecu_id = await self._handler.read_identification()
+                    self.ecu_identified.emit(ecu_id)
+                    self.log_message.emit("INFO", f"ECU Identified: {ecu_id.part_number} SW:{ecu_id.software_version}")
+                elif cmd.kind == "read_eeprom":
+                    data = await self._handler.read_eeprom(cmd.group_number, cmd.extra)
+                    self.group_reading_received.emit(cmd.group_number, [])
+                    self.log_message.emit("INFO", f"EEPROM read: {len(data)} bytes from address 0x{cmd.group_number:04X}")
+                elif cmd.kind == "write_eeprom":
+                    success = await self._handler.write_eeprom(cmd.group_number, cmd.extra)
+                    self.log_message.emit("INFO", f"EEPROM write: {'OK' if success else 'FAILED'} at address 0x{cmd.group_number:04X}")
+                elif cmd.kind == "key_adaptation":
+                    success = await self._handler.adaptation_save(cmd.group_number, cmd.extra[0], cmd.extra[1])
+                    self.log_message.emit("INFO", f"Key adaptation: {'OK' if success else 'FAILED'} channel {cmd.group_number} keys {cmd.extra[0]}")
+                elif cmd.kind == "read_group":
+                    values = await self._handler.read_group(cmd.group_number)
+                    self.group_reading_received.emit(cmd.group_number, values)
+                else:
+                    logger.warning(f"Unknown command kind: {cmd.kind}")
+            except Exception as e:
+                logger.warning(f"Command '{cmd.kind}' failed: {e}")
+                self.error_occurred.emit("CommandError", f"{cmd.kind}: {e}")
+
     async def _handle_reconnect(self) -> None:
         """Handle reconnection with exponential backoff."""
         if not self._running or self._stop_event.is_set():
@@ -485,6 +574,30 @@ class TelemetryThread(QThread):
         self.error_occurred = self.worker.error_occurred
         self.stats_updated = self.worker.stats_updated
         self.log_message = self.worker.log_message
+        self.fault_codes_received = self.worker.fault_codes_received
+        self.fault_codes_cleared = self.worker.fault_codes_cleared
+        self.group_reading_received = self.worker.group_reading_received
+    
+    def request_read_fault_codes(self) -> None:
+        self.worker.request_read_fault_codes()
+
+    def request_clear_fault_codes(self) -> None:
+        self.worker.request_clear_fault_codes()
+
+    def request_read_identification(self) -> None:
+        self.worker.request_read_identification()
+
+    def request_read_eeprom(self, start_address: int, length: int) -> None:
+        self.worker.request_read_eeprom(start_address, length)
+
+    def request_write_eeprom(self, start_address: int, data: bytes) -> None:
+        self.worker.request_write_eeprom(start_address, data)
+
+    def request_key_adaptation(self, channel: int, key_count: int, login: int = 0) -> None:
+        self.worker.request_key_adaptation(channel, key_count, login)
+
+    def request_group(self, group_number: int) -> None:
+        self.worker.request_group(group_number)
     
     def run(self) -> None:
         """QThread entry point - starts the worker."""
@@ -516,6 +629,7 @@ class AsyncTelemetryWorker:
         on_telemetry: Optional[Callable[[TelemetrySnapshot], Awaitable[None]]] = None,
         on_error: Optional[Callable[[Exception], Awaitable[None]]] = None,
         on_ecu_id: Optional[Callable[[ECUIdentification], Awaitable[None]]] = None,
+        on_identification: Optional[Callable[[ECUIdentification], Awaitable[None]]] = None,
     ):
         self.port = port
         self.baudrate = baudrate
@@ -526,6 +640,7 @@ class AsyncTelemetryWorker:
             'telemetry': on_telemetry,
             'error': on_error,
             'ecu_id': on_ecu_id,
+            'identification': on_identification,
         }
         
         self._handler: Optional[KW1281Handler] = None
@@ -552,6 +667,8 @@ class AsyncTelemetryWorker:
                 
                 if self._callbacks['ecu_id']:
                     await self._callbacks['ecu_id'](ecu_id)
+                if self._callbacks['identification']:
+                    await self._callbacks['identification'](ecu_id)
                 
                 self._session_start = time.monotonic()
                 

@@ -1,19 +1,17 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-hiddenimports=[
-    'aiomysql', 'pymysql', 'serial',
-    'serial.tools', 'serial.tools.list_ports',
-    'serial.tools.list_ports_common', 'serial.tools.list_ports_windows',
-    'serial.win32',
-    'PyQt6.QtCore', 'PyQt6.QtWidgets', 'PyQt6.QtGui', 'yaml',
-],
-
 a = Analysis(
     ['main.py'],
-	pathex=['src'],
+    pathex=['src'],
     binaries=[],
     datas=[('config/config.yaml', 'config')],
-    hiddenimports=['aiomysql', 'pymysql', 'serial', 'PyQt6.QtCore', 'PyQt6.QtWidgets', 'PyQt6.QtGui', 'yaml'],
+    hiddenimports=[
+        'aiomysql', 'pymysql', 'serial',
+        'serial.tools', 'serial.tools.list_ports',
+        'serial.tools.list_ports_common', 'serial.tools.list_ports_windows',
+        'serial.win32',
+        'PyQt6.QtCore', 'PyQt6.QtWidgets', 'PyQt6.QtGui', 'yaml',
+    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
