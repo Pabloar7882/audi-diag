@@ -23,6 +23,13 @@ from kw1281_handler import (
     list_serial_ports,
 )
 
+# Common VAG/EDC15 ECU addresses for kw1281test compatibility
+ENGINE_ADDRESS = 0x01
+CLUSTER_ADDRESS = 0x17
+CCM_ADDRESS = 0x46
+RADIO_ADDRESS = 0x56
+ABS_ADDRESS = 0x03
+
 from telemetry_worker import (
     TelemetryWorker,
     TelemetryThread,
@@ -58,6 +65,13 @@ __all__ = [
     "FaultCode",
     "find_kkl_adapters",
     "list_serial_ports",
+    
+    # Common VAG addresses (kw1281test compatibility)
+    "ENGINE_ADDRESS",
+    "CLUSTER_ADDRESS",
+    "CCM_ADDRESS",
+    "RADIO_ADDRESS",
+    "ABS_ADDRESS",
     
     # Telemetry
     "TelemetryWorker",

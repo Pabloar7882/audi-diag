@@ -13,13 +13,20 @@ A native **Windows** automotive diagnostics application for the 1999 Audi A4 B5 
 
 ## Features
 
-- **KW1281 Protocol Implementation**: Complete 5-baud initialization sequence → 10400 baud communication with block-level ACK/NAK handling
+- **Real KW1281 Protocol**: byte-by-byte complement handshake (not a simple checksum), correct block titles (0x05/0x06/0x07/0x09/0x29/0xE7/0xF6/0xFC), verified against the public reference and the open-source `kw1281test` project
+- **Simple Launcher Menu**: the app opens to a big-button start screen ("Watch the Engine Live", "Check for Problems", "Look at One Sensor") instead of dropping straight into a technical dashboard - no jargon, easy for anyone to use
+- **Gauge Pages**: pick a named page (Full Dashboard, Engine Basics, Temperatures, Boost/Turbo) instead of hunting for KW1281 group numbers yourself - only the relevant gauges show up
+- **Two dashboard looks**: classic analog dial gauges, or a "big numbers" digital-card view - switch anytime with one button, both stay in sync
+- **Fault Codes (DTCs)**: real read/clear commands against the ECU, shown in a simple table
+- **Trend Charts**: rolling RPM/Boost/Coolant history graph, no extra dependencies
+- **Sensor Explorer**: advanced users can query any measuring group by number and see the decoded raw fields
+- **Alerts**: gauges change color near warning/critical thresholds, plus a one-time beep + status message when a value goes critical
+- **Port Selector**: dropdown listing every detected COM port, flags recognized FTDI KKL adapters, no manual typing
+- **Global Error Handling**: unexpected errors show a dialog and get logged to `logs/audi_diag.log` instead of the app silently closing
 - **Real-time Telemetry**: Polls Measuring Blocks 003 (MAF/RPM), 007 (Temperatures), 011 (MAP/Boost) at 10Hz — limited to 3 blocks per cycle to match older ECU capabilities
-- **Port Selector**: Dropdown listing every serial (COM) port currently present on the system, auto-populated on startup and via "Refresh" — recognized FTDI KKL adapters are flagged `(KKL)` and listed first; no more manual typing
 - **PyQt6 Dashboard**: Native Windows GUI with animated circular gauges (RPM, MAP Actual/Spec, MAF Actual/Spec, Boost, Temps, Wastegate, Engine Load)
 - **Async Architecture**: Serial communication runs in a dedicated worker thread with Qt signals for thread-safe GUI updates
 - **MySQL/MariaDB Logging**: Buffered bulk INSERT (1s intervals, 100 rows/batch) with automatic reconnection and session management
-- **Robust Error Handling**: Exponential backoff reconnection, checksum validation, timeout handling, protocol error recovery, plus a global exception handler — unexpected errors show a dialog and get written to `logs/audi_diag.log` instead of silently closing the app
 - **Packaged Executable**: PyInstaller `.exe` for distribution without Python installation
 
 ## Hardware Requirements
@@ -68,9 +75,11 @@ mysql -u audi_diag -p audi_diag < sql\schema.sql
 Copy and edit the configuration file:
 
 ```cmd
-copy config\config.yaml config\config.local.yaml
-# Edit config.local.yaml with your settings (Notepad, VS Code, etc.)
+copy config\config.example.yaml config\config.yaml
+# Edit config.yaml with your real settings (Notepad, VS Code, etc.)
 ```
+
+> **Security note:** `config/config.yaml` holds your real MySQL password and is gitignored - never commit it. `config/config.example.yaml` (committed, placeholder values) is the template.
 
 Key settings in `config.local.yaml`:
 
@@ -193,25 +202,30 @@ pyinstaller AudiDiag.spec --clean --noconfirm
 
 ## KW1281 Protocol Details
 
+> Rewritten to match the real, documented KW1281 protocol (see References) —
+> the original checksum-based framing below was replaced early in development
+> once it turned out to not match how real VAG ECUs actually talk.
+
 ### 5-Baud Initialization Sequence
 ```
-1. Open serial at 5 baud, 8N1
-2. Send break pulse (25ms low)
-3. Send address byte: 0x33 (00110011)
-4. Wait for ECU sync: 0x55
-5. Send Keyword 1: 0x01 → Wait for inverted echo: 0xFE
-6. Send Keyword 2: 0x8A (10400 baud) → Wait for inverted echo: 0x75
-7. Wait 300ms for ECU baud rate switch
-8. Reopen serial at 10400 baud
-9. Send Start Communication (0x81)
-10. Expect positive response: 0xC1
+1. Tester sends the module address at 5 baud (0x01 for the engine ECU)
+2. Reopen serial at the target baud rate (10400)
+3. ECU sends sync byte: 0x55
+4. ECU sends keyword: 0x01, 0x8A
+5. Tester replies with the complement of the 2nd keyword byte: 0x75
+6. ECU immediately starts sending its self-introduction (ASCII blocks)
 ```
 
 ### Block Communication (10400 baud)
-- Each block: `[Length][Address][Command/Type][Data...][Checksum]`
-- Checksum: 8-bit sum of all bytes (except length), inverted + 1
-- Block types: DATA (0x01), ACK (0x00), END (0x02), NAK (0x03)
-- Block counter increments per data block, must be ACKed
+- Each block: `[Length][Counter][Title][Data...][0x03 block-end]`
+- **No checksum byte** - instead, every byte is individually confirmed: the
+  receiver echoes back its one's-complement (0xFF − byte) before the sender
+  proceeds to the next byte. The block-end byte (0x03) is the only byte
+  that's *not* complemented.
+- Block titles: `0x05` clear fault codes, `0x06` end communication, `0x07`
+  read fault codes, `0x09` ACK, `0x29` group reading (measuring blocks),
+  `0xE7`/`0xF6`/`0xFC` are the corresponding response titles
+- The block counter increments by 1 on every block, shared by both directions
 
 ## Development
 
@@ -240,16 +254,17 @@ audi_diag/
 ├── requirements.txt        # Python dependencies
 ├── AudiDiag.spec          # PyInstaller spec
 ├── README.md              # This file
+├── .gitignore              # Excludes build/, dist/, config.yaml (real password), logs/
 ├── config/
-│   ├── config.yaml        # Default configuration
-│   └── config.local.yaml  # Local overrides (gitignored)
+│   ├── config.example.yaml # Template (committed) - copy to config.yaml
+│   └── config.yaml         # Your real config incl. DB password (gitignored)
 ├── sql/
-│   └── schema.sql         # MySQL/MariaDB schema
+│   └── schema.sql         # MySQL/MariaDB schema (also auto-created by the app on first run)
 ├── src/
 │   ├── __init__.py        # Package exports
-│   ├── kw1281_handler.py  # KW1281 protocol implementation (also exposes list_serial_ports() for the port selector)
-│   ├── telemetry_worker.py # Async worker thread (Qt + asyncio)
-│   ├── main_window.py     # PyQt6 dashboard UI (port selector, gauges, global exception handler)
+│   ├── kw1281_handler.py  # KW1281 protocol (real byte-complement framing, fault codes, group reading, port discovery)
+│   ├── telemetry_worker.py # Async worker thread (Qt + asyncio), fault-code/group request queue
+│   ├── main_window.py     # PyQt6 UI: launcher menu, dashboard (2 looks), trends, alerts, dialogs
 │   ├── config/
 │   │   ├── config_loader.py
 │   │   └── __init__.py
@@ -320,7 +335,7 @@ MIT License — See LICENSE file for details.
 
 ## References
 
-- VAG KW1281 Protocol Specification (internal VW/Audi documentation)
+- [blafusel.de KW1281 protocol writeup](https://www.blafusel.de/obd/obd2_kw1281.html) — the public reference used to correct the block framing and Kennzahl (value formula) table
+- [gmenounos/kw1281test](https://github.com/gmenounos/kw1281test) — open-source C# reference tool, used to verify block titles and command sequences
 - ISO 9141-2 / ISO 14230 (KWP2000) — K-Line physical layer
-- EDC15 Bosch ECU measuring block definitions
 - FTDI FT232R/FT245R datasheet for USB-KKL adapter

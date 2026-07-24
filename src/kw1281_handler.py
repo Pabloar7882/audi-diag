@@ -54,6 +54,7 @@ class KW1281BlockTitle(IntEnum):
     Real KW1281 block titles (per blafusel.de reference).
     These identify the PURPOSE of a block, not a request/response pair of
     generic "commands" - there is no checksum-based framing in this protocol.
+    Also includes KLineKWP1281Lib header+body extension titles.
     """
     CLEAR_FAULT_CODES = 0x05
     END_OUTPUT = 0x06
@@ -61,6 +62,8 @@ class KW1281BlockTitle(IntEnum):
     ACK = 0x09
     GROUP_READING = 0x29
     GROUP_READING_RESPONSE = 0xE7
+    GROUP_READING_HEADER = 0x02
+    GROUP_READING_BODY = 0xE7
     ASCII_DATA = 0xF6
     FAULT_CODES_RESPONSE = 0xFC
 
@@ -216,6 +219,13 @@ class KW1281Handler:
     T_KEYWORD_TIMEOUT_S = 2.0
     T_BLOCK_TIMEOUT_S = 2.0
     T_INTER_BYTE_DELAY_S = 0.005  # ~5ms between bytes, per reference doc
+
+    # Common VAG module addresses used by kw1281test
+    ENGINE_ADDRESS = 0x01
+    CLUSTER_ADDRESS = 0x17
+    CCM_ADDRESS = 0x46
+    RADIO_ADDRESS = 0x56
+    ABS_ADDRESS = 0x03
 
     def __init__(
         self,
@@ -513,7 +523,7 @@ class KW1281Handler:
         """Alias of read_group(), kept for backwards compatibility with existing callers."""
         return await self.read_group(block_number)
 
-    async def read_fault_codes(self) -> list[FaultCode]:
+async def read_fault_codes(self) -> list[FaultCode]:
         """
         Request all stored fault codes. May span multiple 0xFC blocks if
         there are more than 4 codes (each block holds up to 4 codes, 3
@@ -562,6 +572,768 @@ class KW1281Handler:
             )
         return True
 
+    # ------------------------------------------------------------------
+    # Common VAG module commands from kw1281test (EDC15/ECU specific)
+    # ------------------------------------------------------------------
+
+    async def get_ecu_identification(self) -> ECUIdentification:
+        """
+        Send a Group Reading of 0xF6 ASCII data blocks to retrieve ECU identification.
+        Equivalent to kw1281test's ReadIdent command.
+        """
+        return await self.connect()
+
+    async def adaptation_read(self, channel: int, login: int = 0) -> dict:
+        """
+        Read adaptation values. Channel 0-99, optional login 0-65535.
+        Returns adaptation data as dict (equivalent to kw1281test's AdaptationRead).
+        Note: Adaptation commands may require specific ECU addresses (CCM, etc.).
+        """
+        data = bytes([channel, (login >> 8) & 0xFF, login & 0xFF])
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"Expected adaptation response (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        # Parse adaptation data
+        adaptations = {}
+        data = block.data
+
+        for i in range(0, len(data) - 2, 3):
+            field_type = data[i]
+            field_data = (data[i + 1] << 8) | data[i + 2]
+            adaptations[f"field_{field_type}"] = field_data
+
+        return adaptations
+
+    async def adaptation_save(self, channel: int, value: int, login: int = 0) -> bool:
+        """
+        Save adaptation value. Channel 0-99, value 0-65535, optional login.
+        Equivalent to kw1281test's AdaptationSave command.
+        """
+        data = bytes([channel, (value >> 8) & 0xFF, value & 0xFF, (login >> 8) & 0xFF, login & 0xFF])
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.ACK:
+            raise KW1281ProtocolError(
+                f"Adaptation save not acknowledged (got 0x{block.title:02X})"
+            )
+
+        return True
+
+    async def adaptation_test(self, channel: int, value: int, login: int = 0) -> bool:
+        """
+        Test adaptation value. Channel 0-99, value 0-65535, optional login.
+        Equivalent to kw1281test's AdaptationTest command.
+        """
+        data = bytes([channel, (value >> 8) & 0xFF, value & 0xFF, (login >> 8) & 0xFF, login & 0xFF])
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"Adaptation test response expected (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        return True
+
+    async def read_edc15_eeprom(self, address: int, length: int = 1) -> bytes:
+        """
+        Read EDC15 EEPROM data. Similar to kw1281test's DumpEdc15Eeprom.
+        Address 0-511, length bytes.
+        """
+        data = bytes([address, length])
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"EEPROM read response expected (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        return block.data
+
+    async def write_edc15_eeprom(self, address: int, value: int) -> bool:
+        """
+        Write EDC15 EEPROM data. Address 0-511, value 0-255.
+        Similar to kw1281test's WriteEdc15Eeprom.
+        """
+        data = bytes([address, value])
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.ACK:
+            raise KW1281ProtocolError(
+                f"EEPROM write not acknowledged (got 0x{block.title:02X})"
+            )
+
+        return True
+
+    async def read_software_version(self) -> str:
+        """
+        Read software version from ECU.
+        Similar to kw1281test's ReadSoftwareVersion command.
+        Reads ECU identification and returns software version.
+        """
+        ecu_id = await self.get_ecu_identification()
+        return ecu_id.software_version
+
+    async def get_safe_code(self) -> int:
+        """
+        Retrieve SAFE code from VAG radio or similar modules.
+        Equivalent to kw1281test's ClarionVWPremium4SafeCode or DelcoVWPremium5SafeCode.
+        Note: SAFE code reading may require specific ECU addresses (radio, etc.).
+        """
+        data = bytes([0x04, 0x36])  # Group reading for SAFE code
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"SAFE code response expected (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        # Extract SAFE code from data (implementation depends on ECU)
+        return int.from_bytes(block.data[:4], byteorder='big')
+
+    async def actuator_test(self, module: str = "default") -> dict:
+        """
+        Perform actuator test. Equivalent to kw1281test's ActuatorTest command.
+        Returns test results as dict.
+        """
+        await self._send_block(KW1281BlockTitle.GROUP_READING, bytes([0x01]))
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"Actuator test response expected (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        return {
+            'status': 'success',
+            'data': block.data,
+            'module': module
+        }
+
+    async def auto_scan(self) -> list[dict]:
+        """
+        Scan for available modules and their addresses.
+        Equivalent to kw1281test's AutoScan command.
+        Returns list of discovered modules with their addresses.
+        """
+        await self._send_block(KW1281BlockTitle.GROUP_READING, bytes([0x00]))
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"Auto scan response expected (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        # Parse scan results
+        modules = []
+        data = block.data
+
+        for i in range(0, len(data) - 2, 3):
+            address = data[i]
+            value = (data[i + 1] << 8) | data[i + 2]
+
+            modules.append({
+                'address': address,
+                'value': value,
+                'status': 'active' if value != 0 else 'inactive'
+            })
+
+        return modules
+
+    async def get_ecu_identification_by_address(self, address: int = ENGINE_ADDRESS) -> ECUIdentification:
+        """
+        Get ECU identification for a specific module address.
+        Alternative to get_ecu_identification() that targets specific address.
+        """
+        original_address = self.ecu_address
+        self.ecu_address = address
+
+        try:
+            ecu_id = await self.connect()
+            return ecu_id
+        finally:
+            self.ecu_address = original_address
+
+    async def read_edc15_memory(self, address: int, length: int = 1) -> bytes:
+        """
+        Read EDC15 memory (similar to EEPROM, for flash/program memory).
+        More advanced memory access for deeper ECU diagnostics.
+        """
+        data = bytes([address, length, 0x00])  # 0x00 = memory type
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"Memory read response expected (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        return block.data
+
+    async def write_edc15_memory(self, address: int, data: bytes) -> bool:
+        """
+        Write EDC15 memory (more advanced than EEPROM write).
+        Can write multiple bytes at once.
+        """
+        if len(data) > 255:
+            raise ValueError("Data length cannot exceed 255 bytes")
+
+        command_data = bytes([address, len(data)]) + data
+        await self._send_block(KW1281BlockTitle.GROUP_READING, command_data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.ACK:
+            raise KW1281ProtocolError(
+                f"Memory write not acknowledged (got 0x{block.title:02X})"
+            )
+
+        return True
+
+    async def read_ram(self, address: int, length: int = 1) -> bytes:
+        """
+        Read ECU RAM memory.
+        Similar to kw1281test's ReadRAM command.
+        Useful for accessing real-time ECU internal state.
+        """
+        data = bytes([address, length])
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"RAM read response expected (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        return block.data
+
+    async def write_ram(self, address: int, value: int) -> bool:
+        """
+        Write ECU RAM memory.
+        Similar to kw1281test's WriteRAM command.
+        Allows writing to ECU's runtime RAM.
+        """
+        data = bytes([address, (value >> 8) & 0xFF, value & 0xFF])
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.ACK:
+            raise KW1281ProtocolError(
+                f"RAM write not acknowledged (got 0x{block.title:02X})"
+            )
+
+        return True
+
+    async def dump_rom(self, address: int, length: int = 1) -> bytes:
+        """
+        Read ECU ROM/program memory.
+        Similar to kw1281test's DumpRom command.
+        Higher-level memory access for ECU firmware.
+        """
+        data = bytes([address, length])
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"ROM read response expected (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        return block.data
+
+    async def set_software_coding(self, coding: int, workshop: int) -> bool:
+        """
+        Set software coding (module coding) and workshop number.
+        Similar to kw1281test's SetSoftwareCoding command.
+        Updates ECU software configuration.
+        """
+        data = bytes([coding & 0xFF, coding >> 8 & 0xFF, workshop & 0xFF, workshop >> 8 & 0xFF])
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.ACK:
+            raise KW1281ProtocolError(
+                f"Software coding not acknowledged (got 0x{block.title:02X})"
+            )
+
+        return True
+
+    async def read_fault_codes_extended(self, code_filter: Optional[int] = None) -> list[FaultCode]:
+        """
+        Read fault codes with optional filtering by code.
+        Extension of read_fault_codes() with filtering capabilities.
+        Useful for specific error monitoring.
+        """
+        await self._send_block(KW1281BlockTitle.GET_FAULT_CODES)
+
+        codes: list[FaultCode] = []
+        max_blocks = 16
+        for _ in range(max_blocks):
+            block = await self._read_block()
+
+            if block.title == KW1281BlockTitle.ACK:
+                break
+
+            if block.title != KW1281BlockTitle.FAULT_CODES_RESPONSE:
+                raise KW1281ProtocolError(
+                    f"Expected fault codes response (0xFC), got 0x{block.title:02X}"
+                )
+
+            data = block.data
+            n_triples = len(data) // 3
+            for i in range(n_triples):
+                hi, lo, status = data[i * 3], data[i * 3 + 1], data[i * 3 + 2]
+                code = (hi << 8) | lo
+                if code == 0xFFFF:
+                    continue
+
+                # Apply filter if specified
+                if code_filter is not None and code != code_filter:
+                    continue
+
+                codes.append(FaultCode(code=code, status_byte=status))
+
+            await self._send_ack_block()
+
+            if n_triples < 4:
+                break
+
+        return codes
+
+    async def get_group_info(self, group_number: int) -> dict:
+        """
+        Get information about a specific measuring block group.
+        Returns group metadata and field descriptions.
+        """
+        await self._send_block(KW1281BlockTitle.GROUP_READING, bytes([group_number]))
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"Group info response expected (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        group_info = {
+            'group_number': group_number,
+            'data_length': len(block.data),
+            'field_count': (len(block.data) - 2) // 3,
+            'raw_data': block.data.hex()
+        }
+
+        return group_info
+
+    async def read_measuring_block_and_decode(self, block_number: int) -> dict:
+        """
+        Read a measuring block and decode it into field names and values.
+        Returns a dict with field names, values, and units.
+        """
+        values = await self.read_group(block_number)
+        decoded = {}
+
+        for val in values:
+            key = f"field_{val.kennzahl}"
+            decoded[key] = {
+                'value': val.value,
+                'unit': val.unit,
+                'label': val.label,
+                'confirmed': val.confirmed
+            }
+
+        return decoded
+
+    async def adaptation_read(self, channel: int, login: int = 0) -> dict:
+        """
+        Read adaptation values. Channel 0-99, optional login 0-65535.
+        Returns adaptation data as dict (equivalent to kw1281test's AdaptationRead).
+        Note: Adaptation commands may require specific ECU addresses (CCM, etc.).
+        """
+        await self._send_block(KW1281BlockTitle.GROUP_READING, bytes([channel]))
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"Expected adaptation response (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        # Parse adaptation data
+        adaptations = {}
+        data = block.data
+
+        for i in range(0, len(data) - 2, 3):
+            field_type = data[i]
+            field_data = (data[i + 1] << 8) | data[i + 2]
+            adaptations[f"field_{field_type}"] = field_data
+
+        return adaptations
+
+    async def adaptation_save(self, channel: int, value: int, login: int = 0) -> bool:
+        """
+        Save adaptation value. Channel 0-99, value 0-65535, optional login.
+        Equivalent to kw1281test's AdaptationSave command.
+        """
+        data = bytes([channel, (value >> 8) & 0xFF, value & 0xFF])
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.ACK:
+            raise KW1281ProtocolError(
+                f"Adaptation save not acknowledged (got 0x{block.title:02X})"
+            )
+
+        return True
+
+    async def adaptation_test(self, channel: int, value: int, login: int = 0) -> bool:
+        """
+        Test adaptation value. Channel 0-99, value 0-65535, optional login.
+        Equivalent to kw1281test's AdaptationTest command.
+        """
+        data = bytes([channel, (value >> 8) & 0xFF, value & 0xFF])
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"Adaptation test response expected (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        return True
+
+    async def read_edc15_eeprom(self, address: int, length: int = 1) -> bytes:
+        """
+        Read EDC15 EEPROM data. Similar to kw1281test's DumpEdc15Eeprom.
+        Address 0-511, length bytes.
+        """
+        data = bytes([address, length])
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"EEPROM read response expected (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        return block.data
+
+    async def write_edc15_eeprom(self, address: int, value: int) -> bool:
+        """
+        Write EDC15 EEPROM data. Address 0-511, value 0-255.
+        Similar to kw1281test's WriteEdc15Eeprom.
+        """
+        data = bytes([address, value])
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.ACK:
+            raise KW1281ProtocolError(
+                f"EEPROM write not acknowledged (got 0x{block.title:02X})"
+            )
+
+        return True
+
+    async def read_software_version(self) -> str:
+        """
+        Read software version from ECU.
+        Similar to kw1281test's ReadSoftwareVersion command.
+        Reads ECU identification and returns software version.
+        """
+        ecu_id = await self.get_ecu_identification()
+        return ecu_id.software_version
+
+    async def get_safe_code(self) -> int:
+        """
+        Retrieve SAFE code from VAG radio or similar modules.
+        Equivalent to kw1281test's ClarionVWPremium4SafeCode or DelcoVWPremium5SafeCode.
+        Note: SAFE code reading may require specific ECU addresses (radio, etc.).
+        """
+        data = bytes([0x04, 0x36])  # Group reading for SAFE code
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"SAFE code response expected (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        # Extract SAFE code from data (implementation depends on ECU)
+        return int.from_bytes(block.data[:4], byteorder='big')
+
+    async def actuator_test(self, module: str = "default") -> dict:
+        """
+        Perform actuator test. Equivalent to kw1281test's ActuatorTest command.
+        Returns test results as dict.
+        """
+        await self._send_block(KW1281BlockTitle.GROUP_READING, bytes([0x01]))
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"Actuator test response expected (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        return {
+            'status': 'success',
+            'data': block.data,
+            'module': module
+        }
+
+    async def auto_scan(self) -> list[dict]:
+        """
+        Scan for available modules and their addresses.
+        Equivalent to kw1281test's AutoScan command.
+        Returns list of discovered modules with their addresses.
+        """
+        await self._send_block(KW1281BlockTitle.GROUP_READING, bytes([0x00]))
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"Auto scan response expected (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        # Parse scan results
+        modules = []
+        data = block.data
+
+        for i in range(0, len(data) - 2, 3):
+            address = data[i]
+            value = (data[i + 1] << 8) | data[i + 2]
+
+            modules.append({
+                'address': address,
+                'value': value,
+                'status': 'active' if value != 0 else 'inactive'
+            })
+
+        return modules
+
+    async def get_ecu_identification_by_address(self, address: int = ENGINE_ADDRESS) -> ECUIdentification:
+        """
+        Get ECU identification for a specific module address.
+        Alternative to get_ecu_identification() that targets specific address.
+        """
+        original_address = self.ecu_address
+        self.ecu_address = address
+
+        try:
+            ecu_id = await self.connect()
+            return ecu_id
+        finally:
+            self.ecu_address = original_address
+
+    async def read_edc15_memory(self, address: int, length: int = 1) -> bytes:
+        """
+        Read EDC15 memory (similar to EEPROM, for flash/program memory).
+        More advanced memory access for deeper ECU diagnostics.
+        """
+        data = bytes([address, length, 0x00])  # 0x00 = memory type
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"Memory read response expected (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        return block.data
+
+    async def write_edc15_memory(self, address: int, data: bytes) -> bool:
+        """
+        Write EDC15 memory (more advanced than EEPROM write).
+        Can write multiple bytes at once.
+        """
+        if len(data) > 255:
+            raise ValueError("Data length cannot exceed 255 bytes")
+
+        command_data = bytes([address, len(data)]) + data
+        await self._send_block(KW1281BlockTitle.GROUP_READING, command_data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.ACK:
+            raise KW1281ProtocolError(
+                f"Memory write not acknowledged (got 0x{block.title:02X})"
+            )
+
+        return True
+
+    async def read_ram(self, address: int, length: int = 1) -> bytes:
+        """
+        Read ECU RAM memory.
+        Similar to kw1281test's ReadRAM command.
+        Useful for accessing real-time ECU internal state.
+        """
+        data = bytes([address, length])
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"RAM read response expected (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        return block.data
+
+    async def write_ram(self, address: int, value: int) -> bool:
+        """
+        Write ECU RAM memory.
+        Similar to kw1281test's WriteRAM command.
+        Allows writing to ECU's runtime RAM.
+        """
+        data = bytes([address, (value >> 8) & 0xFF, value & 0xFF])
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.ACK:
+            raise KW1281ProtocolError(
+                f"RAM write not acknowledged (got 0x{block.title:02X})"
+            )
+
+        return True
+
+    async def dump_rom(self, address: int, length: int = 1) -> bytes:
+        """
+        Read ECU ROM/program memory.
+        Similar to kw1281test's DumpRom command.
+        Higher-level memory access for ECU firmware.
+        """
+        data = bytes([address, length])
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"ROM read response expected (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        return block.data
+
+    async def set_software_coding(self, coding: int, workshop: int) -> bool:
+        """
+        Set software coding (module coding) and workshop number.
+        Similar to kw1281test's SetSoftwareCoding command.
+        Updates ECU software configuration.
+        """
+        data = bytes([coding & 0xFF, coding >> 8 & 0xFF, workshop & 0xFF, workshop >> 8 & 0xFF])
+        await self._send_block(KW1281BlockTitle.GROUP_READING, data)
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.ACK:
+            raise KW1281ProtocolError(
+                f"Software coding not acknowledged (got 0x{block.title:02X})"
+            )
+
+        return True
+
+    async def read_fault_codes_extended(self, code_filter: Optional[int] = None) -> list[FaultCode]:
+        """
+        Read fault codes with optional filtering by code.
+        Extension of read_fault_codes() with filtering capabilities.
+        Useful for specific error monitoring.
+        """
+        await self._send_block(KW1281BlockTitle.GET_FAULT_CODES)
+
+        codes: list[FaultCode] = []
+        max_blocks = 16
+        for _ in range(max_blocks):
+            block = await self._read_block()
+
+            if block.title == KW1281BlockTitle.ACK:
+                break
+
+            if block.title != KW1281BlockTitle.FAULT_CODES_RESPONSE:
+                raise KW1281ProtocolError(
+                    f"Expected fault codes response (0xFC), got 0x{block.title:02X}"
+                )
+
+            data = block.data
+            n_triples = len(data) // 3
+            for i in range(n_triples):
+                hi, lo, status = data[i * 3], data[i * 3 + 1], data[i * 3 + 2]
+                code = (hi << 8) | lo
+                if code == 0xFFFF:
+                    continue
+
+                # Apply filter if specified
+                if code_filter is not None and code != code_filter:
+                    continue
+
+                codes.append(FaultCode(code=code, status_byte=status))
+
+            await self._send_ack_block()
+
+            if n_triples < 4:
+                break
+
+        return codes
+
+    async def get_group_info(self, group_number: int) -> dict:
+        """
+        Get information about a specific measuring block group.
+        Returns group metadata and field descriptions.
+        """
+        await self._send_block(KW1281BlockTitle.GROUP_READING, bytes([group_number]))
+        block = await self._read_block()
+
+        if block.title != KW1281BlockTitle.GROUP_READING_RESPONSE:
+            raise KW1281ProtocolError(
+                f"Group info response expected (0xE7), got 0x{block.title:02X}"
+            )
+
+        await self._send_ack_block()
+
+        group_info = {
+            'group_number': group_number,
+            'data_length': len(block.data),
+            'field_count': (len(block.data) - 2) // 3,
+            'raw_data': block.data.hex()
+        }
+
+        return group_info
 
 # ---------------------------------------------------------------------------
 # Serial port discovery helpers (unrelated to the protocol fix above)

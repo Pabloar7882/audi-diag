@@ -13,12 +13,12 @@ from enum import Enum
 
 from PyQt6.QtCore import (
     Qt, QTimer, QRectF, QPointF, QSize, QEasingCurve, QPropertyAnimation,
-    pyqtSignal, pyqtSlot, pyqtProperty, QObject, QThread
+    pyqtSignal, pyqtSlot, pyqtProperty, QObject, QThread, QUrl
 )
 from PyQt6.QtGui import (
     QPainter, QColor, QPen, QBrush, QFont, QFontMetrics, QLinearGradient,
     QRadialGradient, QConicalGradient, QPaintEvent, QResizeEvent, QPixmap,
-    QPolygonF
+    QPolygonF, QDesktopServices, QPainterPath, QCursor
 )
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,
@@ -857,12 +857,257 @@ class CustomGroupsDialog(QDialog):
             self.table.setItem(row, 4, QTableWidgetItem("yes" if mv.confirmed else "unverified"))
 
 
+@dataclass
+class GaugePagePreset:
+    """A named, friendly bundle of KW1281 measuring groups - so the user
+    picks 'Boost / Turbo' instead of having to know it means group 011."""
+    name: str
+    icon: str
+    description: str
+    group_numbers: list[int]
+    gauge_keys: list[str]  # which GAUGE_CONFIGS entries this page actually shows
+
+
+GAUGE_PAGE_PRESETS: list[GaugePagePreset] = [
+    GaugePagePreset(
+        name="Full Dashboard",
+        icon="🎛️",
+        description="Everything at once — RPM, MAP, MAF, boost, temperatures (groups 3, 7, 11)",
+        group_numbers=[3, 7, 11],
+        gauge_keys=['rpm', 'map_actual', 'map_specified', 'maf_actual', 'maf_specified',
+                     'boost', 'coolant_temp', 'intake_temp', 'wastegate', 'engine_load'],
+    ),
+    GaugePagePreset(
+        name="Engine Basics",
+        icon="🔧",
+        description="RPM, mass airflow, engine load (group 3)",
+        group_numbers=[3],
+        gauge_keys=['rpm', 'maf_actual', 'maf_specified', 'engine_load'],
+    ),
+    GaugePagePreset(
+        name="Temperatures",
+        icon="🌡️",
+        description="Coolant & intake air temperature (group 7)",
+        group_numbers=[7],
+        gauge_keys=['coolant_temp', 'intake_temp'],
+    ),
+    GaugePagePreset(
+        name="Boost / Turbo",
+        icon="💨",
+        description="MAP actual/specified, boost pressure, wastegate duty (group 11)",
+        group_numbers=[11],
+        gauge_keys=['map_actual', 'map_specified', 'boost', 'wastegate'],
+    ),
+]
+
+
+class GaugePagePicker(QDialog):
+    """
+    Lets the user choose a named gauge page instead of hunting for the
+    correct KW1281 measuring-group number themselves. The car (being an
+    old ECU) can only report a handful of groups at once, so each page
+    keeps that count sane.
+    """
+
+    def __init__(self, parent: Optional[QWidget] = None):
+        super().__init__(parent)
+        self.setWindowTitle("Choose a Gauge Page")
+        self.resize(440, 420)
+        self.selected_preset: Optional[GaugePagePreset] = None
+
+        layout = QVBoxLayout(self)
+        info = QLabel(
+            "This ECU can only report a few sensor groups at a time - pick which "
+            "page you want live. You can switch pages any time from the dashboard."
+        )
+        info.setWordWrap(True)
+        info.setStyleSheet("color: #aaa; padding-bottom: 8px;")
+        layout.addWidget(info)
+
+        for preset in GAUGE_PAGE_PRESETS:
+            btn = QPushButton(f"{preset.icon}   {preset.name}")
+            btn.setMinimumHeight(52)
+            btn.setStyleSheet(
+                "QPushButton { text-align: left; padding: 10px 16px; font-size: 14px; "
+                "border: 1px solid #2a2a3a; border-radius: 8px; background: #1a1a24; color: white; } "
+                "QPushButton:hover { background: #23232f; border-color: #4da6ff; }"
+            )
+            btn.clicked.connect(lambda checked=False, p=preset: self._choose(p))
+            layout.addWidget(btn)
+
+            sub = QLabel(preset.description)
+            sub.setWordWrap(True)
+            sub.setStyleSheet("color: #777; font-size: 11px; padding: 0 6px 10px 6px;")
+            layout.addWidget(sub)
+
+        layout.addStretch()
+        cancel_btn = QPushButton("Cancel")
+        cancel_btn.clicked.connect(self.reject)
+        layout.addWidget(cancel_btn)
+
+    def _choose(self, preset: GaugePagePreset) -> None:
+        self.selected_preset = preset
+        self.accept()
+
+
+class CatLinkButton(QWidget):
+    """
+    A small clickable cat badge that opens the project's GitHub page.
+    This is an original doodle drawn with QPainter, NOT GitHub's Octocat
+    mascot (that's a registered trademark, not something to reproduce).
+    """
+
+    def __init__(self, url: str, parent: Optional[QWidget] = None):
+        super().__init__(parent)
+        self._url = url
+        self.setFixedSize(52, 52)
+        self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.setToolTip("Open project on GitHub")
+
+    def mousePressEvent(self, event) -> None:
+        if event.button() == Qt.MouseButton.LeftButton:
+            QDesktopServices.openUrl(QUrl(self._url))
+        super().mousePressEvent(event)
+
+    def paintEvent(self, event: QPaintEvent) -> None:
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        w, h = self.width(), self.height()
+
+        # Circular dark badge background
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(QColor("#24292e"))
+        painter.drawEllipse(1, 1, w - 2, h - 2)
+
+        cx, cy = w / 2, h / 2 + 3
+        head_r = w * 0.24
+
+        # Ears (two simple triangles)
+        painter.setBrush(QColor("#f0f0f0"))
+        for side in (-1, 1):
+            ear = QPainterPath()
+            ear.moveTo(cx + side * head_r * 0.7, cy - head_r * 0.6)
+            ear.lineTo(cx + side * head_r * 0.25, cy - head_r * 1.7)
+            ear.lineTo(cx + side * head_r * 0.05, cy - head_r * 0.7)
+            ear.closeSubpath()
+            painter.drawPath(ear)
+
+        # Head
+        painter.drawEllipse(QPointF(cx, cy), head_r, head_r)
+
+        # Eyes
+        painter.setBrush(QColor("#24292e"))
+        eye_r = head_r * 0.13
+        painter.drawEllipse(QPointF(cx - head_r * 0.35, cy - head_r * 0.05), eye_r, eye_r)
+        painter.drawEllipse(QPointF(cx + head_r * 0.35, cy - head_r * 0.05), eye_r, eye_r)
+
+        # Whiskers
+        painter.setPen(QPen(QColor("#f0f0f0"), 1))
+        for side in (-1, 1):
+            base_x = cx + side * head_r * 0.55
+            base_y = cy + head_r * 0.25
+            for dy in (-3, 0, 3):
+                painter.drawLine(
+                    QPointF(base_x, base_y + dy),
+                    QPointF(base_x + side * head_r * 0.7, base_y + dy * 1.5),
+                )
+
+
+class LauncherWindow(QWidget):
+    """
+    Start screen shown when the app opens. Pick a function instead of
+    landing straight in the full technical dashboard.
+    """
+
+    GITHUB_URL = "https://github.com/Pabloar7882/audi-diag"
+
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Audi A4 B5 Diagnostics")
+        self.setMinimumSize(520, 520)
+        self.setStyleSheet("background-color: #12121a;")
+        self._dashboard: Optional["MainDashboard"] = None
+
+        outer = QVBoxLayout(self)
+        outer.setContentsMargins(36, 32, 36, 20)
+        outer.setSpacing(4)
+
+        title = QLabel("Audi A4 B5 · 1.9 TDI")
+        title.setStyleSheet("color: white; font-size: 26px; font-weight: bold;")
+        subtitle = QLabel("AFN / EDC15 — KW1281 Diagnostics")
+        subtitle.setStyleSheet("color: #888; font-size: 12px; margin-bottom: 20px;")
+        outer.addWidget(title)
+        outer.addWidget(subtitle)
+
+        self._add_menu_button(
+            outer, "📊", "Live Dashboard",
+            "Real-time gauges — choose which sensor page to watch",
+            self._open_dashboard_with_picker,
+        )
+        self._add_menu_button(
+            outer, "⚠️", "Fault Codes",
+            "Read or clear stored DTCs (errors) on the ECU",
+            lambda: self._open_dashboard("fault_codes"),
+        )
+        self._add_menu_button(
+            outer, "🔍", "Explore Groups",
+            "Manually query any measuring group by number",
+            lambda: self._open_dashboard("groups"),
+        )
+
+        outer.addStretch()
+
+        bottom_row = QHBoxLayout()
+        exit_btn = QPushButton("Exit")
+        exit_btn.setStyleSheet("color: #999; padding: 8px 18px; border: none;")
+        exit_btn.clicked.connect(self.close)
+        bottom_row.addWidget(exit_btn)
+        bottom_row.addStretch()
+
+        self.cat_link = CatLinkButton(self.GITHUB_URL, self)
+        bottom_row.addWidget(self.cat_link)
+        outer.addLayout(bottom_row)
+
+    def _add_menu_button(self, layout: QVBoxLayout, icon: str, title: str,
+                          subtitle: str, on_click) -> None:
+        btn = QPushButton(f"{icon}   {title}")
+        btn.setMinimumHeight(58)
+        btn.setStyleSheet(
+            "QPushButton { text-align: left; padding: 12px 18px; font-size: 15px; "
+            "border: 1px solid #2a2a3a; border-radius: 10px; background: #1a1a24; color: white; } "
+            "QPushButton:hover { background: #23232f; border-color: #4da6ff; }"
+        )
+        btn.clicked.connect(on_click)
+        layout.addWidget(btn)
+
+        sub = QLabel(subtitle)
+        sub.setStyleSheet("color: #777; font-size: 11px; padding: 0 6px 14px 6px;")
+        layout.addWidget(sub)
+
+    def _open_dashboard_with_picker(self) -> None:
+        picker = GaugePagePicker(self)
+        if picker.exec() == QDialog.DialogCode.Accepted and picker.selected_preset:
+            preset = picker.selected_preset
+            self._open_dashboard("dashboard", blocks=preset.group_numbers, gauge_keys=preset.gauge_keys)
+
+    def _open_dashboard(self, mode: str, blocks: Optional[list[int]] = None,
+                         gauge_keys: Optional[list[str]] = None) -> None:
+        self._dashboard = MainDashboard(mode=mode, initial_blocks=blocks, gauge_keys=gauge_keys)
+        self._dashboard.show()
+        self.close()
+
+
 class MainDashboard(QMainWindow):
     """
     Main application window with telemetry gauges and controls.
     """
     
-    def __init__(self):
+    def __init__(
+        self,
+        mode: str = "dashboard",
+        initial_blocks: Optional[list[int]] = None,
+        gauge_keys: Optional[list[str]] = None,
+    ):
         super().__init__()
         self.setWindowTitle("Audi A4 B5 1.9 TDI (AFN/EDC15) Diagnostics")
         self.setMinimumSize(1200, 800)
@@ -875,14 +1120,75 @@ class MainDashboard(QMainWindow):
         self._session_id: Optional[int] = None
         self._custom_groups_dialog: Optional["CustomGroupsDialog"] = None
         self._active_alerts: set[str] = set()  # metric names currently past critical threshold
+        self._mode: str = mode  # "dashboard" | "fault_codes" | "groups"
+        self._initial_blocks: list[int] = initial_blocks or [3, 7, 11]
+        self._gauge_keys: Optional[list[str]] = gauge_keys
+        self.setWindowTitle(
+            f"Audi A4 B5 1.9 TDI (AFN/EDC15) Diagnostics — groups {self._initial_blocks}"
+        )
         
         # UI setup
         self._setup_ui()
         self._setup_toolbar()
         self._setup_statusbar()
+        self._apply_mode()
         
         # Auto-detect KKL adapter
         self._detect_adapters()
+    
+    def _apply_mode(self) -> None:
+        """
+        Configure what's visible depending on how this window was opened:
+        - 'dashboard': show only the gauges relevant to the selected page
+        - 'fault_codes' / 'groups': hide gauges/trends entirely, show a
+          placeholder pointing at the relevant toolbar button instead
+        """
+        if self._mode == "dashboard":
+            self._apply_gauge_visibility()
+            return
+
+        # Focused screens: no gauge clutter, just the connection panel +
+        # toolbar action for the one thing this screen is about.
+        self.view_stack.setVisible(False)
+        self.trend_group.setVisible(False)
+        self.view_toggle_action.setVisible(False)
+
+        if self._mode == "fault_codes":
+            self.mode_placeholder.setText(
+                "⚠️  Connect to the ECU, then click \"Read Errors\" above\nto check for stored fault codes."
+            )
+        elif self._mode == "groups":
+            self.mode_placeholder.setText(
+                "🔍  Connect to the ECU, then click \"Custom Groups\" above\nto query any measuring group."
+            )
+            # Open it right away so it's one less click
+            QTimer.singleShot(200, self._open_custom_groups_dialog_if_connected)
+        self.mode_placeholder.setVisible(True)
+
+    def _open_custom_groups_dialog_if_connected(self) -> None:
+        # Silent variant used on auto-open right after entering "groups" mode -
+        # don't nag with a "not connected" popup before the user has even tried.
+        if self._worker_thread and self._worker_thread.isRunning():
+            self._open_custom_groups_dialog()
+
+    def _apply_gauge_visibility(self) -> None:
+        """Show only the gauges relevant to the selected gauge page (self._gauge_keys)."""
+        if self._gauge_keys is None:
+            return  # no filtering requested - show everything (default/back-compat)
+
+        visible = set(self._gauge_keys)
+
+        self.rpm_container.setVisible('rpm' in visible)
+        self.map_dual.setVisible('map_actual' in visible or 'map_specified' in visible)
+        self.maf_dual.setVisible('maf_actual' in visible or 'maf_specified' in visible)
+        self.boost_gauge.setVisible('boost' in visible)
+        self.coolant_gauge.setVisible('coolant_temp' in visible)
+        self.intake_gauge.setVisible('intake_temp' in visible)
+        self.wastegate_gauge.setVisible('wastegate' in visible)
+        self.load_gauge.setVisible('engine_load' in visible)
+
+        for key, card in self._digital_cards.items():
+            card.setVisible(key in visible)
     
     def _apply_dark_theme(self) -> None:
         """Apply dark theme stylesheet."""
@@ -1073,29 +1379,29 @@ class MainDashboard(QMainWindow):
         # RPM Gauge (large, prominent)
         self.rpm_gauge = CircularGauge(GAUGE_CONFIGS['rpm'])
         self.rpm_gauge.setMinimumSize(240, 240)
-        rpm_container = QWidget()
-        rpm_layout = QVBoxLayout(rpm_container)
+        self.rpm_container = QWidget()
+        rpm_layout = QVBoxLayout(self.rpm_container)
         rpm_layout.setContentsMargins(0, 0, 0, 0)
         rpm_layout.addWidget(self.rpm_gauge)
-        row1_layout.addWidget(rpm_container, 1)
+        row1_layout.addWidget(self.rpm_container, 1)
         
         # MAP Dual Gauge
-        map_dual = DualGauge(
+        self.map_dual = DualGauge(
             GAUGE_CONFIGS['map_actual'],
             GAUGE_CONFIGS['map_specified']
         )
-        row1_layout.addWidget(map_dual, 1)
-        self.map_actual_gauge = map_dual.actual_gauge
-        self.map_specified_gauge = map_dual.specified_gauge
+        row1_layout.addWidget(self.map_dual, 1)
+        self.map_actual_gauge = self.map_dual.actual_gauge
+        self.map_specified_gauge = self.map_dual.specified_gauge
         
         # MAF Dual Gauge
-        maf_dual = DualGauge(
+        self.maf_dual = DualGauge(
             GAUGE_CONFIGS['maf_actual'],
             GAUGE_CONFIGS['maf_specified']
         )
-        row1_layout.addWidget(maf_dual, 1)
-        self.maf_actual_gauge = maf_dual.actual_gauge
-        self.maf_specified_gauge = maf_dual.specified_gauge
+        row1_layout.addWidget(self.maf_dual, 1)
+        self.maf_actual_gauge = self.maf_dual.actual_gauge
+        self.maf_specified_gauge = self.maf_dual.specified_gauge
         
         splitter.addWidget(row1)
         
@@ -1128,14 +1434,21 @@ class MainDashboard(QMainWindow):
         main_layout.addWidget(self.view_stack, 1)
         
         # Trend chart (RPM / Boost / Coolant history)
-        trend_group = QGroupBox("Trends")
-        trend_layout = QVBoxLayout(trend_group)
+        self.trend_group = QGroupBox("Trends")
+        trend_layout = QVBoxLayout(self.trend_group)
         self.trend_chart = TrendChart()
         self.trend_chart.add_series("RPM", "#4da6ff", 0, 6000)
         self.trend_chart.add_series("Boost", "#ff9500", -1000, 1500)
         self.trend_chart.add_series("Coolant", "#ff4444", -20, 130)
         trend_layout.addWidget(self.trend_chart)
-        main_layout.addWidget(trend_group)
+        main_layout.addWidget(self.trend_group)
+        
+        # Placeholder shown instead of gauges/trends in "fault_codes" / "groups" modes
+        self.mode_placeholder = QLabel("")
+        self.mode_placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.mode_placeholder.setStyleSheet("color: #666; font-size: 16px; padding: 60px;")
+        self.mode_placeholder.setVisible(False)
+        main_layout.addWidget(self.mode_placeholder, 1)
         
         # Bottom status row
         status_group = QGroupBox("Status")
@@ -1180,6 +1493,12 @@ class MainDashboard(QMainWindow):
         toolbar.setMovable(False)
         toolbar.setIconSize(QSize(20, 20))
         self.addToolBar(toolbar)
+        
+        # Back to launcher menu
+        back_action = toolbar.addAction("← Back to Menu")
+        back_action.triggered.connect(self._back_to_menu)
+        
+        toolbar.addSeparator()
         
         # Logging toggle
         self.log_action = toolbar.addAction("Start Logging")
@@ -1303,7 +1622,7 @@ class MainDashboard(QMainWindow):
                 port=port,
                 baudrate=baud,
                 poll_interval_ms=100,
-                blocks=[3, 7, 11],
+                blocks=self._initial_blocks,
             )
             
             # Connect signals
@@ -1588,6 +1907,16 @@ class MainDashboard(QMainWindow):
         self.view_stack.setCurrentIndex(1 if checked else 0)
         self.view_toggle_action.setText("Classic Interface" if checked else "New Interface")
     
+    def _back_to_menu(self) -> None:
+        """Stop any active connection and go back to the launcher menu."""
+        if self._worker_thread:
+            self._worker_thread.stop()
+            self._worker_thread = None
+        launcher = LauncherWindow()
+        launcher.show()
+        self._launcher_ref = launcher  # keep alive - this window is about to close
+        self.close()
+    
     def closeEvent(self, event) -> None:
         """Handle window close."""
         if self._worker_thread:
@@ -1647,8 +1976,8 @@ def main():
     font = QFont("Inter", 9)
     app.setFont(font)
     
-    window = MainDashboard()
-    window.show()
+    launcher = LauncherWindow()
+    launcher.show()
     
     sys.exit(app.exec())
 
