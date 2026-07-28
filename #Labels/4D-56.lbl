@@ -1,0 +1,43 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2006+ Ross-Tech, LLC
+;
+; Component: Radio (#56)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 4D-37.LBL
+; 4D-56.LBL
+; 4B0-035-192-RNSD-37.LBL
+; 4B0-035-192-RNSD-56.LBL
+;
+; created on 23/Feb/2006 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modificationon 04/Jul/2012
+;
+; requires VCDS 805.0 or newer
+;
+;
+REDIRECT,8E0-035-1xx-56.LBL,4D0-035-152-D        ; Chorus II
+;
+REDIRECT,8D0-035-1xx-56.LBL,4D0-035-186-A        ; Concert
+REDIRECT,8D0-035-1xx-56.LBL,4D0-035-186-B        ; Concert
+REDIRECT,8D0-035-1xx-56.LBL,4D0-035-186-C        ; Concert
+REDIRECT,8D0-035-1xx-56.LBL,4D0-035-186-F        ; Concert
+REDIRECT,8E0-035-1xx-56.LBL,4D0-035-186-G        ; Concert II
+;
+REDIRECT,8E0-035-1xx-56.LBL,4D0-035-195-H        ; Symphony II
+REDIRECT,8E0-035-1xx-56.LBL,4D0-035-195-J        ; Symphony II
+;
+REDIRECT,4B0-035-192-RNSD-56.LBL,4D0-035-192-A   ; RNS-D
+REDIRECT,4B0-035-192-RNSD-56.LBL,4D0-035-192-B   ; RNS-D
+REDIRECT,4B0-035-192-RNSD-56.LBL,4D0-035-192-C   ; RNS-D
+REDIRECT,4B0-035-192-RNSD-56.LBL,4D0-035-192-D   ; RNS-D
+REDIRECT,4B0-035-192-RNSD-56.LBL,4D0-035-192-E   ; RNS-D
+REDIRECT,4B0-035-192-RNSD-56.LBL,4D0-035-192-H   ; RNS-D
+REDIRECT,4B0-035-192-RNSD-56.LBL,4D0-035-192-K   ; RNS-D
+REDIRECT,4B0-035-192-RNSD-56.LBL,4D0-035-192-M   ; RNS-D
+REDIRECT,4B0-035-192-RNSD-56.LBL,4D0-035-192-N   ; RNS-D
+;

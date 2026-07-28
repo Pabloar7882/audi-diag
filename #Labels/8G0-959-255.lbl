@@ -1,0 +1,80 @@
+;
+; VCDS Label File
+;
+; Copyright © 2012+ Ross-Tech, LLC
+;
+; Audi Cabriolet (8G)
+;
+; Component: J256 - Convertible Top (#26)
+;
+; P/N: 8G0-959-255-???
+;
+; includes measuring blocks
+;
+; created on 07/Aug/2012 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 07/Aug/2012
+;
+; requires VCDS 11.11.4 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,1,Switch Positions,Movement I,0 = Switch open / 1 = Switch closed\n\n?xxxxxxx = Switch 1 for Compartment cover locked right (F200)\nx?xxxxxx = Switch 2 for Compartment cover unlocked right (F198)\nxx?xxxxx = Switch 3 for Compartment cover right (F196)\nxxx?xxxx = Switch for Roof unlocked/open position (F205)\nxxxx?xxx = Trunk lid unlocked (V53)\nxxxxx?xx = Trunk lid locked (V53)\nxxxxxx?x = Switch for trunk lid closed position (F206)\nxxxxxxx? = Switch for Top Lock front lock (F172)
+; 0 = Switch open / 1 = Switch closed
+; ?xxxxxxx = Switch 1 for Compartment Cover locked Right (F200)
+; x?xxxxxx = Switch 2 for Compartment Cover unlocked Right (F198)
+; xx?xxxxx = Switch 3 for Compartment Cover Right (F196)
+; xxx?xxxx = Switch for Roof unlocked/open Position (F205)
+; xxxx?xxx = Trunk Lid unlocked (V53)
+; xxxxx?xx = Trunk Lid locked (V53)
+; xxxxxx?x = Switch for Trunk Lid closed Position (F206)
+; xxxxxxx? = Switch for Top Lock front Lock (F172)
+001,2,Switch Positions,Movement II,0 = Switch open / 1 = Switch closed\n\n?xxxxxxx = Switch 1 for Compartment Cover locked left (F199)\nx?xxxxxx = Switch 2 for Compartment Cover unlocked left (F197)\nxx?xxxxx = Switch 3 for Compartment Cover left (F195)\nxxx?xxxx = Switch for Compartment Cover open (F201)\nxxxx?xxx = Switch for Roof open Position (F171)\nxxxxx?xx = Switch for Roof closed Position (F202)\nxxxxxx?x = Switch for Tensioning Bow stowed Position (F203)\nxxxxxxx? = Switch for Tensioning Bow raised Position (F204)
+; 0 = Switch open / 1 = Switch closed
+; ?xxxxxxx = Switch 1 for Compartment Cover locked Left (F199)
+; x?xxxxxx = Switch 2 for Compartment Cover unlocked Left (F197)
+; xx?xxxxx = Switch 3 for Compartment Cover Left (F195)
+; xxx?xxxx = Switch for Compartment Cover open (F201)
+; xxxx?xxx = Switch for Roof open Position (F171)
+; xxxxx?xx = Switch for Roof closed Position (F202)
+; xxxxxx?x = Switch for Tensioning Bow stowed Position (F203)
+; xxxxxxx? = Switch for Tensioning Bow raised Position (F204)
+001,3,Switch Positions,Misc I,0 = 0 = Switch open / 1 = Switch closed\n\n0?xxxxxx = Switch "closing" for alarm/locking system (F121/F122/F124)\n0x?xxxxx = Switch "Open" for alarm/locking system (F121/F122/F124)\n0xx?xxxx = Switch "Open" position for windows front and rear (E154)\n0xxx?xxx = Switch "closing" position for windows front and rear (E154)\n0xxxx?xx = Switch "closing" position for Convertible top (E137)\n0xxxxx?x = Switch for Parking brake warning (F9)\n0xxxxxx? = Switch "Open" position for Convertible top (E137)
+; 0 = Switch open / 1 = Switch closed
+; 0?xxxxxx = Switch "closing" for Alarm/Locking System (F121/F122/F124)
+; 0x?xxxxx = Switch "Open" for Alarm/Locking System (F121/F122/F124)
+; 0xx?xxxx = Switch "Open" Pposition for Windows Front and Rear (E154)
+; 0xxx?xxx = Switch "closing" Position for windows Front and Rear (E154)
+; 0xxxx?xx = Switch "closing" Position for Convertible Top (E137)
+; 0xxxxx?x = Switch for Parking Brake Warning (F9)
+; 0xxxxxx? = Switch "Open" Position for Convertible Top (E137)
+001,4,Switch Positions,Misc II,0 = Switch open / 1 = Switch closed\n\n--x?--xx = VSS less than 5 km/h\n--xx--?x = Switch for Central Locking Pass. side (F114)\n--xx--x? = Switch for Central Locking Driver side (F59)
+; 0 = Switch open / 1 = Switch closed
+; --x?--xx = VSS less than 5 km/h
+; --xx--?x = Switch for Central Locking Pass. side (F114)
+; --xx--x? = Switch for Central Locking Driver side (F59)
+;
+002,1,Switch Positions,Misc III,0 = Switch open / 1 = Switch closed\n\n---?xxxx = Unlocking Solenoid for Convertible Top (N187)\n---x?xxx = Hydraulic Pump Relay (J321)\n---xx?xx = Relay for Power Windows closing (J292)\n---xxx?x = Roof locked Indicator Lamp (K98)\n---xxxx? = Relay for Power Windows opening (J291)
+; 0 = Switch open / 1 = Switch closed
+; ---?xxxx = Unlocking Solenoid for Convertible Top (N187)
+; ---x?xxx = Hydraulic Pump Relay (J321)
+; ---xx?xx = Relay for Power Windows closing (J292)
+; ---xxx?x = Roof locked Indicator Lamp (K98)
+; ---xxxx? = Relay for Power Windows opening (J291)
+002,2,Switch Positions,Solenoids,0 = Switch open / 1 = Switch closed\n\n?xxxxxxx = Solenoid Valve 8 (N186) Compartment Cover lock\nx?xxxxxx = Solenoid Valve 7 (N94) Compartment Cover unlock\nxx?xxxxx = Solenoid Valve 6 (N93) Raise Tensioning Bow\nxxx?xxxx = Solenoid Valve 5 (N92) Stow Tensioning Bow\nxxxx?xxx = Solenoid Valve 4 (N91) Roof closing\nxxxxx?xx = Solenoid Valve 3 (N90) Roof Open\nxxxxxx?x = Solenoid Valve 2 (N89) Compartment Cover closing\nxxxxxxx? = Solenoid Valve 1 (N88) Compartment Cover opening
+; 0 = Switch open / 1 = Switch closed
+; ?xxxxxxx = Solenoid Valve 8 (N186) Compartment Cover lock
+; x?xxxxxx = Solenoid Valve 7 (N94) Compartment Cover unlock
+; xx?xxxxx = Solenoid Valve 6 (N93) Raise Tensioning Bow
+; xxx?xxxx = Solenoid Valve 5 (N92) Stow Tensioning Bow
+; xxxx?xxx = Solenoid Valve 4 (N91) Roof closing
+; xxxxx?xx = Solenoid Valve 3 (N90) Roof Open
+; xxxxxx?x = Solenoid Valve 2 (N89) Compartment Cover closing
+; xxxxxxx? = Solenoid Valve 1 (N88) Compartment Cover opening
+;

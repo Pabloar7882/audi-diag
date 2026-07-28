@@ -1,0 +1,88 @@
+;
+; VCDS Label File
+;
+; Copyright © 2011 Ross-Tech, LLC
+;
+; Skoda Superb (3U)
+;
+; Component: J446 - Parking Aid (#76) - 4-Channel Parking Aid / PR-7X1
+;
+; P/N: 3U0-919-283-???
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 3U-76.LBL
+; 3U0-919-283-7X1.LBL (4-Channel Parking Aid / PR-7X1)
+; 3U0-919-283-7X2.LBL (8-Channel Parking Aid / PR-7X2)
+;
+; includes measuring blocks, adaptation and coding
+;
+; created on 28/Apr/2011 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 16/Aug/2011
+;
+; requires VCDS 10.6.3 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,Distance (Rear)
+001,1,Rear Left,Sensor (G203),Specification: 10...60 cm (0 cm = no obstacle recognized)
+001,2,Rear Left Center,Sensor (G204),Specification: 10...160 cm (0 cm = no obstacle recognized)
+001,3,Rear Right Center,Sensor (G205),Specification: 10...160 cm (0 cm = no obstacle recognized)
+001,4,Rear Right,Sensor (G206),Specification: 10...60 cm (0 cm = no obstacle recognized)
+;
+002,0,Resulting Distance / Vehicle Speed && Voltage
+002,1,Resulting,Distance Rear,Specification: 0...120 cm (0 cm = no obstacle recognized)
+002,2,Confirmation,Sound,Range: Sound ON/Sound OFF
+;
+003,1,Parking Aid,System Status,Range: OK/Not OK
+003,2,Reverese Gear,engaged,Range: Reverse: Yes/Reverse: No
+003,3,Trailer hitched,,Range: Trailer: Yes/Trailer: No
+;
+080,0,Advanced Control Module Identification I
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Parking Aid (J446) Coding
+C01,?xxxx: Trailer Hitch
+C02,0 = Trailer Hitch not installed
+C03,1 = Trailer Hitch installed
+C04,x?xxx: Transmission
+C05,0 = Manual Transmission
+C06,1 = Automatic Transmission
+C07,xx?xx: Confirmation Sound
+C08,0 = Confirmation Sound for Reverse Gear inactive
+C09,1 = Confirmation Sound for Reverse Gear active
+C10,xxx?x: Model
+C12,1 = Limousine/Sedan
+C14,xxxx?: Type
+C15,4 = Skoda Superb (3U)
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+A01,0,Rear Buzzer Volume
+A01,5,Rear Buzzer Volume
+A01,6,Adaptation of the Volume for the Rear Warning Buzzer.
+A01,7,Changes can be checked with the Reverse Gear engaged.
+A01,8, 
+A01,9,Range: 1...10
+;

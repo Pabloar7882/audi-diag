@@ -1,0 +1,26 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2004-2009 Ross-Tech, LLC
+;
+; Audi TT Coupe/Roadster (8N)
+;
+; Component: J285 - Instrument Cluster (#17)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 8N-17.LBL
+; 8Nx-919-xxx-17.LBL (             >> 8N-Y-050 000)
+; 8Nx-920-xxx-17.LBL (8N-Y-050 001 >>             )
+;
+; created on 21/Sep/2004 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 26/May/2009
+;
+; requires VCDS 805.0 or newer
+;
+;
+REDIRECT,8Nx-919-xxx-17.LBL,8N?-919-???-???
+REDIRECT,8Nx-920-xxx-17.LBL,8N?-920-???-???
+;

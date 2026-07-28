@@ -1,0 +1,26 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2005-2009 Ross-Tech, LLC
+;
+; VW Golf Citi (174)
+;
+; Component: Engine (#01)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 17-01.LBL
+;
+; created on 18/Oct/2009 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 18/Oct/2009
+;
+; requires VCDS 908.0 or newer
+;
+;
+;17S-906-258-N    ; BZF: (17)
+;17S-906-258-S    ; AGY: (17)
+;17S-906-258-T    ; AFX: (17)
+;17S-906-258-AA   ; AGY: (17)
+;

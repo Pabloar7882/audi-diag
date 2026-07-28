@@ -1,0 +1,209 @@
+;
+; VCDS Label File
+;
+; Copyright © 2010-2011 Ross-Tech, LLC
+;
+; VW Transporter (7D)
+;
+; Component: J285 - Instrument Cluster (#17)
+;
+; P/N: 7D0-919-???-???
+;
+; includes measuring blocks, adaptation, coding,
+;          login and service reset
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 7D-17.LBL
+; 7D0-919-xxx-17.LBL
+; 7D0-920-xx0-17.LBL
+; 7D0-920-xx1-17.LBL
+;
+; created on 03/Dec/2010 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 07/Feb/2011
+;
+; requires VCDS 10.3 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,General
+001,1,Vehicle Speed
+001,2,Engine Speed
+001,3,Oil Pressure,Switch 2,Range: Oil Pr. 2 <min / Oil Pr. 2 OK
+001,4,Time
+;
+002,0,General
+002,1,Odometer
+002,2,Fuel Level
+002,3,Fuel Sender,Resistance
+002,4,Ambient,Temperature
+;
+003,0,General
+003,1,Coolant,Temperature
+;
+050,0,General
+050,1,Odometer
+050,2,Engine Speed
+050,4,Coolant,Temperature
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+A02,0,Service Reminder
+A02,5,Service Reminder
+A02,6,Displayed Values:
+A02,7,01 = Oil Service due
+A02,8,10 = Inspection due
+A02,9,11 = Oil Service & Inspection due
+A02,10, 
+A02,11,New Values:
+A02,12,00 = Reset Oil Service & Inspection
+A02,13,10 = Reset Oil Service
+A02,14,01 = Reset Inspection
+;
+A003,0,Consumption Correction
+A003,5,Consumption Correction
+A003,6,Standard Value: 100 %
+A003,7,Display Range: 85...115 %
+A003,8,Increments: 1 %
+A003,9, 
+A003,10,Calculation based on volume per distance (e.g. l/100km):
+A003,11,New Adaptation Value = Old Adaptation Value * Calculated Consumption / Old Display Value
+A003,12,Calculation based on distance per volume (e.g. MPG):
+A003,13,New Adaptation Value = Old Adaptation Value * Old Display Value / Calculated Consumption 
+;
+A004,0,Language
+A004,5,Language
+A004,6,1 = German
+A004,7,2 = English
+A004,8,3 = French
+A004,9,4 = Italian
+A004,10,5 = Spanish
+A004,11,6 = Portuguese
+;
+A005,0,Service Reminder: Max. Distance to Oil Service "OIL"
+A005,5,Service Reminder: Max. Distance to Oil Service "OIL" (in 1000 km)
+A005,6,15 = 15.000 km (Standard)
+;
+A006,0,Service Reminder: Max. Distance to Inspection "INSP 01"
+A006,5,Service Reminder: Max. Distance to Inspection "INSP 01" (in 1000 km)
+A006,6,30 = 30.000 km (Standard)
+;
+A007,0,Service Reminder: Max. Time to Inspection "INSP 02"
+A007,5,Service Reminder: Max. Time to Inspection "INSP 02" (in 10 Days)
+A007,6,37 = 370 Days (Standard)
+;
+A009,0,Mileage/Odometer
+A009,5,Mileage/Odometer
+A009,6,Increments: 1 = 10 km or 1 = 10 mi
+A009,7, 
+A009,8,The distance can only be changed once until
+A009,9,the current value is not over 100 km/62 mi.
+A009,10, 
+A009,11,NOTE: Perform Login first.
+;
+A010,0,Service Reminder: Distance to Oil Service "OIL"
+A010,5,Service Reminder: Distance to Oil Service "OIL" (in 1000 km)
+A010,6,15 = 15.000 km (Standard)
+;
+A011,0,Service Reminder: Distance to Inspection "INSP 01"
+A011,5,Service Reminder: Distance to Inspection "INSP 01" (in 1000 km)
+A011,6,30 = 30.000 km (Standard)
+;
+A012,0,Service Reminder: Time to Inspection "INSP 02"
+A012,5,Service Reminder: Time to Inspection "INSP 02" (in 10 Days)
+A012,6,37 = 370 Days (Standard)
+;
+A016,0,Distance Impulse Number
+;
+A030,0,Tank Characteristic (Fuel Level Sensor)
+A030,5,Tank Characteristic (Fuel Level Sensor)
+A030,6,This channel is used to set the fuel gauge reserve mark
+A030,7,therfor fill the tank with 9 l of fuel and correct the
+A030,8,needle to hit the reserve mark. This is a parallel shift
+A030,9,of the tank characteristic.
+A030,10, 
+A030,11,Standard: 128
+A030,12,Range: 120...136 (-2.0...+2.0 l)
+A030,13,Increments: 1 = 1 Ohm = 1/4 l
+;
+;
+;---------------------------------------------------
+;
+; login
+;
+;---------------------------------------------------
+;
+;
+L00,Instrument Cluster (J285) Login
+L01,13861 = Adaptation Enabling
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Instrument Cluster (J285) Coding
+C01,??xxx: Equipment
+C02,+01 = Brake Pad Warning installed
+C03,+02 = Seatbelt Warning installed
+C04,+04 = Washer Fluid Warning installed
+C05,+16 = Navigation System installed
+C06,xx?xx: Country
+C07,1 = Europe (EU) / 2 = USA (US) / 3 = Canada (CDN) / 4 = Great Britain (GB)
+C08,5 = Japan (JP) /6 = Saudi Arabia (SA) / 7 = Australia (AUS)
+
+;
+;
+;---------------------------------------------------
+;
+; service reset
+;
+;---------------------------------------------------
+;
+;
+RD,2,Service Reminder Status,1,
+RD,5,Max. Distance to Oil Service "OIL",1000,DIST
+RD,6,Max. Distance to Inspection "INSP 01",1000,DIST
+RD,7,Max. Time to Inspection "INSP 02",1,Day(s)
+RD,10,Remaining Distance to Oil Service "OIL",1000,DIST
+RD,11,Remaining Distance to Inspection "INSP 01",1000,DIST
+RD,12,Remaining Time to Inspection "INSP 02",1,Day(s)
+;
+RJ,0,0,Service Reset (Oil Service & Inspection),,
+RJ,0,1,2,0
+;
+RJ,1,0,Service Reset (Oil Service),,
+RJ,1,1,2,10
+;
+RJ,2,0,Service Reset (Inspection),,
+RJ,2,1,2,1
+;
+RJ,3,0,Service Reset (Oil Service - Indivdual Channels),,
+RJ,3,1,10,15
+;
+RJ,4,0,Service Reset (Inspection - Indivdual Channels),,
+RJ,4,1,10,15
+RJ,4,2,11,30
+;
+RJ,5,0,Service Reset (Oil Service & Inspektion - Indivdual Channels),,
+RJ,5,1,10,15
+RJ,5,2,11,30
+RJ,5,3,12,37
+;

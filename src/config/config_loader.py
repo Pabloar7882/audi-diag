@@ -70,7 +70,7 @@ class ConfigBase:
 
 @dataclass
 class SerialConfig(ConfigBase):
-    port: str = "/dev/ttyUSB0"
+    port: str = "COM3"
     baudrate: int = 10400
     timeout: float = 1.0
     write_timeout: float = 1.0
@@ -79,6 +79,9 @@ class SerialConfig(ConfigBase):
 
 @dataclass
 class KW1281TimingConfig(ConfigBase):
+    wakeup_retries: int = 3
+    wakeup_retry_delay_ms: int = 1000
+    wakeup_initial_delay_ms: int = 300
     five_baud_bit_ms: int = 200
     wakeup_pulse_ms: int = 25
     init_delay_ms: int = 50
@@ -86,6 +89,9 @@ class KW1281TimingConfig(ConfigBase):
     baud_switch_delay_ms: int = 300
     block_timeout_ms: int = 500
     inter_block_delay_ms: int = 5
+    ftdi_latency_timer_ms: int = 2
+    default_read_timeout_ms: int = 2000
+    default_write_timeout_ms: int = 2000
 
 
 @dataclass

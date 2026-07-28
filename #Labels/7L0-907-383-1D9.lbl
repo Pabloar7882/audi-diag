@@ -1,0 +1,163 @@
+;
+; VCDS Label File
+;
+; Copyright © 2010-2011 Ross-Tech, LLC
+;
+; VW Phaeton (3D) / VW Touareg (7L)
+;
+; Component: J345 - Trailer Recognition (#69) - PR-1D9
+;
+; P/N: 7L0-907-383-???
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 7L-69.LBL
+; 7L0-907-383-1D2.LBL (PR-1D2/1D6)
+; 7L0-907-383-1D9.LBL (PR-1D9)
+;
+; includes measuring blocks, coding and selective output tests
+;
+; created on 23/Nov/2010 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 20/Jan/2011
+;
+; requires VCDS 10.6.3 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,Voltage Supply I
+001,1,Voltage,(Terminal 30)
+001,2,Status Term. 30,(switched),Range: ON/OFF\nSignal Type: Input
+;
+002,0,Input Signals I
+002,2,Brake Light Switch,,Range: ON/OFF\nSignal Type: Input
+;
+003,0,Output Signals I
+003,1,Turn Signal,Rear Left,Range: ON/OFF\nSignal Type: Output
+003,2,Turn Signal,Rear Right,Range: ON/OFF\nSignal Type: Output
+003,3,Tail Light,Rear Left,Range: ON/OFF\nSignal Type: Output
+003,4,Tail Light,Rear Right,Range: ON/OFF\nSignal Type: Output
+;
+004,0,Output Signals II
+004,1,Brake Lights,Rear,Range: ON/OFF\nSignal Type: Output
+004,2,Back-Up Lights,Rear,Range: ON/OFF\nSignal Type: Output
+004,3,Rear Fog Lights,,Range: ON/OFF\nSignal Type: Output
+;
+005,0,Swivel Motor I
+005,1,Swivel Motor,deploy,Range: ON/OFF
+005,2,Swivel Motor,retract,Range: ON/OFF
+;
+006,0,Swivel Motor II
+006,1,Status Term. 30,(Swivel Motor),Range: ON/OFF
+006,2,Max. Current,Swivel Motor
+006,3,Current,Swivel Motor
+006,4,Sensor,Swivel Motor
+;
+008,0,Input Signals III
+008,1,Status,Terminal 15,Range: ON/OFF\nSignal Type: Input/CAN
+008,2,Status,Terminal X,Range: ON/OFF\nSignal Type: Input/CAN
+008,4,Trailer,recognized,Range: ON/OFF\nSignal Type: Input/CAN
+;
+009,0,Input Signals III
+009,1,Turn Signal,Left,Range: ON/OFF\nSignal Type: Input/CAN
+009,2,Turn Signal,Right,Range: ON/OFF\nSignal Type: Input/CAN
+009,3,Emergency Flasher,Warning Lights,Range: ON/OFF\nSignal Type: Input/CAN
+;
+010,0,Input Signals IV
+010,1,Brake Light Switch,,Range: ON/OFF\nSignal Type: Input/CAN
+;
+011,0,Input Signals V
+011,1,Side Marking,Lights,Range: ON/OFF\nSignal Type: Input/CAN
+011,2,Parking Light,Left,Range: ON/OFF\nSignal Type: Input/CAN
+011,3,Parking Light,Right,Range: ON/OFF\nSignal Type: Input/CAN
+;
+012,0,Input Signals VI
+012,1,Rear Fog Light,,Range: ON/OFF\nSignal Type: Input/CAN
+012,2,Back-Up Light,,Range: ON/OFF\nSignal Type: Input/CAN
+;
+013,0,Swivel Motor III
+013,1,Swivel Motor,initialised,Range: Yes/No
+013,2,Operating Button,Search Light,Range: ON/OFF
+013,3,Operating Button,Light "ON",Range: ON/OFF
+013,4,Operating Button,Light "OFF",Range: ON/OFF
+;
+014,0,Swivel Motor IV
+014,1,Voltage,Swivel Motor
+014,2,Current (act.),Swivel Motor
+014,3,Current (norm.),Swivel Motor
+;
+;015,1,Swivel Motor V
+;4.500 A,Stromstärke
+;015,2,
+;4.000 A,Stromstärke
+;015,3,
+;8.000 A,Stromstärke
+;
+;016,1,Swivel Motor VI
+;4.000 A,Stromstärke
+;016,2,
+;4.000 A,Stromstärke
+;016,3,
+;8.000 A,Stromstärke
+;
+;17,1,Swivel Motor VII
+;1800,Zähler
+;017,2,
+;2340,Zähler
+;
+080,0,Advanced Control Module Identification I
+;
+081,0,Advanced Control Module Identification II
+;
+082,0,Advanced Control Module Identification III
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Trailer Recognition (J345) Coding
+C01,0000?xx: Operating Button
+C02,0 = Operating Button NOT installed
+C03,1 = Operating Button installed
+C04,0000x?x: Variant
+C05,0 = Trailer Hitch removable/fixed
+C06,1 = Trailer Hitch with automatic Swivel Function
+C07,2 = Trailer Hitch with mechanical Swivel Function
+C08,0000xx?: Country
+C09,1 = Rest of World (RoW)
+C10,2 = North America (USA/Canada)
+;
+;
+;---------------------------------------------------
+;
+; selective output test
+;
+;---------------------------------------------------
+;
+;
+T2578,Swivel Motor: Initialisation
+T2514,Swivel Motor: Retract
+T2515,Swivel Motor: Deploy
+T2516,Operating Button: Search Illumination
+T2517,Operating Button: Function Light "Retract"
+T2518,Operating Button: Function Light "Deploy"
+;
+T2562,Brake Lights (Trailer)
+T2564,Tail Lights Left (Trailer - M60)
+T2563,Tail Lights Right (Trailer - M61)
+T2566,Turn Signals Left (Trailer - M62)
+T2565,Turn Signals Right (Trailer - M63)
+T2567,Rear Fog Lights (Trailer - M64)
+T2568,Back-Up Lights (Trailer)
+;

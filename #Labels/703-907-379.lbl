@@ -1,0 +1,48 @@
+;
+; VCDS Label File
+;
+; Copyright © 2012 Ross-Tech, LLC
+;
+; VW Transporter (70)
+;
+; Component: J104 - Brake Electronics (#03) Bosch 5.0 ABS/EDS
+;
+; P/N: 703-907-379-???
+;
+; includes measuring blocks and misc
+;
+; created on 28/Mar/2012 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modificationon on 28/Mar/2012
+;
+; requires VCDS 11.11.2 or newer
+;
+;
+;---------------------------------------------------
+;
+; Messwertblöcke
+;
+;---------------------------------------------------
+;
+;
+001,0,Wheel Speed
+001,1,Wheel Speed,Front Left (G47),Range: 0.0...255.0 km/h
+001,2,Wheel Speed,Front Right (G45),Range: 0.0...255.0 km/h
+001,3,Wheel Speed,Rear Left (G46),Range: 0.0...255.0 km/h
+001,4,Wheel Speed,Rear Right (G44),Range: 0.0...255.0 km/h
+;
+002,0,General
+002,1,Brake Light Switch,,Range: 0/1
+002,2,Return Flow Pump,Status,0 = OK\n1 = ERROR
+002,3,Valve Relay,,0 = Relay inactive (ERROR)\n1 = Relay active (OK)
+;
+;
+;---------------------------------------------------
+;
+; misc
+;
+;---------------------------------------------------
+;
+;
+SN,Bosch ABS/EDS 5.0
+;

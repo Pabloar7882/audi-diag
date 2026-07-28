@@ -1,0 +1,59 @@
+;
+; VCDS Label File
+;
+; Copyright © 2012 Ross-Tech, LLC
+;
+; VW Bora/Golf/Jetta (1J/9M)
+;
+; Component: J431 - Automatic Headlight Aim Control (#55)
+;
+; P/N: 1J0-941-651
+;
+; includes measuring blocks, basic settings and coding
+;
+; created on 28/Mar/2012 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 28/Mar/2012
+;
+; requires VCDS 11.11.3 / LCode 1.0.3.3 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks & basic settings
+;
+;---------------------------------------------------
+;
+;
+001,1,Voltage,(Terminal 15)
+;
+B001,0,Adjustment Position
+B001,1,Status, , 
+B001,2, , , 
+B001,3, , , 
+B001,4, , , 
+;
+002,1,Front Sensor (G78),(actual),Specification: 1.0...2.0 V
+002,2,GRear Sensor (G76),(actual),Specification: 2.0...3.5 V
+002,3,Basic Setting,Status
+;
+B002,0,Adjustment Learning
+B002,1,Status, , 
+B002,2, , , 
+B002,3, , , 
+B002,4, , , 
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Automatic Headlight Aim Control (J431) Coding
+C1,00001 = VW Golf (1J1) Front-Wheel-Drive (FWD)
+C2,00002 = VW Golf (1J1) All-Wheel-Drive (AWD)
+C3,00003 = VW Bora/Jetta (1J2) Front-Wheel-Drive (FWD)
+C4,00004 = VW Bora/Jetta (1J2) All-Wheel-Drive (AWD)
+;

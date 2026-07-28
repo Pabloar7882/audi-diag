@@ -1,0 +1,43 @@
+;
+; VCDS Label File
+;
+; Copyright © 2012 Ross-Tech, LLC
+;
+; Audi 100 (4A)
+;
+; Component: Engine (#01) - AAE < 02/1992
+;
+; P/N: 4A0-907-311-???
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 4A-01.LBL
+; 048-907-311-AAE1.LBL (2.0l SPI    @ 100 HP - AAE < 02/1992)
+;
+; includes measuring blocks and basic settings
+;
+; created on 28/Mar/2012 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modificationon on 28/Mar/2012
+;
+; requires VCDS 11.11.2 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks & basic setting
+;
+;---------------------------------------------------
+;
+;
+000,0,General (Decimal Values)
+000,1,Coolant Temperature (G62),Range: -48.0...+143.0 °C\nSpecification (Warm): 22...11 (85.0...115.0 °C)
+000,2,Throttly Valve Potentiometer (G69),Specification (Idle): 15...70 (1.6...7.6 °)
+000,3,Engine Speed (G28),Specification (Idle): 30...40 (750...1000 RPM)
+000,4,Intake Air Temperature,Specification: 97...46 (30...60 °C)
+000,5,Lambda Control,Specification: 98...158 (fluctuating) / Average: 128
+000,9,Supply Voltage,Specification: 170...220 (10.8...14.0 V)
+;
+B000,0,Idle Stabilization deactivated / Active Charcoal Valve closed
+;

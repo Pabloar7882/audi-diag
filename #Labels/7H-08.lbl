@@ -1,0 +1,23 @@
+;
+; VCDS Redirect File
+;
+; Component: Heating/Air Conditioning (#08)
+;
+; This file is part of a redirection package,
+; make sure you have all of the following files.
+;
+; 7H-08.LBL
+; 7Hx-820-045.LBL
+; 7Hx-907-040.LBL
+;
+; created on 06/Aug/2007 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification: 07/Oct/2008
+;
+; requires VCDS 805.0 or newer
+;
+;
+REDIRECT,7Hx-820-045.LBL,7H?-820-045-???
+;
+REDIRECT,7Hx-907-040.LBL,7H?-907-040-???
+;

@@ -1,0 +1,24 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2012 Ross-Tech, LLC
+;
+; Component: J344 - Automatic Headlight Aim Control Right (#39)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 1U-29.LBL
+; 1U-39.LBL
+; 1U0-941-651-29.LBL
+; 1U0-941-651-39.LBL
+;
+; created on 28/Mar/2012 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 28/Mar/2012
+;
+; requires VCDS 11.11.2 or newer
+;
+;
+REDIRECT,1U0-941-651-39.LBL,1U0-941-651-???
+;

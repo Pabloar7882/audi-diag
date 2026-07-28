@@ -1,0 +1,40 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2008+ Ross-Tech, LLC
+;
+; Component: J533 - Gateway (#19)
+;
+; This file is part of a label file package
+; make sure you have all of the following files.
+;
+; 6N-19.LBL
+; 6N0-909-901-19.LBL
+; 6N0-909-901-6R.CLB
+; 6N0-909-901-7L.CLB
+;
+; created on 08/Aug/2008 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 04/Jun/2012
+;
+; requires VCDS 805.0 or newer
+;
+;
+REDIRECT,6N0-909-901-6R.CLB,18D-937-08?-???,HW
+REDIRECT,6N0-909-901-6R.CLB,1S0-937-0??-???,HW
+;
+REDIRECT,6N0-909-901-6R.CLB,5C0-937-08?-???,HW
+REDIRECT,6N0-909-901-6R.CLB,5C5-937-08?-???,HW
+;
+REDIRECT,6N0-909-901-6R.CLB,6R0-937-08?-???,HW
+REDIRECT,6N0-909-901-6R.CLB,6R7-937-08?-???,HW
+REDIRECT,6N0-909-901-6R.CLB,6RU-937-08?-???,HW
+;
+REDIRECT,6N0-909-901-6R.CLB,7H0-937-08?-???,HW
+;
+REDIRECT,6N0-909-901-7L.CLB,3D?-???-???-???,HW
+REDIRECT,6N0-909-901-7L.CLB,3W?-???-???-???,HW
+REDIRECT,6N0-909-901-7L.CLB,7L6-???-???-???,HW
+;
+REDIRECT,6N0-909-901-19.LBL,6N0-909-901-???
+;

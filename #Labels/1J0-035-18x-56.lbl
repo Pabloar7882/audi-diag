@@ -1,0 +1,166 @@
+;
+; VCDS Label File
+;
+; Copyright © 2007+ Ross-Tech, LLC
+;
+; Component: R - Radio (#56) - GAMMA/Premium IV/V
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 1C-56.LBL
+; 1J-56.LBL
+; 6N-56.LBL
+; 6Q-56.LBL
+; 6X-56.LBL
+; 1J0-035-15x-56.LBL
+; 1J0-035-18x-56.LBL
+;
+; includes measuring blocks, coding and adaptation
+;
+; created on 29/Mar/2007 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 16/Jul/2012
+;
+; requires VCDS 11.11.2 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,General
+001,1,GALA-Signal,,0 = Signal not recognized\n1 = Signal recognized
+001,2,Supply Voltage,(Terminal 30),Specification: 5...18 V
+001,3,Illumination,(Terminal 58d)
+001,4,Status,S-Contact,Range: ON/OFF
+;
+002,0,Speakers/Line-Out
+002,1,Location/Type,(Front)
+002,2,Status,,Specification: OK/Short to Ground/Open Circuit
+002,3,Location/Type,(Rear)
+002,4,Status,,Specification: OK/Short to Ground/Open Circuit
+;
+003,0,Antenna
+003,1,Antenna Type,,Specification: active/passive
+003,2,Antenna
+003,3,Status,,Specification: OK/Short to Ground/Open Circuit
+;
+004,0,Amplifier / Telephone
+004,1,Amplifier Output,,0 = OK\n1 = Short to Ground
+004,3,Telephone Mute
+004,4,Telephone Mute,Status,Range: ON/OFF
+;
+005,0,Communication Status CD-Changer (R41)
+005,1,Component,CD-Changer/Player
+005,2,Status,,Specification: OK/n.OK
+;
+006,0,External Display
+006,1,Component,External Display
+006,2,Status,External Display,Specification: OK/n.OK
+;
+007,0,Steering Wheel Control
+007,1,Steering Wheel,Buttons
+;
+080,0,Advanced Control Module Identification I
+080,1,Identification
+080,2,Revision
+080,3,Production,Date
+080,4,Manufacturer &,Test Stand Number
+;
+081,0,Advanced Control Module Identification II
+081,1,Serial Number
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+A010,0,Remote Control
+A010,5,Remote Control
+A010,6,0 = Playback disabled
+A010,7,1 = Playback enabled
+A010,8, 
+A010,9,Note: After closing the Diagnostic Session/Communication
+A010,10,the Standard Value 0 is automatically being restored.
+;
+A011,0,Remote Control: Source
+A011,5,Remote Control: Source
+A011,6,0 = FM
+A011,7,1 = AM
+A011,8, 
+A011,9,Note: After closing the Diagnostic Session/Communication
+A011,10,the Standard Value 0 is automatically being restored.
+;
+A012,0,Remote Control: Frequency FM
+A012,5,Remote Control: Frequency FM
+A012,6,The Frequency Adjustment is being carried out
+A012,7,incrementally starting with 0 = 88.3 MHz.
+A012,8, 
+A012,9,Note: After closing the Diagnostic Session/Communication
+A012,10,the Standard Value 0 is automatically being restored.
+;
+A013,0,Remote Control: Frequency AM
+A013,5,Remote Control: Frequency AM
+A013,6,The Frequency Adjustment is being carried out
+A013,7,incrementally starting with 0 = 540 kHz.
+A013,8, 
+A013,9,Note: After closing the Diagnostic Session/Communication
+A013,10,the Standard Value 0 is automatically being restored.
+;
+A014,0,Remote Control: Volume
+A014,5,Remote Control: Volume
+A014,6,Range: 0...100
+A014,7,Standard: 40
+A014,8, 
+A014,9,Note: After closing the Diagnostic Session/Communication
+A014,10,the Standard Value 0 is automatically being restored.
+;
+A015,0,Remote Control: Balance
+A015,5,Remote Control: Balance
+A015,6,Note: After closing the Diagnostic Session/Communication
+A015,7,the Standard Value 0 is automatically being restored.
+;
+A016,0,Remote Control: Fader
+A016,5,Remote Control: Fader
+A016,6,Note: After closing the Diagnostic Session/Communication
+A016,7,the Standard Value 0 is automatically being restored.
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Radio (R) Coding
+C01,??xxx: Sound-Adjustment
+C02,00 = Standard/Other / 01 = Golf (1J)
+C03,02 = Bora/Jetta (1J/9M) / 03 = Golf/Bora/Jetta Variant (1J) 
+C04,04 = Passat Limousine (3B) / 05 = Passat Variant (3B)
+C05,06 = Lupo/Polo (6X/9N) / 06 = New Beetle (1C) with Monsoon
+C06,07 = Golf-Cabriolet (1E) / 08 = Sharan (7M) & New Beetle (1C)
+C07,09 = Transporter/Caravelle (7D)
+C08,xx?xx: Speakers
+C09,0 = No passive Speakers (Sound System)
+C10,2 = 2 passive Speakers (Front)
+C11,3 = 2 passive Speakers (Rear)
+C12,4 = 4 passive Speakers (Front and Rear)
+C13,xxx?x: Sound System Correction
+C14,0 = Sound System not installed (No Correction)
+C15,1 = Sound System (Bose) installed
+C16,2 = Sound-System (DSP) installed
+C17,3 = Monsoon (2-door)
+C18,4 = Monsoon (4-door)
+C19,xxxx?: Configuration
+C20,+1 = Active/Remote Supplied Antenna
+C21,+2 = CD-Player/Changer (including builtin CD)
+C22,+4 = Secondary Display (Instrument Cluster)
+;

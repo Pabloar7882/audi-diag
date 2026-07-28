@@ -1,0 +1,120 @@
+;
+; VCDS Label File
+;
+; Copyright © 2009 Ross-Tech, LLC
+;
+; VW New Beetle RSI (1C) / VW Sharan (7M)
+;
+; Component: J362 - Immobilizer (#25)
+;
+; P/N: 7M3-953-257-???
+;
+; includes measuring blocks, coding, adaptation and login
+;
+; created on 10/Feb/2009 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 30/Apr/2009
+;
+; requires VCDS 805.1 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,General
+001,1,Databus,Communication
+001,2,Reader Coil,Status,Specification: 1 = OK\n\n0 = not OK\n1 = OK
+001,3,Key Status,,Specification: 1 = OK\n\n0 = not OK\n1 = OK
+001,4,Key,authorized,Specification: 1 = Yes\n\n0 = No\n1 = Yes
+;
+002,0,General
+002,1,Engine Start,permitted,Specification: 1 = Yes\nRange: 1= Yes / 0 = No
+002,2,Engine (ECU),responds,Specification: 1 = Yes\nRange: 1 = Yes / 0 = No
+002,3,Key Status,,Specification: 1 = OK\n\n0 = not OK\n1 = OK
+002,4,Number of,adapted Keys,Specification: 0.0...8.0
+;
+003,0,General
+003,1,Variable Code,authorized,Specification: 1 = Yes\n\n0 = No\n1 = Yes
+003,2,Transpoder,Status,Specification: 1 = Yes\n\n0 = No\n1 = Yes
+003,3,Fixed Code,authorized,Specification: 1 = Yes\n\n0 = No\n1 = Yes
+003,4,Immobilizer,Status,Specification: 6 (Immobilizer adapted)
+; 1 = End of Assembly Line: NEW (Delivery Condition of New Instrument Cluster)
+; 2 = End of Assembly Line: VIN adapted
+; 3 = End of Assembly Line: ECU adapted
+; 4 = Customer Service: NEW (Delivery Condition of Replacement Instrument Cluster)
+; 5 = Customer Service: Instrument Cluster adapted
+; 6 = Customer Service: Keys adapted (Normal Condition)
+; 7 = Customer Service: Key Adaptation active
+;
+004,0,Lock Times
+004,1,Login-Lock,Tester,wrong Login (Specification: 0)
+004,2,Login-Lock,CAN-Bus,wrong PIN (Specification: 0)
+004,4,Lock,Scan Protection,Key (Specification: 0)
+;
+005,0,Key Status
+005,1,Key Learning,Time,(in Seconds)
+005,2,Number of Keys,(specified),Specification: 0...8
+005,3,Number of Keys,(actual),Specification: 0...8
+005,4,Key Matching,Status,?xxx = Fault Status (0 = No Fault / 1 = Fault)\nx?xx = Adaption (0 = finished / 1 = running)\nxx?x = Current Key (0 = OK / 1 = Not OK)\nxxx? = Current Adaptation (0 = OK / 1 = Not OK)
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Immobilizer (J362) Coding
+C01,Note: The Communication Type can be determined via
+C02,Measuring Value Block (MVB) 001.1
+C03, 
+C04,Communication via W-Line:
+C05,The Coding reflects the Baud Rate used on
+C06,the W-Line (with Engine Control Module).
+C07, 
+C08,Communication via CAN-Databus:
+C08,00003 = Alle Models (Standard)
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+A001,0,Immobilizer (Key Learning)
+A001,3,Old Key Count
+A001,5,Immobilizer (Key Learning)
+;
+A050,0,Immobilizer (Vehicle Data learning)
+A050,1,Status
+A050,5,Immobilizer (Vehicle Data learning)
+A050,6,Please enter the Immobilizer PIN/SKC of the Engine Control Module (OLD PIN/SKC).
+A050,7,After that the Learning Process is being initiated the new Immobilizer Control
+A050,8,Module adopts the Vehicle-Identification-Number (VIN) and Immobilizer
+A050,9,Identification (IMMO-ID) of the Vehicle (from the OLD Engine Control Module).
+A050,10,Once the Adaptation is done switch the Ignition OFF for about 2 Minutes.
+;
+;
+;---------------------------------------------------
+;
+; login
+;
+;---------------------------------------------------
+;
+;
+L00,Immobilizer (J362) Login
+L01,Prior to Key Learning or adapting a new USED Immobilizer
+L02,Control Module the Vehicle specific PIN/SKC (IMMO-Login)
+L03,of the new USED Immobilizer Control Module has to be used
+L04,to enable the adaptation.
+L05,You'll find the PIN/SKC on the Key Tag of the additional
+L06,Key (of the Donor Car) or you can acquire it through your
+L07,responsible Distribution Center or Importer.
+;

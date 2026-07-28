@@ -1,0 +1,22 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2011 Ross-Tech, LLC
+;
+; Component: J255 - Heating & Air Conditioning (#08)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 70-08.LBL
+; 7D0-907-044.LBL
+;
+; created on 19/Jul/2011 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 19/Jul/2011
+;
+; requires VCDS 10.6.4 or newer
+;
+;
+REDIRECT,7D0-907-044.LBL,701-907-044-???
+;

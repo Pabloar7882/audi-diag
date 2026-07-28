@@ -1,0 +1,26 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2005-2011 Ross-Tech, LLC
+;
+; Component: R - Radio (#56)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 1K-56.LBL
+; 1Z-56.LBL
+; 5M-56.LBL
+; 5P-56.LBL
+; 5Z-56.LBL
+; 1K0-035-1xx-56.LBL
+;
+; created on 26/Mar/2005 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 18/Aug/2011
+;
+; requires VCDS 10.6.4 or newer
+;
+;
+REDIRECT,1K0-035-1xx-56.LBL,5Z0-035-152-??? ; R200
+;

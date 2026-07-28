@@ -1,0 +1,108 @@
+;
+; VCDS Label File
+;
+; Copyright © 2006-2012 Ross-Tech, LLC
+;
+; VW Transporter (7D)
+;
+; Component: J104 - Brake Electronics (#03) - Bosch 5.3 ABS/EDL/ASR/ESP
+;
+; P/N: 7D0-907-379-???
+;
+; includes measuring blocks, basic setting, coding, login and misc
+;
+; created on 10/Dec/2005 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modificationon on 28/Mar/2012
+;
+; requires VCDS 11.11.2 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks & basic setting
+;
+;---------------------------------------------------
+;
+;
+001,0,Wheel Speed
+001,1,Wheel Speed,Front Left (G47),Display Range: 0.0...255.0 km/h
+001,2,Wheel Speed,Front Right (G45),Display Range: 0.0...255.0 km/h
+001,3,Wheel Speed,Rear Left (G46),Display Range: 0.0...255.0 km/h
+001,4,Wheel Speed,Rear Right (G44),Display Range: 0.0...255.0 km/h
+;
+B001,0,Steering Angle Sensor (G85) Alignment
+B001,1,Steering Angle,Sensor (G85), 
+B001,2,Alignment, , 
+B001,3,Alignment,Status,Specification: OK
+B001,4, , , 
+;
+002,0,Switches && Buttons
+002,1,Brake Test Switch,,Display Range: 0/operated
+002,2,Brake Light Switch,,Display Range: 0/operated
+002,3,Parking Brake,Button,Display Range: 0/operated
+002,4,ASR/ESP-Button,,Display Range: 0/operated
+;
+003,0,Engine Data
+003,1,Engine Speed
+003,2,Engine Torque
+003,3,Engine Torque,(loss)
+003,4,Throttle Valve Angle
+;
+004,1,Standing Time
+004,2,EDL-T Flag,,Display Range: ON/OFF\nSpecification: OFF
+;
+005,1,Steering Angle,Sensor (G85),Display Range: -720.0...+720.0 °\nTolerance (when straight): ±5.0 °
+005,2,Rotation Rate,,Display Range: -69.0...+69.0 °/s
+005,3,Brake Pressure,,Display Range: -41.0...+292.0 bar\n40.0 bar = Short to Ground\n290.0 bar = Short to Plus
+005,4,Transverse,Acceleration,Display Range: -25.0...+25.0 m/s²
+;
+006,1,Supply Voltage,(Terminal 30),Specification: 9.8...17.4 V
+006,2,Valve Relay,,Display Range: ON = OK / OFF = not OK
+006,3,Return Flow Pump,,Display Range: ON/OFF
+006,4,Work Shop Code
+;
+125,0,CAN-Databus Communication (Powertrain)
+125,1,Steering Angle,Sensor (G85),Specification: Steer. ang. 1\nDisplay Range: Steer. ang. 0/Steer. ang. 1
+125,2,Engine,,Specification: Engine 1\nDisplay Range: Engine 0/Engine 1
+125,3,Transmission,,Display Range: Transm. 1
+;
+;
+;---------------------------------------------------
+;
+; login
+;
+;---------------------------------------------------
+;
+;
+L00,Brake Electronics - Bosch 5.3 (J104) Login
+L01,See Factory Repair Manual for proper Login/Coding Information.
+L02, 
+L03,Note: After Login/Coding-II has been carried out you need to recode the Control Module.
+L04, 
+L05,40168 = Basic Settings Enabling (i.e. mandatory prior to Steering Angle Sensor Alignment)
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Brake Electronics - Bosch 5.3 (J104) Coding
+C01,See Factory Repair Manual for proper Login/Coding Information.
+C02, 
+C03,Note #1: Coding is accepted after a specific Login has been carried out.
+C04,Note #2: After successful Coding the Steering Angle Sensor Alignment needs to be carried out.
+;
+;
+;---------------------------------------------------
+;
+; misc
+;
+;---------------------------------------------------
+;
+;
+SN,Bosch ESP 5.3
+;

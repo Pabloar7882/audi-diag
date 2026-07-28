@@ -1,0 +1,24 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2008-2011 Ross-Tech, LLC
+;
+; Component: Engine (#01)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 00-01.LBL
+; 4E-01.LBL
+; 077-910-560-BFM.LBL  (4.2l MPI    @ 334 HP - BFM)
+; 077-910-560-BFMS.CLB (4.2l MPI    @ 400 HP - BFM/Spyker)
+;
+; created on 02/Oct/2008 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 22/Aug/2011
+;
+; requires VCDS 805.0 or newer
+;
+;
+REDIRECT,077-910-560-BFMS.CLB,006-410-010-A0  ; BFM (Spyker C8 MY 2005)
+;

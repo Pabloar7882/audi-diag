@@ -1,0 +1,55 @@
+;
+; VCDS Label File
+;
+; Copyright © 2011 Ross-Tech, LLC
+;
+; Component: J220 - Engine (#01) - 1Z
+;
+; P/N: 8A0-907-401-A (D06/D08) / 8A0-907-401-B (D09)
+;
+; includes measuring blocks, basic setting and coding
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 8A-01.LBL
+; 028-907-401-1ZA.LBL  (1.9l VP-TDI @  90 HP - 1Z D05)
+; 028-907-401-1ZB.LBL  (1.9l VP-TDI @  90 HP - 1Z D06/D08/D09)
+;
+; created on 30/May/2011 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modificationon on 30/May/2011
+;
+; requires VCDS 10.6.4 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks & basic setting
+;
+;---------------------------------------------------
+;
+;
+000,0,Decimal Measuring Values
+000,1,Engine Speed (G28),Specification (Idle): 39...42\nSpecification (Full Load): 130...190
+000,2,Injection Start,Specification (Idle): 50...65\nSpecification (Full Load): 190...245
+000,3,Accel. Pedal Pos. Sensor 1 (G79),Specification (Idle): 0\nSpecification (Full Throttle): 255
+000,4,Injection Quantity,Specification (Idle): 15...30\nSpecification (Full Load): 160...172
+000,5,Boost/Manifold Pressure,Specification (Idle): 116 (~1000 mbar)\nSpecification (Full Load): 200...235 (215 = ~1760 mbar)
+000,6,Atmospheric Pressure,Specification (Idle): 116 (~1000 mbar)
+000,7,Coolant Temperature,Specification (Warm): 62 (~90.0 °C)\nSpecification (Cold): ~196 (~20 °C)
+000,8,Intake Air Temperature,Specification (Warm): 97 (~30.0 °C)\nSpecification (Cold): ~82 (~20 °C)
+000,9,Fuel Temperature,Specification (Warm): 127 (~40.0 °C)\nSpecification (Cold): ~91 (~20 °C)
+000,10,Mass Air Flow,Specification (Idle): 80...99\nSpecification (Full Load): 190...255
+;
+;
+;---------------------------------------------------
+;
+; coding (type a)
+;
+;---------------------------------------------------
+;
+;
+C00,Engine Control Unit (J220) Coding
+C01,00000 = Standard
+;

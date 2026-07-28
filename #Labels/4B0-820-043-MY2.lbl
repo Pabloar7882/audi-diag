@@ -1,0 +1,222 @@
+;
+; VCDS Label File
+;
+; Copyright © 2011 Ross-Tech, LLC
+;
+; Audi A6 (4B)
+;
+; Component: J255 - Heating/Air Conditioning (#08) (MY 2002 >)
+;
+; P/N: 4B0-820-043-???
+;
+; includes measuring blocks, basic setting and coding
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 4B-08.LBL
+; 4B0-820-043-MY1.LBL (> MY 2001)
+; 4B0-820-043-MY2.LBL (MY 2002 >)
+;
+; created on 15/Apr/2011 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 22/Apr/2011
+;
+; requires VCDS 10.6.3 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks & basic setting
+;
+;---------------------------------------------------
+;
+;
+B000,0,Potentiometer && Flap Alignment
+B000,1,Left Temperature Flap Control Motor (V158),Specification: 0
+B000,2,Right Temperature Flap Control Motor (V159),Specification: 0
+B000,3,Central Flap Control Motor (V70),Specification: 0
+B000,4,Footwell/Defroster Flap Control Motor (V107),Specification: 0
+B000,5,Recirculation Flap Control Motor (V113),Specification: 0
+B000,6,Air Flow Flap Control Motor (V71),Specification: 0
+;
+001,0,General
+001,1,A/C Valve (N280),Current
+001,2,A/C Valve (N280),Duty Cycle,Range: 0.0...100.0 %
+001,3,High-Pressure,Signal (G65)
+001,4,Refrigerant Circuit,Pressure (G65)
+;
+002,0,Compressor Shut-Off Criteria
+;  0 = Compressor ON
+;  1 = Compressor OFF: Refrigerant Pressure too High
+;  2 = Compressor ON: Reduced Performance Requested by Engine Control Unit (ECU)
+;  3 = Compressor OFF: Refrigerant Pressure too Low
+;  4 = Compressor OFF: Fault Code stored
+;  5 = Compressor OFF: Engine not running or less than 300 RPM
+;  6 = Compressor OFF: ECON Mode active OR Basic Setting not performed
+;  7 = Compressor OFF: System deactivated (by Driver)
+;  8 = Compressor OFF: Ambient Temperature too Low
+; 10 = Compressor OFF: Supply Voltage too Low
+; 11 = Compressor OFF: Engine Temperature too High
+; 12 = Compressor OFF: Requested by Engine Control Unit (ECU)
+; 14 = Compressor OFF: High Pressure Sensor (G65) faulty
+; 15 = Compressor OFF: Evaporator Temperature too Low
+002,1,Current,Shut-Off Criteria,See Factory Repair Manual for further Details\n\n0 = Compressor ON\n1 = Compressor OFF: Refrigerant Pressure too High\n2 = Compressor ON: Reduced Performance Requested by Engine Control Unit (ECU)\n3 = Compressor OFF: Refrigerant Pressure too High\n4 = Compressor OFF: Fault Code stored\n5 = Compressor OFF: Engine not running or less than 300 RPM\n6 = Compressor OFF: ECON Mode active OR Basic Setting not performed\n7 = Compressor OFF: System deactivated (by Driver)\n8 = Compressor OFF: Ambient Temperature too Low\n10 = Compressor OFF: Supply Voltage too Low\n11 = Compressor OFF: Engine Temperature too High\n12 = Compressor OFF: Requested by Engine Control Unit (ECU)\n14 = Compressor OFF: High Pressure Sensor (G65) faulty\n15 = Compressor OFF: Evaporator Temperature too Low
+002,2,Last,Shut-Off Criteria,See Factory Repair Manual for further Details\n\n0 = Compressor ON\n1 = Compressor OFF: Refrigerant Pressure too High\n2 = Compressor ON: Reduced Performance Requested by Engine Control Unit (ECU)\n3 = Compressor OFF: Refrigerant Pressure too High\n4 = Compressor OFF: Fault Code stored\n5 = Compressor OFF: Engine not running or less than 300 RPM\n6 = Compressor OFF: ECON Mode active OR Basic Setting not performed\n7 = Compressor OFF: System deactivated (by Driver)\n8 = Compressor OFF: Ambient Temperature too Low\n10 = Compressor OFF: Supply Voltage too Low\n11 = Compressor OFF: Engine Temperature too High\n12 = Compressor OFF: Requested by Engine Control Unit (ECU)\n14 = Compressor OFF: High Pressure Sensor (G65) faulty\n15 = Compressor OFF: Evaporator Temperature too Low
+002,3,Second to Last,Shut-Off Criteria,See Factory Repair Manual for further Details\n\n0 = Compressor ON\n1 = Compressor OFF: Refrigerant Pressure too High\n2 = Compressor ON: Reduced Performance Requested by Engine Control Unit (ECU)\n3 = Compressor OFF: Refrigerant Pressure too High\n4 = Compressor OFF: Fault Code stored\n5 = Compressor OFF: Engine not running or less than 300 RPM\n6 = Compressor OFF: ECON Mode active OR Basic Setting not performed\n7 = Compressor OFF: System deactivated (by Driver)\n8 = Compressor OFF: Ambient Temperature too Low\n10 = Compressor OFF: Supply Voltage too Low\n11 = Compressor OFF: Engine Temperature too High\n12 = Compressor OFF: Requested by Engine Control Unit (ECU)\n14 = Compressor OFF: High Pressure Sensor (G65) faulty\n15 = Compressor OFF: Evaporator Temperature too Low
+002,4,Third to Last,Shut-Off Criteria,See Factory Repair Manual for further Details\n\n0 = Compressor ON\n1 = Compressor OFF: Refrigerant Pressure too High\n2 = Compressor ON: Reduced Performance Requested by Engine Control Unit (ECU)\n3 = Compressor OFF: Refrigerant Pressure too High\n4 = Compressor OFF: Fault Code stored\n5 = Compressor OFF: Engine not running or less than 300 RPM\n6 = Compressor OFF: ECON Mode active OR Basic Setting not performed\n7 = Compressor OFF: System deactivated (by Driver)\n8 = Compressor OFF: Ambient Temperature too Low\n10 = Compressor OFF: Supply Voltage too Low\n11 = Compressor OFF: Engine Temperature too High\n12 = Compressor OFF: Requested by Engine Control Unit (ECU)\n14 = Compressor OFF: High Pressure Sensor (G65) faulty\n15 = Compressor OFF: Evaporator Temperature too Low
+;
+003,0,Left Temperature Flap Control Motor/Potentiometer (V158/G220)
+003,1,Potentiom. (G220),(actual),Range: 5...250\nTolerance (to Specification): 3
+003,2,Potentiom. (G220),(specified),Range: 5...250
+003,3,Learned,(Heating),Specification: 5...50
+003,4,Learned,(Cooling),Specification: 200...250
+;
+004,0,Right Temperature Flap Control Motor/Potentiometer (V159/G221)
+004,1,Potentiom. (G221),(actual),Range: 5...250\nTolerance (to Specification): 3
+004,2,Potentiom. (G221),(specified),Range: 5...250
+004,3,Learned,(Heating),Specification: 5...50
+004,4,Learned,(Cooling),Specification: 200...250
+;
+005,0,Footwell/Defroster Flap Control Motor/Potentiometer (V107/G135)
+005,1,Potentiom. (G135),(actual),Range: 5...250\nTolerance (to Specification): 3
+005,2,Potentiom. (G135),(specified),Range: 5...250
+005,3,Learned,(Footwell),Specification: 5...50
+005,4,Learned,(Defrost),Specification: 200...250
+;
+006,0,Central Flap Control Motor/Potentiometer (V70/G112)
+006,1,Potentiom. (G112),(actual),Range: 5...250\nTolerance (to Specification): 3
+006,2,Potentiom. (G112),(specified),Range: 5...250
+006,3,Learned,(Footwell),Specification: 5...50
+006,4,Learned,(Dashboard),Specification: 200...250
+;
+007,0,Recirculation Flap Control Motor/Potentiometer (V113/G143)
+007,1,Potentiom. (G143),(actual),Range: 5...250\nTolerance (to Specification): 3
+007,2,Potentiom. (G143),(specified),Range: 5...250
+007,3,Learned,(Recircul.),Specification: 5...50
+007,4,Learned,(Fresh Air.),Specification: 200...250
+;
+008,0,Air Flow Flap Control Motor/Potentiometer (V71/G113)
+008,1,Potentiom. (G113),(actual),Range: 5...250\nTolerance (to Specification): 3
+008,2,Potentiom. (G113),(specified),Range: 5...250
+008,3,Learned,(upper stop),Specification: 5...50
+008,4,Learned,(lower stop),Specification: 200...250
+;
+009,0,Temperatures (Interior)
+009,1,Outlet Temperature,Footwell (G192)
+009,3,Outlet Temperature,Left Vent (G150)
+009,4,Outlet Temperature,Right Vent (G151)
+;
+010,0,Temperatures
+010,1,Outlet Temperature,Evaporator (G263)
+010,2,Fresh Air Intake,Temperature (G89)
+010,3,Outside Air,Temperature (G17)
+010,4,Outside Air (calc.),Temperature
+;
+011,1,Interior Temp.,Sensor (G56)
+011,2,Interior Temp.,Sensor Fan (V42),Specification: min. 2000 RPM
+011,3,Coolant,Temperature
+011,4,Idle Speed,Increase,Range: ON/OFF
+;
+012,0,General
+012,1,Engine Speed
+012,2,Vehicle Speed
+012,3,Compressor,Torque Status,0 = Compressor Torque Signal current\n1 = Compressor Torque Signal outdated
+012,4,Compressor,Torque
+;
+013,0,Voltage Supply
+013,1,Fresh Air Blower,(V2) actual,Tolerance (to Specification): < 0.7 V
+013,2,Fresh Air Blower,(V2) specified,Specification: 0.0...12.5 V
+013,3,Dimming,Terminal 58d,Range: 0.0...100.0 %
+013,4,Dimming,Terminal 58s,Range: 0.0...100.0 %
+;
+014,1,Radiator Fan,(V7) specified,Range: 0.0...100.0 %
+014,2,Radiator Fan,(V7) actual,Range: 0.0...100.0 %
+014,3,Radiator Fan,(V7) Ansteuerung,1 = Stage 1\n10 = Stage 2
+;
+015,1,Fresh/Recirc.,Air Mode Request,See Factory Repair Manual for further Details\n\n00 = Recirculation NOT requested\n10 = Recirculation requested by Air Quality Sensor (G238)\n11 = Recirculation requested but rejected (Automatic Recirculation inactive)\n12 = Recirculation requested but rejected (Compressor OFF)\n13 = Recirculation requested but rejected (Defrost active)\n20 = Manual Recirculation active\n30 = Recirculation active (Front Wiper/Washer active)\n40 = Recirculation active (High Ambient Temperature)\n50 = Recirculation active (A/C deactivated by Driver)\n60 = Partial Recirculation active
+; 00 = Recirculation NOT requested
+; 10 = Recirculation requested by Air Quality Sensor (G238)
+; 11 = Recirculation requested but rejected (Automatic Recirculation inactive)
+; 12 = Recirculation requested but rejected (Compressor OFF)
+; 13 = Recirculation requested but rejected (Defrost active)
+; 20 = Manual Recirculation active
+; 30 = Recirculation active (Front Wiper/Washer active)
+; 40 = Recirculation active (High Ambient Temperature)
+; 50 = Recirculation active (A/C deactivated by Driver)
+; 60 = Partial Recirculation active
+015,2,Air Quality,Sensor (G238),See Factory Repair Manual for further Details\n\n0 = Missing Signal from Air Quality Sensor (G238)\n1 = Recirculation requested: Low Increase in oxidisable Gases \n2 = Recirculation requested: High Increase in oxidisable Gases\n3 = Recirculation requested: Low Increase in reducible Gases\n4 = Recirculation requested: High Increase in reducible Gases\n5 = Recirculation NOT requested (Fresh Air Mode/No Pollution recognised)\n7 = Recirculation NOT requested (Fresh Air Mode/No Pollution recognised)\n254 = Missing Signal from Air Quality Sensor (G238)\n255 = Missing Signal from Air Quality Sensor (G238)
+;   0 = Missing Signal from Air Quality Sensor (G238)
+;   1 = Recirculation requested: Low Increase in oxidisable Gases
+;   2 = Recirculation requested: High Increase in oxidisable Gases 
+;   3 = Recirculation requested: Low Increase in reducible Gases
+;   4 = Recirculation requested: High Increase in reducible Gases
+;   5 = Recirculation NOT requested (Fresh Air Mode/No Pollution recognised)
+;   7 = Recirculation NOT requested (Fresh Air Mode/No Pollution recognised)
+; 254 = Missing Signal from Air Quality Sensor (G238)
+; 255 = Missing Signal from Air Quality Sensor (G238)
+;
+016,1,Rear Window,Heating (Z1),Range: ON/OFF
+016,2,Front Window,Heating (Z2),1x = Front Window Heating Activation ON\nx1 = Front Window Heating ON
+016,3,Auxiliary,Heater,Range: ON/OFF
+016,4,Aux. Heater,Shut-Off Criteria,See Factory Repair Manual for further Details\n\n0 = Aux. Heater ON\n1 = Aux. Heater OFF: Ambient Temperature above 5 °C\n2 = Aux. Heater OFF: Blow-Out Temperature below 50 °C\n3 = Aux. Heater OFF: Temperature Flap less than 10 % opened\n4 = Aux. Heater OFF: Blow-Out Temperature below 42 °C\n5 = Aux. Heater OFF: System deactivated via ECON/OFF\n6 = Aux. Heater OFF: Temperature Flap less than 25 % opened
+; 0 = Aux. Heater ON
+; 1 = Aux. Heater OFF: Ambient Temperature above 5 °C
+; 2 = Aux. Heater OFF: Blow-Out Temperature below 50 °C
+; 3 = Aux. Heater OFF: Temperature Flap less than 10 % opened
+; 4 = Aux. Heater OFF: Blow-Out Temperature below 42 °C
+; 5 = Aux. Heater OFF: System deactivated via ECON/OFF
+; 6 = Aux. Heater OFF: Temperature Flap less than 25 % opened
+;
+017,0,Sun Intensity (G107)
+017,1,Sun Intensity,Left Side (G107),Range: 0...1000 W/m²
+017,2,Sun Intensity,Right Side (G107),Range: 0...1000 W/m²
+017,3,Front Window,Washer Pump,Range: ON/OFF
+017,4,Front Wiper,,Range: ON/OFF
+;
+018,1,Voltage,(Terminal 75)
+018,2,Voltage,(Terminal 15)
+018,3,Standing Time
+018,4,Ignition Key
+;
+019,1,Auxiliary,Heating,Range: ON/OFF
+019,2,Parking Lights,,Range: ON/OFF
+019,3,Communication,Matrix Version
+;
+080,0,Adanced Control Module Identification I
+080,1,Control Module,Identification I
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Heating/Air Conditioning (J255) Coding
+C01,0?xxx: Options
+C02,+1 = Heated Front Window installed
+C03,0x?xx: Compressor
+C04,0 = Compressor with Clutch (N25)
+C05,1 = Compressor with Regulator Valve (N280)
+C06,0xx?x: Country/Market
+C07,0 = Rest of World (RoW)
+C08,1 = North American Region (NAR)
+C09,2 = Japan (JP)
+C10,0xxx?: Vehicle/Engine Type
+C11,0 = Gasoline Engine with Left-Hand-Drive (LHD)
+C12,1 = Gasoline Engine with Right-Hand-Drive (RHD)
+C13,3 = Diesel Engine with Left-Hand-Drive (LHD)
+C14,4 = Diesel Engine with Right-Hand-Drive (RHD)
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+
+;

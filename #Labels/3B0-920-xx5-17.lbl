@@ -1,0 +1,312 @@
+;
+; VCDS Label File
+;
+; Copyright © 2005-2011 Ross-Tech, LLC
+;
+; VW Passat (3B)
+;
+; Component: J285 - Instrument Cluster (#17)
+;
+; P/N: 3B?-920-??7-???
+;
+; includes measuring blocks, adaptation, coding and service reset
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 3B-17.LBL
+; 3Bx-920-xx5.LBL
+;
+; created on 25/Mar/2005 by Sebastian Stange (sebastian@ross-tech.com)
+;
+; last modification on 24/May/2011
+;
+; requires VCDS 805.0 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,Speed / Engine speed / Oil pressure / Time
+001,1,Speed
+001,2,Engine Speed
+001,3,Oil pressure, 0.9 bar
+001,4,Time
+;
+002,0,Distance / Fuel / Ambient temperature
+002,1,Mileage
+002,2,Fuel Level
+002,3,Fuel Sender,Resistance
+002,4,Ambient,Temperature,MFD only
+;
+003,0,Coolant and Oil
+003,1,Coolant,Temperature
+003,2,Oil Level,,Display Range: Ok/n.Ok
+003,3,Oil,Temperature
+;
+022,0,Immobilizer
+022,1,Starting,permitted
+022,2,Engine (ECM),responds
+022,3,Key condition,OK
+022,4,Number of,keys coded
+;
+023,0,Immobilizer
+023,1,Variable code,authorized
+023,2,Key status,(transponder)
+023,3,Fixed code,authorized
+023,4,Immobilizer,status,see labelfile
+; 4 - new customer service - delivery condition (replacement part instrument cluster)
+; 5 - customer service locked - adaptation data programmed in customer service
+; 6 - immobilizer adapted - normal function condition
+; 7 - key adaptation active - key adaptation via tester
+;
+024,0,Immobilizer - locking periods
+024,1,Instrument,cluster
+024,2,Engine control, module (ECM)
+024,3,Emergency,release
+024,4,Transponder,recognition
+;
+025,0,Immobilizer Communication
+025,1,Immobilizer,Communication,1 = via CAN-Databus / 2 = via W-Line
+;
+050,0,Main Information
+050,1,Mileage
+050,2,Engine Speed
+050,3,Oil,Temperature
+050,4,Coolant,Temperature
+;
+125,0,CAN-Databus Communication (Powertrain)
+125,1,Engine
+125,2,Transmission
+125,3,ABS
+;
+126,0,CAN-Databus Communication (Powertrain)
+126,1,Steering,sensor
+126,2,Airbag
+;
+130,0,CAN-Databus Communication (Comfort)
+130,1,CAN-Databus,Status
+130,2,Comfort System
+130,3,Door electronics,driver
+130,4,Door electronics,passenger
+;
+131,0,CAN-Databus Communication (Comfort)
+131,1,Door electronics,rear left
+131,2,Door electronics,rear right
+;
+132,0,CAN-Databus Communication (Comfort)
+;
+140,0,CAN-Databus Communication (Infotainment)
+140,1,CAN-Databus,Status
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+A2,0,Service reminder
+A2,5,Service reminder reset
+A2,6,displayed values:
+A2,7,0 - no service
+A2,8,1 - service
+A2,9, 
+A2,10,reset:
+A2,11,0 - Service reminder reset
+;
+A4,0,Language for error messages and navigation (MFD only)
+A4,5,Language for error messages and navigation
+A4,6,1 - German
+A4,7,2 - English
+A4,8,3 - French
+A4,9,4 - Italian
+A4,10,5 - Spanish
+A4,11,6 - Portuguese
+A4,12,8 - Czech
+;
+A9,0,Dinstance (in 10km)
+A9,1,Distance
+A9,2,in 10
+A9,3,km
+A9,5,Distance changing
+A9,6,Before the cluster accepts the new
+A9,7,distance you have to login using 13861.
+A9,8, 
+A9,9,The distance can only be changed until
+A9,10,the current value is not over 100km.
+;
+A21,0,Key count (Immobilizer)
+A21,1,Old Key
+A21,2,count
+A21,3,[count]
+;
+A30,0,Fuel gauge adaption
+A30,1,Current,value
+A30,5,Fuel gauge adaption
+A30,6,Basic value: 100
+A30,7,Range: 120 - 136
+A30,8,Unit: 1 Ohm
+;
+A35,0,Engine speed threshold
+A35,5,Engine speed threshold adaption
+A35,6,Basic value: 0
+A35,7,Range: 0 - 1000
+A35,8,Unit: 250 U/min
+;
+A040,0,Mileage since Service
+A040,5,Mileage since Service
+A040,6,Increments: 1 = 100 km
+;
+A041,0,Time since Service
+A041,5,Time since Service
+A041,6,Increments: 1 = 1 day(s)
+;
+A042,0,Minimum Mileage to Service
+A042,5,Minimum Mileage to Service
+A042,6,Increments: 1 = 1000 km/mi
+A042,7,00015 = Standard (15.000 km)
+A042,8,or (if coded to miles)
+A042,9,00009 = Standard (9.000 mi)
+;
+A043,0,Maximum Mileage to Service
+A043,5,Maximum Mileage to Service
+A043,6,Increments: 1 = 1000 km/mi
+A043,7,00015 = fixed Service Intervals (15.000 km - w/o Longlife)
+A043,8,00030 = Gasoline Engines with flexible Service Intervals (30.000 km - with Longlife)
+A043,9,00050 = Diesel Engines with flexible Service Intervals (50.000 km - with Longlife)
+A043,10,or (if coded to miles)
+A043,11,00009 = fixed Service Intervals (9.000 mi - Great Britain - w/o Longlife)
+A043,12,00019 = Gasoline Engines with flexible Service Intervals (19.000 mi - with Longlife)
+A043,13,00031 = Diesel Engines with flexible Service Intervals (31.000 mi - with Longlife)
+;
+A044,0,Maximum Time to Service
+A044,5,Maximum Time to Service
+A044,6,Increments: 1 = 1 day(s)
+A044,7,00365 = fixed Service Intervals (w/o Longlife)
+A044,8,00730 = flexible Service Intervals (with Longlife)
+;
+A045,0,Oil Quality
+A045,5,Oil Quality
+A045,6,1 = fixed Service Intervals (w/o Longlife)
+A045,7,2 = Gasoline Engines with flexible Service Intervals (with Longlife)
+A045,8,4 = Diesel Engines with flexible Service Intervals (with Longlife)
+;
+A046,0,Total Consumption
+A046,5,Total Consumption
+A046,6,This value does not represent the actual consumption
+A046,7,but is rather an arithmetic value for the service interval display.
+;
+A047,0,Soot Entry
+A047,5,Soot Entry
+A047,6,Arithmetic value used to calculate the amount of soot in
+A047,7,the engine oil referenced to a distance of 100 km and used
+A047,8,as comparison value for the service interval display.
+;
+A048,0,Thermal Load
+A048,5,Thermal Load
+A048,6,Arithmetic value used to calculate the thermal stress of
+A048,7,the engine oil referenced to a distance of 100 km and used
+A048,8,as comparison value for the service interval display.
+;
+A050,0,Immobilizer (Vehicle Data learning)
+A050,1,Status
+A050,5,Immobilizer (Vehicle Data learning)
+A050,6,Please enter the Immobilizer PIN/SKC of the Engine Control Module (OLD PIN/SKC).
+A050,7,After that the Learning Process is being initiated the new Immobilizer Control
+A050,8,Module adopts the Vehicle-Identification-Number (VIN) and Immobilizer
+A050,9,Identification (IMMO-ID) of the Vehicle (from the OLD Engine Control Module).
+A050,10,Once the Adaptation is done switch the Ignition OFF for about 2 Minutes.
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Instrument Cluster (J285) Coding
+C01,??xxx: Options
+C02,+01 = Brake Pad Wear Warning active
+C03,+02 = Seatbelt Warning active
+C04,+04 = Washer Fluid Level Warning active
+C05,+16 = Secondary Display (Radio/Navigation) active
+C06,xx?xx: Country
+C07,0 = Germany | 1 = Europe | 2 = USA
+C08,3 = Canada/Mexico/Latin America | 4 = England
+C09,5 = Japan | 6 = Saudi Arabia | 7 = Australia
+C10,xxx?x: Service Intervals
+C11,0 = Fixed Service Interval w/o Oil Level & Temperature Sensor (PR-QG0)
+C12,1 = Flexible Service Interval with Oil Level & Temperature Sensor (PR-QG1)
+C13,2 = Fixed Service Interval with Oil Level & Temperature Sensor (PR-QG2)
+C14,3 = Service Interval Reminder inactive (USA/Canada)
+C15,xxxx?: Distance Impulse Number (K-Value)
+C16,1 = Speed Signal via CAN (23400)
+C17,3 = 6-Cylinder Light Armored Vehicle (4134)
+C18,5 = All other Engine Variants (4182)
+C19,6 = 8-Cylinder (W8 - 4128)
+;
+;
+;---------------------------------------------------
+;
+; service reset
+;
+;---------------------------------------------------
+;
+;
+RD,2,Service Reminder Status,1,
+RD,40,ST_DSS,100,DIST
+RD,41,ST_TSS,1,ST_D
+RD,42,ST_MIDTS,1000,DIST
+RD,43,ST_MADTS,1000,DIST
+RD,44,ST_MATTS,1,ST_D
+RD,45,ST_OQ,1,
+RD,47,ST_SQ,100,DIST
+RD,48,ST_TL,100,DIST
+RD,49,ST_MITTS,1,ST_D
+;
+RJ,0,0,Service Reset,,
+RJ,0,1,2,0
+;
+RJ,1,0,Change to flexible Intervals (Great Britain/Gasoline)
+RJ,1,1,42,9
+RJ,1,2,43,19
+RJ,1,3,44,730
+RJ,1,4,45,2
+;
+RJ,2,0,Change to flexible Intervals (Great Britain/Diesel)
+RJ,2,1,42,9
+RJ,2,2,43,31
+RJ,2,3,44,730
+RJ,2,4,45,4
+;
+RJ,3,0,Change to fixed Intervals (Great Britain)
+RJ,3,1,42,9
+RJ,3,2,43,9
+RJ,3,3,44,365
+RJ,3,4,45,1
+;
+RJ,4,0,Change to flexible Intervals (Rest of World/Gasoline)
+RJ,4,1,42,15
+RJ,4,2,43,30
+RJ,4,3,44,730
+RJ,4,4,45,2
+;
+RJ,5,0,Change to flexible Intervals (Rest of World/Diesel)
+RJ,5,1,42,15
+RJ,5,2,43,50
+RJ,5,3,44,730
+RJ,5,4,45,4
+;
+RJ,6,0,Change to fixed Intervals (Rest of World)
+RJ,6,1,42,15
+RJ,6,2,43,15
+RJ,6,3,44,365
+RJ,6,4,45,1
+;

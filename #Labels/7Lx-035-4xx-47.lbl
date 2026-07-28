@@ -1,0 +1,44 @@
+;
+; VCDS Label File
+;
+; Copyright © 2005+ Ross-Tech, LLC
+;
+; Bentley Continental (3W) / VW Phaeton (3D) / VW Touareg (7L) / VW Transporter (7H/7J)
+;
+; Component: R12/R44 - Sound System (#47)
+;
+; P/N: 3D0-035-4??-??? / 3W?-035-456-??? / 7L?-035-4??-???
+;
+; includes measuring blocks
+;
+; This file is part of a redirection package,
+; make sure you have all of the following files.
+;
+; 3D-47.LBL
+; 3W-47.LBL
+; 7L-47.LBL
+; 7Lx-035-4xx-47.LBL
+;
+; created on 15/Aug/2005 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 25/Jun/2012
+;
+; requires VCDS 11.11.2 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,General
+001,1,Supply Voltage,(Terminal 30)
+;
+080,0,Advanced Control Module Identification I
+080,1,Identification
+080,2,Revision
+080,3,Production,Date
+080,4,Manufacturer &,Test Stand Number
+;

@@ -1,0 +1,27 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2005-2009 Ross-Tech, LLC
+;
+; Seat Ibiza/Cordoba (6K) / VW Polo Classic/Variant (6V)
+;
+; Component: J285 - Instrument Cluster (#17)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 6K-17.LBL
+; 6K0-920-xxx-17.LBL
+; 6N0-920-xxx-17.LBL
+;
+; created on 12/May/2005 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 16/Nov/2008
+;
+; requires VCDS 805.0 or newer
+;
+;
+REDIRECT,6K0-920-xxx-17.LBL,6K0-920-???-???
+;
+REDIRECT,6K9-920-xxx-17.LBL,6K9-920-???-???
+;

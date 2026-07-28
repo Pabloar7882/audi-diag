@@ -1,0 +1,83 @@
+;
+; VCDS Label File
+;
+; Copyright © 2005-2009 Ross-Tech, LLC
+;
+; VW Bora/Golf/Jetta (1J/9M) / VW New Bettle (1C/1Y/9C) / VW Sharan (7M)
+;
+; Component: J567 - Automatic Headlight Aim Control Left (#29)
+;
+; P/N: 7M3-907-391
+;
+; includes measuring blocks, basic setting and coding
+;
+; This file is part of a redirection package,
+; make sure you have all of the following files.
+;
+; 7M-29.LBL
+; 7M-39.LBL
+; 7M0-907-391-29.LBL
+; 7M0-907-391-39.LBL
+;
+; created on 24/Aug/2005 by Sebastian Stange (sebastian@ross-tech.com)
+;
+; last modificationon on 10/Oct/2009
+;
+; requires VCDS 805.0 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks & basic setting
+;
+;---------------------------------------------------
+;
+;
+001,0,General (Power Supply)
+001,1,Voltage,Terminal 15
+001,2,Voltage,Terminal 56b
+001,3,Vehicle Speed
+001,4,Vehicle Status,,0 = Vehicle is stationary\n85 = Vehicle moving uniformly\n255 = Vehicle not moving uniformly
+;
+B001,0,Headlight Adjustment Position
+B001,1,Adjustment,Status, 
+B001,2, , , 
+B001,3, , , 
+B001,4, , , 
+;
+002,0,General
+002,1,Front Level,Sender (G78),Specification: 1.6...3.0 V
+002,2,Rear Level,Sender (G76),Specification: 2.0...3.0 V
+002,3,Basic Setting,Status
+002,4,Supply Voltage,Actuation Motor,Specification: 40.0...80.0 %
+;
+B002,0,Headlight Position Learning
+B002,1,Learning,Status, 
+B002,2, , , 
+B002,3, , , 
+B002,4, , , 
+;
+003,0,General
+003,1,Bulb Output,,Specification: 30.0...40.0 W
+003,2,Bulb Voltage,,Specification: 68.0...103.0 V
+003,3,Supply Voltage,Act. Motor (Slave),Specification: 40.0...80.0 %
+;
+080,0,Advanced Control Module Identification I
+080,1,Advanced,Identification
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Automatic Headlight Aim Control (J567) Coding
+C01,00001 = VW Golf (1J) Front-Wheel-Drive (FWD)
+C02,00002 = VW Golf (1J) 4Motion/All-Wheel-Drive (AWD)
+C03,00003 = VW Bora/Jetta (1J/9M) Front-Wheel-Drive (FWD)
+C04,00004 = VW Bora/Jetta (1J/9M) 4Motion/All-Wheel-Drive (AWD)
+C05,00005 = VW Sharan (7M)
+C06,00006 = VW New Beetle (1C/1Y/9Y)
+;

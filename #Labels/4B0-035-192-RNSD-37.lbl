@@ -1,0 +1,147 @@
+;
+; VCDS Label File
+;
+; Copyright © 2011 Ross-Tech, LLC
+;
+; Audi A2 (8Z) / Audi A3 (8L) / Audi A4 (8D/8E) / Audi A6 (4B) / Audi A8 (4D)
+;
+; Component: Radio/Navigation System (#37) RNS-D
+;
+; T/N: ??0-035-192-???
+;
+; includes measuring blocks and adaptation
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 4B-37.LBL
+; 4D-37.LBL
+; 8D-37.LBL
+; 8E-37.LBL
+; 8L-37.LBL
+; 8Z-37.LBL
+; 4B0-035-192-RNSD-37.LBL
+;
+; created on 25/Apr/2011 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 25/Apr/2011
+;
+; requires VCDS 10.6.4 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,General
+001,1,Speed Signal,recognized,Range: 0 = not recognized / 1 = recognized
+001,2,Supply Voltage,(Terminal 30),Range: 0.0...20.0 V\nSpecification: 8.0...15.0 V
+001,3,Illumination,(Terminal 58d)
+001,4,Ignition Status,(Terminal S),Range: ON/OFF
+;
+002,0,Input Signals
+002,1,Backup-Light,Switch,Range: Reverse OFF/Reverse ON
+002,2,Status,Terminal 15,Range: ON/OFF
+;
+003,0,GPS-Antenna (Active/Remote Supplied)
+003,1,GPS-Antenna
+003,2,GPS-Antenna,Status
+;
+004,0,External Display
+004,1,External Display
+004,2,External Display,Status,Range: OK/n.OK
+;
+005,0,CAN-Databus Communication
+005,1,CAN-Databus
+005,2,CAN-Databus,Status,Range: OK/n.OK
+;
+006,0,Speed Signal
+006,1,ABS-Sensor,Front Left
+006,2,Vehicle Speed
+;
+007,0,Production Diagnostics
+007,1,System,Status,Specification: 255\n\n+001 = CAN-Communication Navigation System OK\n+002 = Current Draw for GPS-Antenna (10-30 mA) OK\n+004 = Terminal 15 (Ignition ON) recognized\n+008 = Backup-Light Switch recognized\n+016 = CAN-Communication Instrument Cluster OK\n+032 = Signal Wheel Impulse at least once recognized\n+064 = Wheel Impulse Adaptation OK\n+128 = Tire Circumference Adaptation OK
+; +001 = CAN-Communication Navigation System OK
+; +002 = Current Draw for GPS-Antenna (10-30 mA) OK
+; +004 = Terminal 15 (Ignition ON) recognized
+; +008 = Backup-Light Switch recognized
+; +016 = CAN-Communication Instrument Cluster OK
+; +032 = Signal Wheel Impulse at least once recognized
+; +064 = Wheel Impulse Adaptation OK
+; +128 = Tire Circumference Adaptation OK
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+A001,0,Tire Circumference
+A001,5,Tire Circumference
+A001,6,The tire circumference is beeing adapted in "mm".
+A001,7,A tire circumference list can be found here:
+A001,8, 
+A001,9,http://de.openobd.org/audi/rns.htm#reifen
+;
+A002,0,Wheel Impulse
+A002,5,Wheel Impulse
+A002,6,The Distance Impulse describes the amount
+A002,7,of ABS Pulses per Wheel Revolution.
+A002,8, 
+A002,9,39 = Audi A2 (8Z) with 1.2l Economy
+A002,10,43 = Audi A2 (8Z) with all other Engines
+A002,11,45 = Audi A3 (8L) / Audi A4 (8D/8E) / Audi A6 (4B) / Audi A8 (4D)
+;
+A003,0,Production Diagnostics
+A003,5,Production Diagnostics
+A003,6,The Result of the Production Diagnostics is
+A003,7,displayed in Measuring Value Block 007 Field 1.
+A003,8, 
+A003,9,0 = Production Diagnostics inactive
+A003,10,1 = Production Diagnostics active
+;
+A004,0,Instrument Cluster Display
+A004,5,Instrument Cluster Display
+A004,6,RNS 4.0 & 4.1 (< CW 44/2001)
+A004,7,0 = Monochrome Display
+A004,8,1 = Color Display
+A004,9, 
+A004,10,RNS 4.2 (CW 45/2001 >)
+A004,11,0 = Monochrome Display (< MY 2001)
+A004,12,1 = Monochrome Display (MY 2002 >)
+;
+A005,0,Country
+A005,5,Country
+A005,6,0 = Europe (EU)
+A005,7,1 = North American Region (NAR)
+;
+A006,0,Telematics
+A006,5,Telematics
+A006,6,1 = Telematics not installed
+A006,7,3 = Telematics installed
+;
+A007,0,Options
+A007,5,Options
+A007,6,+1 = Card Reader installed
+A007,7,+2 = Multi-Function-Steering-Wheel (MFSW) installed (through KW 45/2001 - RNS 4.2)
+A007,8,+4 = TV-Tuner installed (from KW 45/2001 - RNS 4.2)
+A007,9,+8 = Voice Control installed (from KW 45/2001 - RNS 4.2)
+;
+A009,0,Speakers/Model
+A009,5,Speakers/Model
+A009,6,Suppresses a Fault Code which would otherwise be stored when installed
+A009,7,in Audi A4 Cabriolet (8H) Speakers are connected via a Capacitor.
+A009,8, 
+A009,9,0 = Audi A4 (8E) Limousine/Avant
+A009,10,1 = Audi A4 (8H) Cabriolet
+;
+A099,0,Transport Mode
+A099,5,Transport Mode
+A099,6,0 = Transport Mode OFF
+A099,7,1 = Transport Mode ON
+;

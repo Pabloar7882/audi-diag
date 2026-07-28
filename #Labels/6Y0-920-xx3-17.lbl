@@ -1,0 +1,310 @@
+;
+; VCDS Label File
+;
+; Copyright © 2010 Ross-Tech, LLC
+;
+; Skoda Fabia (6Y)
+;
+; Component: J285 - Instrument Cluster (#17)
+;
+; P/N: 6Y0-920-??3-???
+;
+; includes measuring blocks, adaptation, coding, login and service reset
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 6Y-17.LBL
+; 6Y-25.LBL
+; 6Yx-9xx-xxx-17.LBL
+; 6Y0-920-xx0-17.LBL
+; 6Y0-920-xx3-17.LBL
+; 6Y0-920-xx3-25.LBL
+;
+; created on 06/Dec/2010 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 06/Dec/2010
+;
+; requires VCDS 10.6.0 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,General
+001,1,Vehicle Speed
+001,2,Engine Speed
+001,3,Oil Pressure,Switch 2,Range: Oil Pr. 2 <min / Oil Pr. 2 OK
+001,4,Time
+;
+002,0,General
+002,1,Odometer
+002,2,Fuel Level
+002,3,Fuel Sender,Resistance
+002,4,Ambient,Temperature
+;
+003,0,General
+003,1,Coolant,Temperature
+003,2,Oil Level,,Range: Ok/n.Ok
+003,3,Oil,Temperature
+;
+005,0,Service Interval Information I
+005,1,Distance since,Service exceeded,Unit: 100 km
+005,2,Time since,Service exceeded,Unit: 1 day(s)
+005,3,Remaining Dist.,until Service,Unit: 100 km
+005,4,Remaining Time,until Service,Unit: 1 day(s)
+;
+012,0,Adaptation Channels I
+012,1,Adaptation,Channel
+012,2,Mileage,since Service
+012,3,Adaptation,Channel
+012,4,Days,since Service
+;
+013,0,Adaptation Channels II
+013,1,Adaptation,Channel
+013,2,Minimum Mileage,to Service
+013,3,Adaptation,Channel
+013,4,Maximum Mileage to Service
+;
+014,0,Adaptation Channels III
+014,1,Adaptation,Channel
+014,2,Maximum Time,to Service
+014,3,Adaptation,Channel
+014,4,Minimum Time,to Service
+;
+050,0,General
+050,1,Odometer
+050,2,Engine Speed
+050,3,Oil Temperature
+050,4,Coolant,Temperature
+;
+060,0,Installation Information
+;
+125,0,CAN-Databus Powertrain (Communication)
+125,1,Engine Electronics,,Range: Engine 1/Engine 0\nSpecification: Engine 1
+125,2,Transmission,Electronics,Range: Transm. 1/Transm. 0\nSpecification: Transm. 1
+125,3,Brake Electronics,(J104),Range: ABS 1/ABS 0\nSpecification: ABS 1
+;
+126,0,CAN-Databus Powertrain (Communication)
+126,1,Steering Angle,Sensor (G85),Range: Steer. ang. 1/Steer. ang. 0\nSpecification: Steer. ang. 1
+126,2,Airbag System,(J234),Range: Airbag 1/Airbag 0\nSpecification: Airbag 1
+126,3,Steering Aid,(J500),Range: Steering 1/Steering 0\nSpecification: Steering 1
+;
+127,0,CAN-Databus Powertrain (Communication)
+127,1,Central Electronics,(J519),Range: E.Load.Crtl 1/E.Load.Crtl 0\nSpecification: E.Load.Crtl 1
+;
+201,1,Distance Impulse Number
+201,1,Distance Impulse,Number
+;
+202,0,Engine Hood Contact
+202,1,Engine,Hood Contact,Range: open/closed (open if not installed)
+;
+221,0,Extended Service Interval (ESI)
+221,1,Maximum Fuel,Quantity per Cyl.
+221,2,Theoretical,Service Interval,Increments: 100 km
+221,3,Annual Distance,Driven,Increments: 100 km
+;
+225,0,CAN-Databus Powertrain (Timeout)
+225,1,Engine Electronics
+225,2,Transmission,Electronics
+225,3,Brake Electronics,(J104)
+;
+226,0,CAN-Databus Powertrain (Timeout)
+226,2,Airbag System,(J234)
+226,3,Steering Aid,(J500)
+;
+227,0,CAN-Databus Powertrain (Timeout)
+227,1,Central Electronics,(J519)
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Instrument Cluster (J285) Coding
+C01,??xxx: Equipment
+C02,+02 = Seatbelt Warning installed
+C03,+04 = Washer Fluid Warning installed
+C04,+08 = Check Lamp for "Lamp/Bulp Diagnostic" installed
+C05,+16 = Check Lamp for "Open Door(s)" installed
+C07,xx?xx: Country
+C08,0 = Germany (DE) / 1 = Europe (EU) / 2 = USA (US) / 3 = Canada (CDN)
+C09,4 = Great Britain (GB) / 5 = Japan (JP) /6 = Saudi Arabia (SA) / 7 = Australia (AUS)
+C10,xxx?x: Service Intervals
+C11,0 = fixed Service Intervals without Oil Level/Temperature Sensor (PR-QG0)
+C12,1 = flexible Service Intervals with Oil Level/Temperature Sensor (PR-QG1)
+C13,2 = fixed Service Intervals with Oil Level/Temperature Sensor (PR-QG2)
+C14,3 = without Service Intervals (USA/Canada)
+C15,xxxx?: Engine Type (Distance Impulse Number)
+C16,1 = All Engine/Transmission Combinations (Signal Source CAN: 23984)
+C17,1 = All Engine/Transmission Combinations (Signal Source Speed Sensor: 3775)
+C20,2 = 1.2l/40-47kW Gasoline Engines (Signal Source Speed Sensor: 3904)
+;
+;
+;---------------------------------------------------
+;
+; Login
+;
+;---------------------------------------------------
+;
+;
+L00,Instrument Cluster (J285) Login
+; 21597 = Freischaltung EEPROM lesen/schreiben
+L01,Note: Any Immobilizer related work like matching new Keys or replacing
+L02,the Instrument Cluster you have to use Address 25 (Immobilizer) instead.
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+A002,0,Service Reminder
+A002,5,Service Reminder
+A002,6,0 = Service NOT Due
+A002,7,1 = Service Due
+A002,8, 
+A002,9,To reset the service reminder save 0 as new value.
+;
+A003,0,Consumption Correction
+A003,5,Consumption Correction
+A003,6,Standard Value: 100 %
+A003,7,Display Range: 85...115 %
+A003,8,Increments: 1 %
+A003,9, 
+A003,10,Calculation based on volume per distance (e.g. l/100km):
+A003,11,New Adaptation Value = Old Adaptation Value * Calculated Consumption / Old Display Value
+A003,12,Calculation based on distance per volume (e.g. MPG):
+A003,13,New Adaptation Value = Old Adaptation Value * Old Display Value / Calculated Consumption 
+;
+A004,0,Language
+A004,5,Language
+A004,6,1 = German
+A004,7,2 = English
+A004,8,3 = French
+A004,9,4 = Italian
+A004,10,5 = Spanish
+A004,11,6 = Portuguese
+;
+A009,0,Mileage/Odometer
+A009,5,Mileage/Odometer
+A009,6,Increments: 1 = 10 km or 1 = 10 mi
+A009,7, 
+A009,8,The distance can only be changed once until
+A009,9,the current value is not over 100 km/62 mi.
+;
+A030,0,Tank Characteristic (Fuel Level Sensor)
+A030,5,Tank Characteristic (Fuel Level Sensor)
+A030,6,This channel is used to set the fuel gauge reserve mark
+A030,7,therfor fill the tank with 7 l of fuel and correct the
+A030,8,needle to hit the reserve mark. This is a parallel shift
+A030,9,of the tank characteristic.
+A030,10, 
+A030,11,Standard: 128
+A030,12,Range: 96...160 (-8.0...+8.0 l)
+A030,13,Increments: 1 = 1 Ohm = 1/4 l
+;
+A035,0,Speed Threshold
+A035,5,Speed Threshold
+A035,6,This value represents the speed threshold of the
+A035,7,dynamic oil pressure system. The threshold can be
+A035,8,raised in increments of 250 RPM.
+A035,9, 
+A035,10,Standard: 0
+A035,11,Range: 0...1000 U/min
+A035,12,Increments: 250 U/min
+;
+A039,0,Oil Temperature/Level Sensor Installation
+A039,5,Oil Temperature/Level Sensor Installation
+A039,6,0 = Oil Temperature/Level Sensor not installed
+A039,7,1 = Oil Temperature/Level Sensor installed
+;
+A040,0,Mileage since Service
+A040,5,Mileage since Service
+A040,6,Increments: 1 = 100 km
+;
+A041,0,Time since Service
+A041,5,Time since Service
+A041,6,Increments: 1 = 1 day(s)
+;
+A042,0,Minimum Mileage to Service
+A042,5,Minimum Mileage to Service
+A042,6,Increments: 1 = 100 km/mi
+A042,7,150 = Standard (15.000 km)
+A042,8,or (if coded to miles)
+A042,9,093 = Standard (9.300 mi - ohne Longlife)
+;
+A043,0,Maximum Mileage to Service
+A043,5,Maximum Mileage to Service
+A043,6,Increments: 1 = 100 km/mi
+A043,7,150 = fixed Service Intervals (15.000 km - w/o Longlife)
+A043,8,300 = flexible Service Intervals (30.000 km - with Longlife)
+A043,8,or (if coded to miles)
+A043,9,00093 = fixed Service Intervals (9.300 mi - w/o Longlife)
+A043,10,00180 = flexible Service Intervals (18.000 mi - with Longlife)
+;
+A044,0,Maximum Time to Service
+A044,5,Maximum Time to Service
+A044,6,Increments: 1 = 1 day(s)
+A044,7,00365 = fixed Service Intervals (w/o Longlife)
+A044,8,00730 = flexible Service Intervals (with Longlife)
+;
+A045,0,Oil Quality
+A045,5,Oil Quality
+A045,6,1 = fixed Service Intervals (w/o Longlife)
+A045,7,2 = flexible Service Intervals (with Longlife)
+;
+A046,0,Total Consumption
+A046,5,Total Consumption
+A046,6,This value does not represent the actual consumption
+A046,7,but is rather an arithmetic value for the service interval display.
+;
+A047,0,Soot Entry
+A047,5,Soot Entry
+A047,6,Arithmetic value used to calculate the amount of soot in
+A047,7,the engine oil referenced to a distance of 100 km and used
+A047,8,as comparison value for the service interval display.
+;
+A048,0,Thermal Load
+A048,5,Thermal Load
+A048,6,Arithmetic value used to calculate the thermal stress of
+A048,7,the engine oil referenced to a distance of 100 km and used
+A048,8,as comparison value for the service interval display.
+;
+A049,0,Minimum Time to Service
+A049,5,Minimum Time to Service
+A049,6,Increments: 1 = 1 day(s)
+A049,7,00365 = Standard
+;
+;
+;---------------------------------------------------
+;
+; Service Rückstellung
+;
+;---------------------------------------------------
+;
+;
+RD,2,Service Reminder Status,1,
+RD,40,ST_DSS,100,DIST
+RD,41,ST_TSS,1,ST_D
+RD,42,ST_MIDTS,100,DIST
+RD,43,ST_MADTS,100,DIST
+RD,44,ST_MATTS,1,ST_D
+RD,45,ST_OQ,1,
+RD,46,ST_TC,100,DIST
+RD,47,ST_SQ,100,DIST
+RD,48,ST_TL,100,DIST
+RD,49,ST_MITTS,1,ST_D
+;
+RJ,0,0,Service Reset,,
+RJ,0,1,2,0
+;

@@ -1,0 +1,231 @@
+;
+; VCDS Label File
+;
+; Copyright © 2004-2011 Ross-Tech, LLC
+;
+; VW Touareg (7LA)
+;
+; Component: J285 - Instrument Cluster (#17)
+;
+; P/N: 7L6-920-???-???
+;
+; includes coding, adaptation, measuring blocks
+;          and service reset
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 7L-17.LBL
+; 7L6-920-xxx-17-7L6.LBL
+; 7L6-920-xxx-17-7LA.LBL
+;
+; created on 13/Dec/2004 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 18/Aug/2011
+;
+; requires VCDS 805.0 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuaring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,Common Informations
+001,1,Vehicle Speed,,via CAN from brake control module
+001,2,Engine Speed,,via CAN from transmission control module
+001,3,Oil Pressure,,Specified Value: Oilpr.2 i.O.
+001,4,Clock
+;
+002,0,Common Informations
+002,1,Mileage
+002,2,Fuel Tank Content
+002,4,Ambient,Temperature,Display Range: -45...+65 °C | +70 °C = short circuit | -50 °C = open circuit
+;
+003,0,Coolant && Oil Temperature
+003,1,Coolant,Temperature,via CAN from engine control module
+003,2,Oil Level
+003,3,Oil Temperature
+;
+004,1,Battery Voltage
+;
+005,1,Fuel Gauge
+005,2,Fuel Supply,Sensor 3
+;
+006,1,Tank Content,(Main Chamber)
+006,2,Tank Content,(Side Chamber)
+;
+050,0,Common Informations
+050,1,Mileage
+050,2,Engine Speed
+050,3,Oil Temperature
+050,4,Coolant,Temperature
+;
+060,0,Installation Information (Senders && Sensors)
+;
+061,0,Checking Installation Information
+;
+080,0,Advanced Control Module Identification I
+;
+081,0,Advanced Control Module Identification II
+;
+082,0,Advanced Control Module Identification III
+;
+125,0,CAN-Databus Communication (Powertrain)
+125,1,Engine
+125,2,Transmission
+125,3,ABS
+;
+126,0,CAN-Databus Communication (Powertrain)
+126,2,Airbag
+;
+127,0,CAN-Databus Communication (Powertrain)
+127,2,All wheel,drive (AWD)
+;
+128,0,CAN-Databus Communication (Powertrain)
+128,2,Electrical Ignition
+128,3,Level Control
+;
+130,0,CAN-Databus Communication (Comfort)
+130,1,Comfort-CAN,Condition
+130,2,Comfortsystem
+130,3,Driver Door
+130,4,Passenger Door
+;
+131,0,CAN-Databus Communication (Comfort)
+131,1,Rear/Left Door
+131,2,Rear/Right Door
+131,3,Driver,Memory Seat
+131,4,Electrical System
+;
+132,0,CAN-Databus Communication (Comfort)
+132,2,Steering Wheel
+132,3,Climate
+132,4,Tire Pressure
+;
+133,0,CAN-Databus Communication (Comfort)
+133,2,Passenger,Memory Seat
+133,4,Parking Aid
+;
+134,0,CAN-Databus Communication (Comfort)
+134,2,Electrical Ignition
+;
+140,0,CAN-Databus Communication (Infotainment)
+140,1,Infotainment-CAN,Condition
+140,3,Radio/Navigation
+140,4,Telephone
+;
+141,0,CAN-Databus Communication (Infotainment)
+141,3,TV-Tuner
+;
+143,0,CAN-Databus Communication (Infotainment)
+143,1,Digital,Sound Package
+143,3,Parking Heater
+143,4,Roof Electronics
+;
+201,1,K-Value
+201,2,Wheel,Circumference
+201,3,Starting impulse,recognized
+;
+202,1,Engine Hood,Switch
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Instrument Cluster (J285) Coding
+C01,00??xx1: Options
+C02,+01 = Brakepad Warning active
+C03,+02 = Seatbelt Warning active
+C04,+04 = Washer Fluid Warning active
+C05,00xx?x1: Country
+C06,1 = Europe / 2 = USA / 3 = Canada/Mexico/Latin America
+C07,4 = Great Britain (GB) / 5 = Japan / 6 = Saudi Arabia / 7 = Australia
+C08,00xxx?1: Service Intervals
+C09,0 = fixed Service Intervals (PR-QG0) without Oil Level/Temperature Sensor
+C10,1 = flexible Service Intervals with Oil Level/Temperature Sensor (PR-QG1)
+C11,2 = fixed Service Intervals with Oil Level/Temperature Sensor (PR-QG2)
+C12,3 = without Service Intervals (USA/Canada)
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+A003,0,Consumption Correction
+A003,5,Consumption Correction
+A003,6,Standard Value: 100 %
+A003,7,Display Range: 85...115 %
+A003,8,Increments: 1 %
+A003,9, 
+A003,10,Calculation based on volume per distance (e.g. l/100km):
+A003,11,New Adaptation Value = Old Adaptation Value * Calculated Consumption / Old Display Value
+A003,12,Calculation based on distance per volume (e.g. MPG):
+A003,13,New Adaptation Value = Old Adaptation Value * Old Display Value / Calculated Consumption 
+;
+A004,0,Language
+A004,5,Language
+A004,6,1 = German
+A004,7,2 = English
+A004,8,3 = French
+A004,9,4 = Italian
+A004,10,5 = Spanish
+A004,11,6 = Portuguese
+A004,12,8 = Czech
+;
+A09,0,Mileage
+A09,5,Mileage shown in instrument cluster
+A09,6,Mileage can only be changed once until it
+A09,7,is not over 100 km/mi. On some instrument
+A09,8,clusters you do not need any login/security
+A09,9,code to change the value.
+;
+A30,0,Tank sensor
+A30,5,Tank sensor
+A30,6,Tank sensor can be adjusted by
+A30,7,steps of 1 from 108 to 148.
+;
+A35,0,Undocumented
+;
+A60,0,Undocumented (DATA-BUS Engine)
+;35951
+;
+A61,0,Undocumented (DATA-BUS Comfort)
+;447
+;
+A62,0,Undocumented (DATA-BUS Infotainment)
+;28752 = 111000001010000
+;
+;
+;---------------------------------------------------
+;
+; service reset
+;
+;---------------------------------------------------
+;
+;
+RD,2,Service Reminder Status,1,
+RD,40,ST_DSS,100,DIST
+RD,41,ST_TSS,1,ST_D
+RD,42,ST_MIDTS,1000,DIST
+RD,43,ST_MADTS,1000,DIST
+RD,44,ST_MATTS,1,ST_D
+RD,45,ST_OQ,1,
+RD,47,ST_SQ,100,DIST
+RD,48,ST_TL,100,DIST
+RD,49,ST_MITTS,1,ST_D
+;
+RJ,0,0,Service Reset,,
+RJ,0,1,2,0
+RC,0,0,The Service Reminder Reset Function is neither necessary nor possible on 
+RC,0,1,North American Region (NAR) Models since there is no Service Reminder.
+;

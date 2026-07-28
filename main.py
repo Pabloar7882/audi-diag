@@ -224,6 +224,11 @@ def main() -> int:
         help='List available KKL adapters and exit',
     )
     parser.add_argument(
+        '--probe-connection',
+        action='store_true',
+        help='Try a few wakeup strategies and print the results for debugging',
+    )
+    parser.add_argument(
         '--version',
         action='version',
         version='Audi A4 B5 Diagnostics v1.0.0',
@@ -246,6 +251,24 @@ def main() -> int:
     setup_logging(config)
     logger = logging.getLogger(__name__)
     
+    if args.probe_connection:
+        import asyncio
+        from kw1281_handler import KW1281Handler
+
+        port = config.serial.port
+        handler = KW1281Handler(port=port, baudrate=config.serial.baudrate)
+        results = asyncio.run(handler.probe_connection(port=port, baudrate=config.serial.baudrate))
+        print("=" * 60)
+        print("  KW1281 CONNECTION PROBE")
+        print("=" * 60)
+        for result in results:
+            if result.success:
+                print(f"[OK] strategy={result.strategy_name} port={result.port} baud={result.baudrate} address=0x{result.address:02X} use_rts={result.use_rts} sync=0x{result.sync_byte:02X} keyword=0x{result.keyword_lsb:02X} 0x{result.keyword_msb:02X}")
+            else:
+                print(f"[FAIL] strategy={result.strategy_name} port={result.port} baud={result.baudrate} address=0x{result.address:02X} use_rts={result.use_rts} error={result.error}")
+        print("=" * 60)
+        return 0
+
     # Handle list-ports
     if args.list_ports:
         from kw1281_handler import list_all_com_ports, find_kkl_adapters
@@ -306,7 +329,7 @@ def main() -> int:
             asyncio.run(run_headless(config))
         else:
             # GUI mode
-            gui_main()
+            gui_main(config)
     except KeyboardInterrupt:
         logger.info("Interrupted by user")
         return 130

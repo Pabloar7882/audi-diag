@@ -1,0 +1,38 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2005+ Ross-Tech, LLC
+;
+; Component: J743 - Transmission Electronic (#02) - Direct Selection Gearbox (DSG) 02E
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 02-02.LBL
+; 02E-300-0xx.LBL
+;
+; created on 05/Jan/2005 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 21/Jun/2012
+;
+; requires VCDS 805.0 or newer
+;
+;
+REDIRECT,02E-300-0xx.LBL,02E-300-011-???
+REDIRECT,02E-300-0xx.LBL,02E-300-012-???
+REDIRECT,02E-300-0xx.LBL,02E-300-013-???
+REDIRECT,02E-300-0xx.LBL,02E-300-014-???
+REDIRECT,02E-300-0xx.LBL,02E-300-041-???
+REDIRECT,02E-300-0xx.LBL,02E-300-042-???
+REDIRECT,02E-300-0xx.LBL,02E-300-043-???
+REDIRECT,02E-300-0xx.LBL,02E-300-044-???
+REDIRECT,02E-300-0xx.LBL,02E-300-046-???
+REDIRECT,02E-300-0xx.LBL,02E-300-047-???
+REDIRECT,02E-300-0xx.LBL,02E-300-050-???
+REDIRECT,02E-300-0xx.LBL,02E-300-051-???
+REDIRECT,02E-300-0xx.LBL,02E-300-052-???
+REDIRECT,02E-300-0xx.LBL,02E-300-053-???
+REDIRECT,02E-300-0xx.LBL,02E-300-054-???
+REDIRECT,02E-300-0xx.LBL,02E-300-057-???
+REDIRECT,02E-300-0xx.LBL,02E-300-058-???
+;

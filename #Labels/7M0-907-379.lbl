@@ -1,0 +1,62 @@
+;
+; VCDS Label File
+;
+; Copyright © 2012 Ross-Tech, LLC
+;
+; VW Sharan (7M)
+;
+; Component: J104 - Brake Electronics (#03) - Teves 04/ITT Mark 04
+;
+; P/N: 7M0-907-379-???
+;
+; includes measuring blocks
+;
+; created on 28/Mar/2012 by Sebastian Stange (sebastian@ross-tech.com)
+;
+; last modification on 28/Mar/2012
+;
+; requires VCDS 11.11.2 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,Current Wheel Speed
+001,1,Speed Sensor,Front Left (G47),Specification: 0.0...255.0 km/h
+001,2,Speed Sensor,Front Right (G45),Specification: 0.0...255.0 km/h
+001,3,Speed Sensor,Rear Left (G46),Specification: 0.0...255.0 km/h
+001,4,Speed Sensor,Rear Right (G44),Specification: 0.0...255.0 km/h
+;
+002,0,Starting Wheel Speed
+002,1,Speed Sensor,Front Left (G47),Specification: 0.0...254.0 km/h (255.0 km/h = standing)
+002,2,Speed Sensor,Front Right (G45),Specification: 0.0...254.0 km/h (255.0 km/h = standing)
+002,3,Speed Sensor,Rear Left (G46),Specification: 0.0...254.0 km/h (255.0 km/h = standing)
+002,4,Speed Sensor,Rear Right (G44),Specification: 0.0...254.0 km/h (255.0 km/h = standing)
+;
+003,0,Brake Light Switch
+003,1,Brake Light,Switch (F),Specification: not oper./operated
+;
+;
+;---------------------------------------------------
+;
+; Codierung
+;
+;---------------------------------------------------
+;
+;
+;C00,Brake Electronics (J104) Coding
+;
+;
+;---------------------------------------------------
+;
+; misc
+;
+;---------------------------------------------------
+;
+;
+SN,Teves 04/ITT Mark 04
+;

@@ -1,0 +1,87 @@
+;
+; VCDS Label File
+;
+; Copyright © 2012+ Ross-Tech, LLC
+;
+; Audi Cabriolet (8G) / Audi A8 (4D)
+;
+; Component: J362 - Immobilizer (#25)
+;
+; P/N: 4B0-953-234-???
+;
+; includes measuring blocks, adaptation, login and misc
+;
+; created on 19/Jul/2012 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 19/Jul/2012
+;
+; requires VCDS 11.11.3 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+022,0,System Status
+022,1,Engine Start,permitted,Specification: Yes\nRange: Yes/No
+022,2,Engine (ECU),responds,Specification: Yes\nRange: Yes/No
+022,3,Key Status,OK,Specification: Yes\nRange: Yes/No
+022,4,Number of,adapted Keys,Specification: 1...8
+
+023,0,Key && Adaptation Status
+023,1,Variable Code,authorized,Specification: Yes\nRange: Yes/No
+023,2,Key Status,(Transponder Lock),Range: Yes/No
+023,3,Fixed Code,authorized,Specification: Yes\nRange: Yes/No
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+A021,0,Immobilizer (Key Adaptation)
+A021,3,Key Count
+A021,5,Immobilizer (Key Adaptation)
+A021,6,Prior to Adapting new Keys the Adaptation has to be enabled by
+A021,7,logging in using the Immobilizer PIN/SKC. The Adaptation Value
+A021,8,is the number of all Keys to be adapted (Max. 4). After Saving
+A021,9,the Adaptation Value the first Key is adapted. The Learning of
+A021,10,all Keys should not exceed 30 Seconds.
+A021,11,Proceed until all Keys are adapted:
+A021,12,- Switch the Ingnition OFF and take out the Key.
+A021,13,- Switch the Ignition ON using the next Key.
+A021,14,- The Immobilizer Lamp should light up for 2 Seconds and then switch OFF.
+A021,15,- The Key is now adapted.
+;
+;
+;---------------------------------------------------
+;
+; Login
+;
+;---------------------------------------------------
+;
+;
+L00,Immobilizer (J362) Login
+L01,Prior to Key Learning or adapting a new USED Immobilizer
+L02,Control Module the Vehicle specific PIN/SKC (IMMO-Login)
+L03,of the new USED Immobilizer Control Module has to be used
+L04,to enable the adaptation.
+L05,You'll find the PIN/SKC on the Key Tag of the additional
+L06,Key (of the Donor Car) or you can acquire it through your
+L07,responsible Distribution Center or Importer.
+;
+;
+;---------------------------------------------------
+;
+; misc
+;
+;---------------------------------------------------
+;
+;
+SN,IMMO II
+;

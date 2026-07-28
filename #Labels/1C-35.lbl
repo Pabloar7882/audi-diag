@@ -1,0 +1,31 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2006-2008 Ross-Tech, LLC
+;
+; Component: J379 - Central Locking (#35)
+;
+; This file is part of a redirection package,
+; make sure you have all of the following files.
+;
+; 1C-35.LBL
+; 1C0-962-258-II.LBL
+; 1C0-962-258-III.LBL
+;
+; created on 27/Apr/2006 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 04/Nov/2008
+;
+; requires VCDS 805.0 or newer
+;
+REDIRECT,1C0-962-258-II.LBL,1C0-962-258-D
+REDIRECT,1C0-962-258-II.LBL,1C0-962-258-E
+REDIRECT,1C0-962-258-II.LBL,1C0-962-258-J
+REDIRECT,1C0-962-258-II.LBL,1C0-962-258-N
+REDIRECT,1C0-962-258-II.LBL,1C0-962-258-P
+REDIRECT,1C0-962-258-II.LBL,1C0-962-258-T
+;
+REDIRECT,1C0-962-258-III.LBL,1C0-962-258-AA
+REDIRECT,1C0-962-258-III.LBL,1C0-962-258-AB
+REDIRECT,1C0-962-258-III.LBL,1C0-962-258-AC
+;

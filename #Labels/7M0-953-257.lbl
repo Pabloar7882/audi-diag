@@ -1,0 +1,82 @@
+;
+; VCDS Labeldatei
+;
+; Ford Galaxy (7M) / Seat Alhambra (7M) / VW Sharan (7M)
+;
+; Component: J362 - Immobilizer (#25)
+;
+; P/N: 7M0 953 257 ?
+;
+; includes measuring blocks, coding, adaptation and login
+;
+; created on 10/Feb/2009 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 30/Apr/2009
+;
+; requires VCDS 805.1 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,General
+001,1,Number of,adapted Keys,Specification: 1...8
+001,2,Reader Coil,Status,Specification: 1 = OK\n\n0 = not OK\n1 = OK
+001,3,Key Status,(Transponder),Specification: 1 = OK\n\n0 = not OK (possibly defective)\n1 = OK
+001,4,Variable Code,authorized,Specification: 1 = Yes\n\n0 = No\n1 = Yes
+;
+002,0,General (from 09/1997)
+002,1,Key Learning,Time,(in Seconds)
+002,2,Number of Keys,(specified),Specification: 0...8
+002,3,Number of Keys,(actual),Specification: 0...8
+002,4,Key Matching,Status,?xxx = Fault Status (0 = No Fault / 1 = Fault)\nx?xx = Adaption (0 = finished / 1 = running)\nxx?x = Current Key (0 = OK / 1 = Not OK)\nxxx? = Current Adaptation (0 = OK / 1 = Not OK)
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Immobilizer (J362) Coding
+C01,The coding displays the used baud rate on the w-line for
+C02,communication between immobilizer and engine control unit.
+C03, 
+C04,through 08/1997:
+C05,09600 = all Models (Standard)
+C06, 
+C07,from 09/1997:
+C08,The coding/baud rate will be automatically determined by the control module.
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+
+;
+;
+;---------------------------------------------------
+;
+; login
+;
+;---------------------------------------------------
+;
+;
+L00,Immobilizer (J362) Login
+L01,Prior to Key Learning or adapting a new USED Immobilizer
+L02,Control Module the Vehicle specific PIN/SKC (IMMO-Login)
+L03,of the new USED Immobilizer Control Module has to be used
+L04,to enable the adaptation.
+L05,You'll find the PIN/SKC on the Key Tag of the additional
+L06,Key (of the Donor Car) or you can acquire it through your
+L07,responsible Distribution Center or Importer.
+;

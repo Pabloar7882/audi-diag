@@ -1,0 +1,28 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2005-2011 Ross-Tech, LLC
+;
+; Component: Engine (#01)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 1H-01.LBL
+; 3A-01.LBL
+; 8A-01.LBL
+; 051-907-311-ABS.LBL  (1.8l     @  90 HP - ABS/ADZ/ANN/ANP)
+;
+; created on 07/Mar/2005 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 18/Aug/2011
+;
+; requires VCDS 10.6.4 or newer
+;
+;
+REDIRECT,051-907-311-ABS.LBL,3A0-907-311     ; ABS/ADZ: (1H)
+REDIRECT,051-907-311-ABS.LBL,3A0-907-311-A   ; AAM/ANN: (1H, 3A)
+REDIRECT,051-907-311-ABS.LBL,3A0-997-311-X   ; ABS/ADZ: (1H)
+REDIRECT,051-907-311-ABS.LBL,3A0-997-311-AX  ; AAM/ANN: (1H, 3A)
+REDIRECT,051-907-311-ABS.LBL,3A0-997-311-BX  ; ADZ: (3A)
+;

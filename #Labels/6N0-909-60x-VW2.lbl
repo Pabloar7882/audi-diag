@@ -1,0 +1,64 @@
+;
+; VCDS Label File
+;
+; Copyright © 2001-2012 Ross-Tech, LLC
+;
+; VW Golf/Vento (1H) / VW Polo (6N)
+;
+; Component: J234 - Airbag (#15) VW2
+;
+; P/N: 6N0-909-60?-???
+;
+; includes measuring blocks, adaptation and misc
+;
+; created in the early days by an unknown subject ;)
+; updated on 23/Apr/2011 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 02/Feb/2012
+;
+; requires VCDS 11.2.2 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,Ignitiers I (Front Airbags && Front Belt Tensioners)
+001,1,Airbag,Driver Side,Specification: Correct\nRange: Correct/Signal too Low/Signal too High/Short to Ground/Short to Plus/Not Installed
+001,2,Airbag,Passenger Side,Specification: Correct\nRange: Correct/Signal too Low/Signal too High/Short to Ground/Short to Plus/Not Installed
+001,3,Belt Tensioner,Front Driver Side,Specification: Correct\nRange: Correct/Signal too Low/Signal too High/Short to Ground/Short to Plus/Not Installed
+001,4,Belt Tensioner,Front Pass. Side,Specification: Correct\nRange: Correct/Signal too Low/Signal too High/Short to Ground/Short to Plus/Not Installed
+;
+003,0,Voltage Supply
+003,1,Voltage Supply,,Specification: Correct
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+A001,0,Front Passenger Airbag Deactivation
+A001,1,Front Passenger,Airbag
+A001,2,Current Status
+A001,5,Front Passenger Airbag Deactivation
+A001,6,0 = Front Passenger Airbag active
+A001,7,1 = Front Passenger Airbag inactive
+A001,8, 
+A001,9,Note: Refer to Service Manual!
+;
+;
+;---------------------------------------------------
+;
+; misc
+;
+;---------------------------------------------------
+;
+;
+I,
+;

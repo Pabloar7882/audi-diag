@@ -1,0 +1,152 @@
+;
+; VCDS Label File
+;
+; Copyright © 2002-2012 Ross-Tech, LLC
+;
+; Audi TT (8N)
+;
+; Component: J429 - Central Locking (#35)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 8N-35.LBL
+; 8Nx-962-267.LBL
+;
+; includes measuring blocks, basic setting, login, coding and misc
+;
+; created on 15/Dec/2002 by Simon Graham (simgr@attbi.com)
+; updated on 21/Apr/2011 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 16/Apr/2012
+;
+; requires VCDS 10.6.4 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,Driver Door
+001,1,Drivers Door,Key Switch,Range: open/close/not oper.
+001,2,Interior Locking,Switch (E150),Range: lock/unlock/not oper.
+001,3,Door Lock,Status/Feedback,Range: locked/unlocked
+001,4,Safety Lock,Status/Feedback,Range: safe/not safe
+;
+002,0,Passenger Door
+002,1,Passenger Door,Key Switch,Range: open/close/not oper.
+002,3,Door Lock,Status/Feedback,Range: locked/unlocked
+002,4,Safety Lock,Status/Feedback,Range: safe/not safe
+;
+003,0,Door Contact Switches
+003,1,Drivers Door,Contact Switch,Range: Door open/Door closed
+003,2,Passenger Door,Contact Switch,Range: Door open/Door closed
+003,3,Interior Monitor.,Switch,Range: operated/not oper.
+;
+004,0,Fuel Flap / Trunk Lid
+004,1,Remote Switch,Fuel Flap,Range: open/not oper.
+004,2,Trunk Lid,Contact Switch,Range: Lid open/Lid closed
+004,3,Remote Switch,Trunk Lid,Range: open/not oper.
+;
+005,1,Interior,Lights,Range: ON/OFF
+005,2,Terminal 15,Shut-Off Delay,Range: Relay ON/Relay OFF
+005,3,Remote Control,Comfort Operation,Range: open/close/not oper.
+005,4,Luggage Comp,Light,Range: ON/OFF
+;
+006,0,Remote Control
+006,1,Remote Control,Key Number,Range: 0.0...4.0 (0 = None operated / 1-4 = Memory Location 1-4)
+006,2,Remote Control,Command,0 = inactive / 1 = active\n\nxxx? = Panic (NAR only)\nxx?x = Rear Lid\nx?xx = Lock\n?xxx = Unlock
+; 0 = inactive / 1 = active
+; xxx? = Panic (NAR only)
+; xx?x = Rear Lid
+; x?xx = Lock
+; ?xxx = Unlock
+006,3,Remote Control,Positions,0 = not occupied / 1 = occupied\n\nxxx? = Memory Location 1\nxx?x = Memory Location 2\nx?xx = Memory Location 3\n?xxx = Memory Location 4
+; 0 = NOT occupied / 1 = occupied
+; xxx? = Memory Location 1
+; xx?x = Memory Location 2
+; x?xx = Memory Location 3
+; ?xxx = Memory Location 4
+;
+007,1,Vehicle Speed
+007,2,Immobilizer,Status,ON = Immobilizer OK\nOFF = Immobilizer NOT OK (Engine Start blocked)
+007,3,Status,Terminal 15,Range: active/inactive
+007,4,Status,Terminal S,Range: active/inactive
+;
+008,0,Coding Flags
+008,1,Coding I,,?xx = Remote Control\nx?x = Safe Function inactive (NAR only)\nxx? = Remote Control Confirmation (Opening/Blink 2x)
+; ?xx = Remote Control
+; x?x = Safe Function inactive (NAR only)
+; xx? = Remote Control Confirmation (Opening/Blink 2x)
+008,2,Coding II,,?xxx = Terminal 87 Door/Window Motor Logic (NAR only)\nx?xx = Anti-Theft Confirmation (Horn)\nxx?x = Remote Control Confirmation (Locking/Blink 1x)\nxxx? = Time Delay for Trunk Unlocking OR Alarm Cycle for Sounder
+; ?xxx = Terminal 87 Door/Window Motor Logic (NAR only)
+; x?xx = Anti-Theft Confirmation (Horn)
+; xx?x = Remote Control Confirmation (Locking/Blink 1x)
+; xxx? = Time Delay for Trunk Unlocking OR Alarm Cycle for Sounder
+008,3,Coding III,,?xxx = Right-Hand-Drive (RHD)\nx?xx = Comfort Operation via Remote Control\nxx?x = Auto-Lock/Unlock\nxxx? = Automatic Convertible Top
+; ?xxx = Right-Hand-Drive (RHD)
+; x?xx = Comfort Operation via Remote Control
+; xx?x = Auto-Lock/Unlock
+; xxx? = Automatic Convertible Top
+008,4,Coding IV,,?xxx = Anti-Theft-System\nx?xx = Selective Central Locking\nxx?x = Anti-Theft Confirmation (Blink)\nxxx? = Anti-Theft LED (1 Hz)
+; ?xxx = Anti-Theft-System
+; x?xx = Selective Central Locking
+; xx?x = Anti-Theft Confirmation (Blink)
+; xxx? = Anti-Theft LED (1 Hz)
+;
+009,0,Convertible Top I
+009,1,Operation,Switch (E137)
+009,3,Canvas Cover,recognized
+009,4,Hard Top,recognized
+;
+010,0,Convertible Top II
+010,1,Front Lock,Switch (F172)
+010,2,Latch Open,Switch
+010,3,Cover Detector,Switch (F171)
+010,4,Front Lock,Switch (F202)
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+
+;
+A021,0,Remote Control learning (Memory Location)
+A021,5,Remote Control learning (Memory Location)
+A021,6,Select the Memory Location (1-4) to which the Remote should be adapted.
+A021,7,Save the new Value and press the Open/Lock Button on the Remote Control.
+A021,8, 
+A021,9,Additional Remote Controls can be learned by selecting different
+A021,10,Memory Locations. Continue until all Remotes are learned.
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Zentralverriegelung (J429) Codierung
+C01,+00001 = Rear Lid Opening via Rear Lid Lock Button
+C02,+00002 = Anti-Theft Locking Confirmation (Turn Signals)
+C03,+00004 = Selective Locking active
+C04,+00008 = Anti-Theft-System installed
+C05,+00016 = Half-Automatic Convertible Top (Roadster only)
+C06,+00032 = Auto-Lock/Unlock (Locking at 15 km/h)
+C07,+00064 = Comfort Operation (Windows/Sunroof) via Remote Control
+C08,+00128 = Right-Hand-Drive (RHD)
+C09,+00256 = Rear Lid Logic (Anti-Theft-System)
+C10,+00512 = Remote Control "Close" Confirmation (1x Turn Signals)
+C11,+01024 = Anti-Theft Locking Confirmation (Siren/Horn)
+C12,+02048 = Door/Window Logic (USA / Terminal 87)
+C13,+04096 = Remote Control "Open" Confirmation (2x Turn Signals)
+C14,+08192 = Remote Control active
+;

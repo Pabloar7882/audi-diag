@@ -1,0 +1,84 @@
+;
+; VCDS Label File
+;
+; Copyright © 2012 Ross-Tech, LLC
+;
+; Skoda Octavia (1U)
+;
+; Component: J343 - Automatic Headlight Aim Control (#29)
+;
+; P/N: 1U0-941-651
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 1U-29.LBL
+; 1U-39.LBL
+; 1U0-941-651-29.LBL
+; 1U0-941-651-39.LBL
+;
+; includes measuring blocks, basic settings and coding
+;
+; created on 28/Mar/2012 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 28/Mar/2012
+;
+; requires VCDS 11.11.3 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks & basic settings
+;
+;---------------------------------------------------
+;
+;
+001,0,General
+001,1,Voltage,(Terminal 15)
+001,2,Voltage,(Terminal 56b)
+001,3,Vehicle,Speed
+001,4,Vehicle,Status,  0 = Vehicle standing (up 5 km/h)\n 85 = Vehicle moving at constant Speed\n255 = Vehicle NOT moving at constant Speed
+;   0 = Vehicle standing (up to 5 km/h)
+;  85 = Vehicle moving at constant Speed
+; 255 = Vehicle NOT moving at constant Speed
+;
+B001,0,Adjustment Position
+B001,1,Status, , 
+B001,2, , , 
+B001,3, , , 
+B001,4, , , 
+;
+002,0,Sensors && Position Motors
+002,1,Front Sensor (G78),(actual),Range: 0.0...5.0 V\nSpecification (standing): 2.3...2.8 V
+002,2,Rear Sensor (G76),(actual),Range: 0.0...5.0 V\nSpecification (Front-Wheel-Drive): 1.9...2.3 V\nSpecification (All-Wheel-Drive): 3.5...3.9 V
+002,3,Adjustment Signal,Master > Slave
+002,4,Adjustment,Position Motor
+;
+B002,0,Adjustment Learning
+B002,1,Status, , 
+B002,2, , , 
+B002,3, , , 
+B002,4, , , 
+;
+003,0,Gas Discharge Lamp
+003,1,Current,Discharge Lamp,Range: 0.0...100.0 W\nSpecification: 32.0...65.0 W
+003,2,Voltage,Discharge Lamp,Range: 0.0...100.0 V\nSpecification: 45.0...95.0 V
+;
+080,0,Advanced Control Module Identification I
+080,1,Identification
+080,2,Revision
+080,3,Production,Date
+080,4,Manufacturer &,Test Stand Number
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Automatic Headlight Aim Control (J343) Coding
+C01,00005 = Skoda Octavia (1U) with Front-Wheel-Drive (FWD)
+C02,00006 = Skoda Octavia (1U) with All-Wheel-Drive (AWD)
+;

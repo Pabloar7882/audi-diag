@@ -1,0 +1,134 @@
+;
+; VCDS Label File
+;
+; Copyright © 2007-2011 Ross-Tech, LLC
+;
+; Seat Ibiza (6L) / Skoda Fabia (6Y) / VW Polo (9N)
+;
+; Component: J104 - Brake Electronics (#03) -  Bosch 5.7 ABS/ASR/EDS/ESP
+;
+; P/N: 6Q0-907-37?-???
+;
+; Includes measuring blocks, basic setting, login, coding and misc
+;
+; This File is part of a Label File Package,
+; make sure you have all of the following Files.
+;
+; 6Q-03.LBL
+; 6R-03.LBL
+; 6Q0-907-37x-ABS.LBL  (ABS/EDS 5.7)
+; 6Q0-907-37x-ABS2.LBL (ABS/EDS MK60)
+; 6Q0-907-37x-ASR.LBL  (ABS/EDS/ASR 5.7)
+; 6Q0-907-37x-ESP.LBL  (ABS/EDS/ASR/ESP 5.7)
+; 6R0-907-37x-ABS.LBL  (ABS/EDS 8.0)
+; 6R0-907-37x-ASR.LBL  (ABS/EDS/ASR 8.0)
+; 6R0-907-37x-ESP.LBL  (ABS/EDS/ASR/ESP 8.0)
+; 
+; created on 22/Oct/2007 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 20/Jun/2011
+;
+; requires VCDS 10.6.4 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks & basic setting
+;
+;---------------------------------------------------
+;
+;
+001,0,Wheel Speed
+001,1,Wheel Speed,Front Left,Display Range: 0...255 km/h
+001,2,Wheel Speed,Front Right,Display Range: 0...255 km/h
+001,3,Wheel Speed,Rear Left,Display Range: 0...255 km/h
+001,4,Wheel Speed,Rear Right,Display Range: 0...255 km/h
+;
+B001,0,Steering Angel Sensor (G85) Alignment
+B001,1,Steering Angel,Sensor (G85), 
+B001,2,Alignment, , 
+B001,3,Alignment,Status,Specification: OK
+B001,4, , , 
+;
+002,0,Switches && Buttons
+002,1,Brake Test Switch,,Display Range: 0/operated
+002,2,Brake Light Switch,,Display Range: 0/operated
+002,3,Parking Brake,Button,Display Range: 0/operated
+002,4,ESP-Passive,Button,Display Range: 0/operated
+;
+003,0,Engine Data
+003,1,Engine Speed
+003,2,Engine Torque
+003,3,Engine Torque,(loss)
+003,4,Throttle Valve Angle
+;
+B003,0,System Function Test Activation
+B003,1,Status, , 
+B003,2, , , 
+B003,3, , , 
+B003,4, , , 
+;
+004,0,Standing Time && EDL-T Flag
+004,1,Standing Time
+004,2,EDL-T Flag,,Display Range: ON/OFF\nSpecification: OFF
+;
+005,1,Steering Angle,Sensor (G85),Display Range: -720.0...+720.0 °\nTolerance: +/- 5.0 °
+005,2,Turn Rate,,Display Range: -69.0...+69.0 °/s
+005,3,Brake Pressure,,Display Range: -41.0...+292.0 bar\n\n-41.0 bar = short to ground\n290 bar = short to plus
+005,4,Lateral,Acceleration,Display Range: -25.0...+25.0 m/s²
+;
+006,1,Voltage Supply,(Terminal 30),Specification: 9.8...17.4 V
+006,2,Valve Relay,,Display Range: ON/OFF\nSpecification: ON
+006,3,Return Flow Pump,Status,Display Range: ON/OFF\nSpecification (Ignition ON/Engine OFF): OFF
+006,4,Workshop Code
+;
+B010,0,Brake System Bleeding
+B010,1,Status, , 
+B010,2, , , 
+B010,3, , , 
+B010,4, , , 
+;
+125,0,CAN-Databus Communication (Powertrain)
+125,1,Steering Angle,Sensor,Specification: Steer. ang. 1
+125,2,Automatic,Transmission,Specification: Transm. 1
+125,3,Engine,,Specification: Engine 1
+125,4,Instrument Cluster,,Specification: Instruments 1
+;
+;
+;---------------------------------------------------
+;
+; login
+;
+;---------------------------------------------------
+;
+;
+L00,Brake Electronics (J104) Login
+L01,40168 = Basic Setting Enabling
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Brake Electronics (J104/Bosch 5.7 ABS/ASR/ESP) Coding
+C01,Refer to the Factory Repair Manual for Coding Details.
+C02, 
+C03,If a Factory Repair Manual is not available or does not
+C04,contain Coding Information please contact Ross-Tech or
+C05,your local VCDS Reseller/Distributor for Assistance.
+C06, 
+C07,http://www.ross-tech.com/contact.html
+;
+;
+;---------------------------------------------------
+;
+; misc
+;
+;---------------------------------------------------
+;
+;
+SN,ABS/ASR/ESP Bosch 5.7
+;

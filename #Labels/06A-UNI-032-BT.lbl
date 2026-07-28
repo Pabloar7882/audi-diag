@@ -1,0 +1,55 @@
+;
+; VCDS Label File
+;
+; Copyright © 2010 Ross-Tech, LLC
+;
+; UNITRONIC
+;
+; Component: J220 - Engine (#01)
+;
+; P/N: 06A-UNI-032-BT
+;
+; includes readiness, coding and coding-II
+;
+; created on 02/Dec/2010 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modificationon on 02/Dec/2010
+;
+; requires VCDS 10.6.2 or newer
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Engine Control Unit (J220) Coding
+C01,This ECU has been modified with aftermarket software that may  
+C02,alter your ability to recode this control module. 
+C03, 
+C04,Please Contact your tuner for further information.
+;
+;
+;---------------------------------------------------
+;
+; login/coding-ii
+;
+;---------------------------------------------------
+;
+;
+L00,Engine (J220) Coding-2
+L01,11463 = Cruise Control System (CCS) Activation
+L02,16167 = Cruise Control System (CCS) Deactivation
+;
+;
+;---------------------------------------------------
+;
+; readiness
+;
+;---------------------------------------------------
+;
+;
+O,06A-UNI-032-BT
+;

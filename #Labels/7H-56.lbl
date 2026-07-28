@@ -1,0 +1,27 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2008-2011 Ross-Tech, LLC
+;
+; Component: R - Radio (#56)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 7H-56.LBL
+; 1K0-035-1xx-56.LBL (Radio X00)
+; 5M0-035-1xx-56.CLB (Modular Radio X10)
+;
+; created on 03/Mar/2008 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 19/Aug/2011
+;
+; requires VCDS 805.0 or newer
+;
+;
+REDIRECT,1K0-035-1xx-56.LBL,7H0-035-152-???  ; RCD200/MP3
+;
+REDIRECT,5M0-035-1xx-56.CLB,7H0-035-156-???  ; R110
+;
+REDIRECT,5M0-035-1xx-56.CLB,7H0-035-186-???  ; RCD310
+;

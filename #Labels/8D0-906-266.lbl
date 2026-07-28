@@ -1,0 +1,223 @@
+;
+; VCDS Label File
+;
+; Copyright © 2010-2011 Ross-Tech, LLC
+;
+; Audi A4 (8D)
+;
+; Component: J220 - Engine (#01) - AFC (2.8l 12V)
+;
+; P/N: 8D0-906-266-?
+;
+; See special notes on this Ecu:
+;
+; http://www.ross-tech.com/vag-com/audi_issues.html#HitachiOBD2
+;
+; Readiness Status via Generic OBD-2 (Binary Data in MVB 029)
+;
+; created on 01/Dec/2010 by Dana Smetanick (Dana@Ross-Tech.com)
+; updated on 28/Jan/2011 by Dana Smetanick (Dana@Ross-Tech.com) / added Coding
+; updated on 31/Jan/2011 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; requires VCDS 10.6.3 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks & basic setting
+;
+;---------------------------------------------------
+;
+;
+001,0,Note: Only run one group at a time on this ECU
+001,1,Engine Coolant, temperature, ECT (G62)
+001,2,MAF sensor, output voltage 
+001,3,Altitude, only w/SAI
+001,4,ECM voltage
+;
+002,0,Throttle position sensor
+002,1,TPS (G69) Coarse, Idle to WOT range, Specification: 0.250...4.750 V 
+002,2,TPS (G69) Fine, Idle && Lower, Partial throttle range: 0.250...1.275 V
+002,3,TPS (G69),Learning value, Specification: 0.250...0.500 V
+002,4,Closed Throttle, switch (F60), Specification: Open = 0 Closed = 1
+;
+003,0,Note: Only run one group at a time on this ECU
+003,1,Engine speed, (RPM)
+003,2,Engine load
+003,3,Throttle angle
+003,4,Vehicle speed
+;
+004,0,IAC && ASC Learning
+004,1,Idle Air Control, valve (IAC)
+004,2,Idle Speed, Control learning
+004,3,Idle Speed, Control learning
+;
+005,0,Oxygen Sensor Learning Bank 1
+005,1,O2s Learning,at Idle
+005,2,O2s Learning,Part Throttle I
+005,3,O2s Learning,Part Throttle II
+005,4,O2s Learning,Part Throttle III
+;
+006,0,Oxygen Sensor Learning  Bank 2
+006,1,O2s Learning,at Idle
+006,2,O2s Learning,Part Throttle I
+006,3,O2s Learning,Part Throttle II
+006,4,O2s Learning,Part Throttle III
+;
+007,0,Oxygen Sensor Control Bank 1
+007,1,O2s Control,, Specification: 0.0 +/- 6.0 %
+007,2,O2s Learning, Range
+007,3,O2s Learning, Diagnosis
+007,4,O2s Learning, Display
+;
+008,0,Oxygen Sensor Control Bank 2
+008,1,O2s Control,, Specification: 0.0 +/- 6.0 %,
+008,2,O2s Learning, Range
+008,3,O2s Learning, Diagnosis
+008,4,O2s Learning, Display
+;
+009,0,Note: Only run one group at a time on this ECU
+009,1,O2s Control, Bank 1
+009,2,O2s Control, Bank 2
+009,3,Evap Sol.(N80), Duty Cycle
+009,4,Throttle angle
+;
+010,0,Oxygen Sensor
+010,1,O2s Control, Bank 1, and momentary O2s learning value
+010,2,O2s Control, Bank 2, and momentary O2s learning value
+010,3,Heated O2s, Bank 1, control Voltage
+010,4,Heated O2s, Bank 2, control Voltage
+;
+011,1,Ignition Timing,, w/o knock or idle speed control
+011,2,Ignition Timing,, with knock and idle speed control
+011,3,Ignition Timing, Access to ISC, Idle Speed Control
+011,4,Closed Throttle, Position switch 
+;
+012,0,Note: Only run one group at a time on this ECU
+012,1,Engine Speed
+012,2,Engine Load
+012,3,Ignition Timing,Map switching
+012,4,Ignition Timing,,Retarded by knock control
+;
+013,0,Ignition Timing
+013,1,Ignition Timing,Map switching
+013,2,Ignition Timing,Cylinder 1, retarded by knock control
+013,3,Ignition Timing,Cylinder 2, retarded by knock control
+013,4,Ignition Timing,Cylinder 3, retarded by knock control
+;
+014,0,Ignition Timing
+014,1,Ignition Timing,Map switching
+014,2,Ignition Timing,Cylinder 4, retarded by knock control
+014,3,Ignition Timing,Cylinder 5, retarded by knock control
+014,4,Ignition Timing,Cylinder 6, retarded by knock control
+;
+015,1,Engine Speed 
+015,2,Knock Sensor,Cylinder 1
+015,3,Knock Sensor,Cylinder 2
+015,4,Knock Sensor,Cylinder 3
+;
+016,1,Engine Speed
+016,2,Knock Sensor,Cylinder 4
+016,3,Knock Sensor,Cylinder 5
+016,4,Knock Sensor,Cylinder 6
+;
+017,0,Note: Only run one group at a time on this ECU
+017,1,Timer 1
+017,2,Timer 2
+017,3,Engine load
+017,4,EGR temperature 
+;
+018,0,Idle Air Control
+018,1,Specified IAC, Duty Cycle
+018,2,Current Draw, IAC valve (N71)
+018,3,Power Control, IAC valve (N71)
+018,4,ECM Voltage, supply
+;
+019,0,Note: Only run one group at a time on this ECU
+019,1,Engine Power
+019,2,Intake Air, volume
+019,3,Vehicle Speed
+019,4,Fuel Injection, time
+;
+020,0,Secondary Air Injection (If Applicable)
+;
+021,0,Secondary Air Injection (If Applicable)
+;
+022,0,Traction control (If Applicable)
+;
+023,0,Note: Only run one group at a time on this ECU
+;
+027,0,Fuel level display
+;
+028,0,Note: Only run one group at a time on this ECU
+;
+029,0,Readiness Diagnostic Status *Note: Use generic OBD-2
+029,1,Readiness code,,000x00x0 is passed \ "x" = N/A
+029,2,Trip status, display
+;
+030,0,Evap System with Pressure Sensor (G172)
+;
+031,0,Misfire Recognition operating conditions
+;
+032,0,Bank 1 O2s
+;
+033,0,Bank 2 O2s
+;
+034,0,O2s
+;
+035,0,Three way catalytic convertor diagnosis, Bank 1
+;
+036,0,Three way catalytic convertor diagnosis, Bank 2
+;
+037,0,Sensor wheel learning
+;
+038,0,Misfire Recognition current
+;
+039,0,Misfire Recognition statistical
+;
+040,0,HO2s current front and rear
+;
+041,0,HO2s voltage front and rear
+;
+042,0,Diagnostic conditions for front O2s response time
+;
+043,0,Current conditions for front O2S response time
+;
+044,0,Diagnostic conditions for catalytic convertor
+;
+045,0,EVAP system tank diagnosis
+;
+046,0,Next Valid Group is 99
+;
+099,0,Note: Only run one group at a time on this ECU
+099,1,Engine speed
+099,2,Engine load
+099,3,ECT Coolant,Temperature 
+099,4,O2s Control,On/Off
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Engine Electronics (J220) Coding
+C01,??xxx: Country/Emission
+C02,01 = Exhaust Gas Recirculation and Evaporative Emissions Sensor (G172)
+C03,10 = Exhaust Gas Recirculation / Evaporative Emissions Sensor (G172) and Secondary Air Injection (SAI)
+C04,xx?xx: Drive/Additional Functions
+C05,0 = Front-Wheel-Drive w/o Traction Control (ASR)
+C06,1 = Front-Wheel-Drive with Traction Control (ASR)
+C07,2 = All-Wheel-Drive w/o Traction Control (ASR)
+C08,xxx?x: Transmission
+C09,0 = 5-Speed Manual Transmission
+C10,3 = 4 Speed Automatic Transmission (01N)
+C11,4 = 4 Speed Automatic Transmission (01F/01K - HP-18)
+C12,5 = 5 Speed Automatic Transmission (01V)
+C13,xxxx?: Vehicle Type
+C14,1 = B-Class (e.g. Audi A4)
+C15,2 = C-Class (e.g. Audi A6)
+C16,4 = Special (e.g. Audi Cabriolet)
+;

@@ -1,0 +1,72 @@
+;
+REDIRECT,1J0-907-487-A.LBL,A,B,C,D
+;
+; VCDS Labeldatei
+;
+; Copyright © 2005-2011 Ross-Tech, LLC
+;
+; Skoda Octavia (1U) / Skoda Superb (3U) / VW Golf/Jetta (1J)
+; VW Passat (3B) / VW Sharan (7M) / VW Transporter (7D)
+;
+; Component: J453 - Steering Wheel Electronics (#16)
+;
+; P/N: 1J0-907-487
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 1J0-907-487.LBL
+; 1J0-907-487-A.LBL
+;
+; includes measuring blocks and coding
+;
+; created on 07/Jun/2005 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 05/Mar/2011
+;
+; requires VCDS 805.0 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,Buttons right
+001,1,Button,"softer",Specification: operated/not operated
+001,2,Button,"louder",Specification: operated/not operated
+001,3,Button,"down",Specification: operated/not operated
+001,4,Button,"up",Specification: operated/not operated
+;
+002,0,Buttons left
+002,1,Button,"SET (-)",Specification: operated/not operated
+002,2,Button,"RES (+)",Specification: operated/not operated
+002,3,Button,"Cancel"/"Mode",Specification: operated/not operated
+002,4,Button,"Telephone",Specification: operated/not operated
+;
+003,0,Supply Voltage
+;003,1,
+003,2,Supply Voltage
+;
+080,0,Advanced Control Module Identification I
+;
+125,0,CAN-Databus Communication (Comfort)
+125,1,Instrument Cluster
+125,2,CAN-Databus,Comfort (Status)
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Steering Column Electronic (J453) Coding
+C01,00001 = Audio/Telephone and Cruise Control System (CCS)
+C02,00008 = Audio and Cruise Control System (CCS)
+C03,00118 = Audio and Cruise Control System (CCS) via CAN
+C04,00119 = Audio/Telephone and Cruise Control System (CCS) via CAN
+;

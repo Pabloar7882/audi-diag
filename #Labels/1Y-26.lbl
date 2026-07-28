@@ -1,0 +1,29 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2007-2009 Ross-Tech, LLC
+;
+; VW New Beetle Cabriolet (1Y)
+;
+; Component: J256 - Convertible Top (#26)
+;
+; This file is part of a redirection package,
+; make sure you have all of the following files.
+;
+; 1Y-26.LBL
+; 1Y0-959-255-HYD.LBL (Hydraulic/PR-3FT)
+; 1Y0-959-255-MEC.LBL (Mechanical/PR-3FM)
+;
+; created on 22/Jun/2007 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 12/Apr/2009
+;
+; requires VCDS 805.0 or newer
+;
+;
+REDIRECT,1Y0-959-255-HYD.LBL,1Y0-959-255      ; Hydraulic
+1Y0-959-255-A    ; ?
+1Y0-959-255-B    ; Mechanic
+REDIRECT,1Y0-959-255-HYD.LBL,1Y0-959-255-C    ; Hydraulic
+REDIRECT,1Y0-959-255-HYD.LBL,1Y0-959-255-D    ; Hydraulic
+;

@@ -1,0 +1,100 @@
+;
+; VCDS Label File
+;
+; Copyright © 2005-2011 Ross-Tech, LLC
+;
+; VW Bora/Golf/Jetta (1J)
+;
+; Component: J217 - Automatic Transmission (#02) - 09A
+;
+; P/n: 09A-927-750-??
+;
+; includes measuring blocks and coding
+;
+; created on 26/Mar/2005 by Sebastian Stange (Sebastian@Ross-Tech.com)
+; updated on 28/Jan/2011 by Dana Smetanick (Dana@Ross-Tech.com)
+; updated on 07/Feb/2011 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 09/Oct/2012
+;
+; requires VCDS 10.6.2 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks & basic settings
+;
+;---------------------------------------------------
+;
+;
+001,1,Vehicle Speed,,Display Range: 0...255 km/h
+001,2,Transmission,Speed (G182),Display Range: 0...7650 RPM
+001,3,Engine Speed,,Display Range: 0...7650 RPM
+001,4,Driving Mode
+;
+002,1,Accelerator,Pedal,Display Range: 0...99 %
+002,2,Solenoid,Valve 6 (N93),Display Range: 0...95 %
+002,3,ATF Temperature,,Display Range: -40...+170 °C
+002,4,Battery Voltage,,Display Range: 0...26 V
+;
+003,1,Vehicle Speed,,Display Range: 0...255 km/h
+003,2,Accelerator,Pedal,Display Range: 0...99 %
+003,3,Driving Mode
+003,4,Solenoid,Valve 4 (N91),Display Range: 4...94 %
+;
+004,1,Selector Lever,Position
+004,2,Multi-Function,Switch,1xx-xxxx = Tiptronic down (-)\nx1x-xxxx = Shift lever in Tiptronic mode\xx1-xxxx = Tiptronic up (+)\nxxx-1xxx = Multi-function switch 1\nxxx-x1xx = Multi-function switch 2\nxxx-xx1x = Multi-function switch 3\nxxx-xxx1 = Multi-function switch 4\n----1010 = P\n----0010 = R\n----0110 = N\n----0100 = D (Tiptronic)\n----0101 = 4\n----0001 = 3\n----1001 = 2
+; 1xx-xxxx = Tiptronic down (-)
+; x1x-xxxx = Shift lever in Tiptronic mode
+; xx1-xxxx = Tiptronic up (+)
+; xxx-1xxx = Multi-function switch 1
+; xxx-x1xx = Multi-function switch 2
+; xxx-xx1x = Multi-function switch 3
+; xxx-xxx1 = Multi-function switch 4
+; ----1010 = P
+; ----0010 = R
+; ----0110 = N
+; ----0100 = D (Tiptronic)
+; ----0101 = 4
+: ----0001 = 3
+; ----1001 = 2
+004,3,Multi-Function,Switch 3
+004,4,Condition of,Solenoid Valves,1xxxxxxx - Solenoid Valve 4 (N91)\nx1xxxxxx - Solenoid Shift Lock\nxx1xxxxx - Solenoid Valve 9 (N282)\nxxx1xxxx - Solenoid Valve 8 (N281)\nxxxx1xxx - Solenoid Valve 3 (N90)\nxxxxx1xx - Solenoid Valve 5 (N92)\nxxxxxx1x - Solenoid Valve 2 (N89)\nxxxxxxx1 - Solenoid Valve 1 (N88)
+; 1xxxxxxx - Solenoid Valve 4 (N91)
+; x1xxxxxx - Solenoid Shift Lock
+; xx1xxxxx - Solenoid Valve 9 (N282)
+; xxx1xxxx - Solenoid Valve 8 (N281)
+; xxxx1xxx - Solenoid Valve 3 (N90)
+; xxxxx1xx - Solenoid Valve 5 (N92)
+; xxxxxx1x - Solenoid Valve 2 (N89)
+; xxxxxxx1 - Solenoid Valve 1 (N88)
+;
+005,1,Selector Lever,Position
+005,2,Tiptronic Mode,Condition
+005,3,Driving Mode
+005,4,Multi-Function,Switch,1xx-xxxx = Tiptronic down (-)\nx1x-xxxx = Shift lever in Tiptronic mode\xx1-xxxx = Tiptronic up (+)\nxxx-1xxx = Multi-function switch 1\nxxx-x1xx = Multi-function switch 2\nxxx-xx1x = Multi-function switch 3\nxxx-xxx1 = Multi-function switch 4\n----1010 = P\n----0010 = R\n----0110 = N\n----0100 = D (Tiptronic)\n----0101 = 4\n----0001 = 3\n----1001 = 2
+; 1xx-xxxx = Tiptronic down (-)
+; x1x-xxxx = Shift lever in Tiptronic mode
+; xx1-xxxx = Tiptronic up (+)
+; xxx-1xxx = Multi-function switch 1
+; xxx-x1xx = Multi-function switch 2
+; xxx-xx1x = Multi-function switch 3
+; xxx-xxx1 = Multi-function switch 4
+; ----1010 = P
+; ----0010 = R
+; ----0110 = N
+; ----0100 = D (Tiptronic)
+; ----0101 = 4
+: ----0001 = 3
+; ----1001 = 2
+;
+007,1,Engine Speed,,Display Range: 0...7650 RPM
+007,2,Transmission,Speed (G182),Display Range: 0...7650 RPM
+007,3,Intermediate,Engine Speed,Display Range: 0...7650 RPM
+007,4,Vehicle Speed,,Display Range: 0...255 km/h
+;
+008,1,Accelerator,Pedal,Display Range: 0...99 %
+008,2,Main Pressure of,Solenoid Valve,Display Range: 0...95
+008,3,Brake Pressure,,Display Range: 0...100
+008,4,Driving Mode
+;

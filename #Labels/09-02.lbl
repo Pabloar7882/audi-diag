@@ -1,0 +1,30 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2005-2011 Ross-Tech, LLC
+;
+; Audi A3 (8P) / Audi TT (8N) / Seat Altea (5P) / Seat Toledo (5P)
+; Skoda Octavia (1Z) / VW Golf IV (1J) / VW Golf V (1K) / VW Touran (1T)
+;
+; Component: J217 - Transmission Electronics (#02)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 09-02.LBL
+; 09E-927-156.LBL
+; 09G-927-750.LBL
+;
+; created on 05/Jan/2005 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 27/Apr/2011
+;
+; requires VCDS 805.0 or newer
+;
+;
+REDIRECT,09E-927-156.LBL,09E-927-760-???
+;
+REDIRECT,09G-927-750.LBL,09G-997-750-???
+;
+REDIRECT,09G-927-750.LBL,09K-927-750-???
+;

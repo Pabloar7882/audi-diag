@@ -1,0 +1,29 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2011 Ross-Tech, LLC
+;
+; Component: J623 - Engine (#01)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 2D-01.LBL
+
+; created on 17/Aug/2011 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 17/Aug/2011
+;
+; requires VCDS 10.6.4 or newer
+;
+;
+;2D0-906-019     ; BCQ (2D)
+;2D0-906-019-A   ; AUH (2D)
+;2D0-906-019-C   ; AUH (2D)
+;2D0-906-019-H   ; AUH (2D)
+;2D0-906-019-G   ; AUH (2D)
+;
+;2D0-906-020-C   ; AGL (2D)
+;2D0-906-020-D   ; AGL (2D)
+;2D0-906-020-E   ; AGL (2D)
+;

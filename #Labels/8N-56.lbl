@@ -1,0 +1,25 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2009 Ross-Tech, LLC
+;
+; Component: R - Radio (#56)
+;
+; This file is part of a redirection package,
+; make sure you have all of the following files.
+;
+; 4B-56.LBL
+; 8D0-035-1xx-56.LBL
+; 8E0-035-1xx-56.LBL
+;
+; created on 23/Oct/2009 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 23/Oct/2009
+;
+; requires VCDS 805.0 or newer
+;
+;
+REDIRECT,8D0-035-1xx-56.LBL,8N0-035-186-A        ; Concert
+REDIRECT,8E0-035-1xx-56.LBL,8N0-035-186-B        ; Concert II
+REDIRECT,8E0-035-1xx-56.LBL,8N0-035-186-C        ; Concert II
+;

@@ -1,0 +1,93 @@
+;
+; VCDS Label File
+;
+; Copyright © 2012 Ross-Tech, LLC
+;
+; VW Golf/Bora (1J) / VW Passat (3B) / Skoda Superb (3U)
+;
+; Component: R12 - Sound System (#47)
+;
+; P/N: 1J0-035-456-??? / 3U0-035-456-???
+;
+; This file is part of a redirection package,
+; make sure you have all of the following files.
+;
+; 3U-47.LBL
+; 1J0-035-456.LBL
+;
+; includes measuring blocks and coding
+;
+; created on 28/Mar/2012 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 28/Mar/2012
+;
+; requires VCDS 11.11.2 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,General
+001,1,GALA-Signal,,0 = Signal NOT recognized\n1 = Signal recognized
+001,2,Supply Voltage,(Terminal 30)
+;
+;002,1,
+; Sound
+;002,2,
+; ON
+002,3,Telephone,Mute
+002,4,Status,Mute,Range: ON/OFF
+;
+003,0,Front Left Speaker
+003,1,Location/Type,,Range: Speaker FL
+003,2,Status,,Range: OK/Short Circuit/Open Circuit
+;
+004,0,Front Right Speaker
+004,1,Location/Type,,Range: Speaker FR
+004,2,Status,,Range: OK/Short Circuit/Open Circuit
+;
+005,0,Rear Left Speaker
+005,1,Location/Type,,Range: Speaker RL
+005,2,Status,,Range: OK/Short Circuit/Open Circuit
+;
+006,0,Rear Right Speaker
+006,1,Location/Type,,Range: Speaker RR
+006,2,Status,,Range: OK/Short Circuit/Open Circuit
+;
+007,0,Bass Speaker
+007,1,Location/Type,,Range: Bass FL
+;007,2,
+;0.0 %
+007,3,Location/Type,,Range: Bass FR
+;007,4,
+;0.0 %
+;
+009,1,Databus,Communication
+009,2,Databus,Status,Range: OK/Not OK
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Sound System (R12) Coding
+C01,00?xx: Model
+C02,1 = VW Golf/Jetta/Bora (1J/9M)
+C03,5 = VW Passat Limousine (3B) / Skoda Superb (3U)
+C04,6 = VW Passat Variant (3B)
+C05,00x?x: Options
+C06,+1 = Leather Interior
+C07,+2 = Navigation System
+C08,+4 = 4-Doors
+C09,+8 = Wagon/Combi
+C10,00xx?: Chassis
+C11,1 = Left-Hand-Drive (LHD)
+C12,2 = Right-Hand-Drive (RHD)
+;

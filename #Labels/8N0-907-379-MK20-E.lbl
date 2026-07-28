@@ -1,0 +1,137 @@
+;
+; VCDS Label File
+;
+; Copyright © 2011 Ross-Tech, LLC
+;
+; Audi TT (8N)
+;
+; Component: J104 - Brake Electronics (#03) - MK20 ABS/ASR/ESP
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 8N-03.LBL
+; 8N0-907-379-MK20.LBL   (MK20)
+; 8N0-907-379-MK20-E.LBL (MK20 ESP)
+; 8N0-907-379-MK60-A.LBL (MK60 AWD)
+; 8N0-907-379-MK60-F.LBL (MK60 FWD)
+;
+; includes measuring blocks, basic setting, login, coding and misc
+;
+; created on 15/Dec/2002 by Simon Graham (simgr@attbi.com)
+; updated on 21/Apr/2011 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 21/Apr/2011
+;
+; requires VCDS 10.6.4 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks & basic setting
+;
+;---------------------------------------------------
+;
+;
+001,0,Current Wheel Speed
+001,1,Speed Sensor,Front Left (G47),Range: 0.0...255.0 km/h
+001,2,Speed Sensor,Front Right (G45),Range: 0.0...255.0 km/h
+001,3,Speed Sensor,Rear Left (G46),Range: 0.0...255.0 km/h
+001,4,Speed Sensor,Rear Right (G44),Range: 0.0...255.0 km/h
+;
+B001,0,Brake Pump Bleeding
+B001,1,Status, , 
+B001,2, , , 
+B001,3, , , 
+B001,4, , , 
+;
+002,0,Starting Wheel Speed
+002,1,Speed Sensor,Front Left (G47),Range: 0.0...254.0 km/h\nSpecification (Standing): 255.0 km/h
+002,2,Speed Sensor,Front Right (G45),Range: 0.0...254.0 km/h\nSpecification (Standing): 255.0 km/h
+002,3,Speed Sensor,Rear Left (G46),Range: 0.0...254.0 km/h\nSpecification (Standing): 255.0 km/h
+002,4,Speed Sensor,Rear Right (G44),Range: 0.0...254.0 km/h\nSpecification (Standing): 255.0 km/h
+;
+003,1,Brake Light,Switch (F),Range: Not Oper./Operated
+003,2,Brake Pressure,Solen. Switch (F84),Range: Not Oper./Operated
+;
+004,1,Steering Angle,Sensor (G85),Range: -720.0...+720.0 °\nTolerance (when straight): ±4.5 °
+004,2,Lateral Acc.,Sensor (G200),Specification: ± 0.5 m/s²
+004,3,Rotation Rate,(G202) Yaw Rate,Specification: ± 2.5 °/s
+;
+005,0,Brake Pressure
+005,1,Brake Pressure,Sensor 1 (G201),Specification: ± 7.0 bar
+005,2,Brake Pressure,Sensor 2 (G214),Specification: ± 7.0 bar
+;
+006,0,Longitudinal Acceleration
+006,1,Long. Accel.,Sensor (G251),Specification: ± 0.5 m/s²
+;
+B040,0,Deactivation of Longitudinal Acceleration Sensor (G251)
+B040,1,Status, , 
+B040,2, , , 
+B040,3, , , 
+B040,4, , , 
+;
+B060,0,Adjustment of Steering Angle Sensor (G85)
+B060,1,Adjustment
+B060,2,Adjustment,Status
+B060,4,Steering Angle,Sensor (G85),Range: -720.0...+720.0 °\nTolerance (when straight): ±4.5 °
+;
+B063,0,Adjustment of Lateral Acceleration Sensor (G200)
+B063,1,Adjustment
+B063,2,Adjustment,Status
+B063,4,Lateral Acc.,Sensor (G200),Specification: ± 1.5 m/s²
+;
+B066,0,Adjustment of Brake Pressure Sensor (G201)
+B066,1,Adjustment
+B066,2,Adjustment,Status
+B066,3,Brake Pressure,Sensor 1 (G201),Specification: ± 7.0 bar
+B066,4,Brake Pressure,Sensor 2 (G214),Specification: ± 7.0 bar
+;
+B069,0,Adjustment of Longitudinal Acceleration Sensor (G251)
+B069,1,Adjustment
+B069,2,Adjustment,Status
+B069,4,Long. Accel.,Sensor (G251),Specification: ± 0.5 m/s²
+;
+125,0,CAN-Databus Communication (Powertrain)
+125,1,Engine,Electronics,Range: Engine 0/Engine 1\nSpecification: Engine 1
+125,2,Steering Angle,Sensor (G85),Range: Steer. ang. 1/Steer. ang. 0\nSpecification: Steer. ang. 1
+125,3,All-Wheel-Drive,Electronics (J492),Range: AWD 1/AWD 0\nSpecification: AWD 1
+;
+225,0,CAN-Databus Timout (Powertrain)
+225,1,Engine,Electronics
+225,2,Steering Angle,Sensor (G85)
+225,3,All-Wheel-Drive,Electronics (J492)
+;
+;
+;---------------------------------------------------
+;
+; login
+;
+;---------------------------------------------------
+;
+;
+L00,Brake Electronic (MK20 ABS/ASR/ESP) Login
+L01,40168 = Basic Setting Enabling
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Brake Electronic (MK20 ABS/ASR/ESP) Coding
+C01,23049 = Audi TT (8N) with Front-Wheel-Drive (FWD)
+C02,18446 = Audi TT (8N) with All-Wheel-Drive (AWD)
+;
+;
+;---------------------------------------------------
+;
+; misc
+;
+;---------------------------------------------------
+;
+;
+SN,MK20 ABS/ASR/ESP
+;

@@ -1,0 +1,26 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2005-2011 Ross-Tech, LLC
+;
+; Audi A3 (8L)
+;
+; Component: J285 - Instrument Cluster (#17)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 8L-17.LBL
+; 8L0-919-xxx-17.LBL
+; 8L0-920-xxx-17.LBL
+;
+; created on 26/Apr/2005 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 18/Aug/2011
+;
+; requires VCDS 10.6.4 or newer
+;
+;
+REDIRECT,8L0-919-xxx-17.LBL,8L0-919-???-???
+REDIRECT,8L0-920-xxx-17.LBL,8L0-920-???-???
+;

@@ -1,0 +1,39 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2008-2009 Ross-Tech, LLC
+;
+; Component: R - Radio (#56)
+;
+; This file is part of a redirection package,
+; make sure you have all of the following files.
+;
+; 1C-56.LBL
+; 1J-56.LBL
+; 1U-56.LBL
+; 6L-56.LBL
+; 6N-56.LBL
+; 6Q-56.LBL
+; 6X-56.LBL
+; 6Y-56.LBL
+; 1J0-035-15x-56.LBL
+; 1J0-035-18x-56.LBL
+; 1U0-035-156.LBL
+;
+; created on 07/Apr/2008 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 23/Jun/2009
+;
+; requires VCDS 805.0 or newer
+;
+;
+;REDIRECT,1J0-035-15x-56.LBL,1J0-035-152-B   ; BETA
+;
+;6Y0-035-152-??? ; MS 202
+;
+REDIRECT,1U0-035-156.LBL,6Y0-035-156-???     ; SYMPHONY CD
+;
+;6Y0-035-160-??? ; MS 402
+;
+;6Y0-035-161-??? ; MS 502
+;

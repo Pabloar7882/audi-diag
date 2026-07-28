@@ -1,0 +1,324 @@
+;
+; VCDS Label File
+;
+; Copyright © 2009-2011 Ross-Tech, LLC
+;
+; VW Touareg (7L6)
+;
+; Component: J285 - Instrument Cluster (#17)
+;
+; P/N: 7L6-920-???-???
+;
+; includes measuring blocks, coding, adaptation, 
+;          selective output test and service reset
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 7L-17.LBL
+; 7L6-920-xxx-7L6.LBL
+; 7L6-920-xxx-7LA.LBL
+;
+; created on 25/Mar/2009 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 18/Aug/2011
+;
+; requires VCDS 805.0 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuaring blocks
+;
+;---------------------------------------------------
+;
+;
+
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Instrument Cluster (J285) Coding
+C01,00??xx1: Options
+C02,+01 = Brakepad Warning active
+C03,+02 = Seatbelt Warning active
+C04,+04 = Washer Fluid Warning active
+C05,00xx?x1: Country
+C06,1 = Europe
+C07,2 = USA
+C08,3 = Canada/Mexico/Latin America
+C09,4 = Great Britain (GB)
+C10,5 = Japan
+C11,6 = Saudi Arabia
+C12,7 = Australia
+C13,00xxx?1: Service Intervals
+C14,0 = All Engines (except 5.0l V10 TDI-Engine)
+C15,1 = 5.0l V10 TDI-Engine only
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+A002,0,Service Reminder
+A002,5,Service Reminder
+A002,6,0 = Service NOT Due
+A002,7,1 = Service Due
+A002,8, 
+A002,9,IMPORTANT NOTE: If you need to reset the service reminder
+A002,10,please use the Automatic Service Reset (under Applications).
+;
+A003,0,Consumption Correction
+A003,5,Consumption Correction
+A003,6,Standard Value: 100 %
+A003,7,Display Range: 85...115 %
+A003,8,Increments: 1 %
+A003,9, 
+A003,10,Calculation based on volume per distance (e.g. l/100km):
+A003,11,New Adaptation Value = Old Adaptation Value * Calculated Consumption / Old Display Value
+A003,12,Calculation based on distance per volume (e.g. MPG):
+A003,13,New Adaptation Value = Old Adaptation Value * Old Display Value / Calculated Consumption 
+;
+A004,0,Language
+A004,5,Language
+A004,6,1 = German
+A004,7,2 = English
+A004,8,3 = French
+A004,9,4 = Italian
+A004,10,5 = Spanish
+A004,11,6 = Portuguese
+A004,12,8 = Czech
+;
+A009,0,Mileage/Odometer
+A009,5,Mileage/Odometer
+A009,6,Increments: 1 = 10 km or 1 = 10 mi
+A009,9,The distance can only be changed once before
+A009,10,the current value is not over 100 km/62 mi.
+A009,11,After changing the value can be corrected
+A009,12,within the next 5 km/3 mi.
+;
+A15,0,
+;16
+A15,1,
+;Hour
+A15,2,
+;N/A
+A15,3,
+;N/A
+A15,4,
+;N/A
+;
+A16,0,
+;3
+A16,1,
+;Minute
+A16,2,
+;N/A
+A16,3,
+;N/A
+A16,4,
+;N/A
+;
+A17,0,
+;2009
+A17,1,
+;Year
+A17,2,
+;N/A
+A17,3,
+;N/A
+A17,4,
+;N/A
+;
+A18,0,
+;10
+A18,1,
+;Month
+A18,2,
+;N/A
+A18,3,
+;N/A
+A18,4,
+;N/A
+;
+A19,0,
+;1
+A19,1,
+;Day
+A19,2,
+;N/A
+A19,3,
+;N/A
+A19,4,
+;N/A
+;
+;A025,0,
+;0
+;
+A030,0,Tank Characteristic (Fuel Level Sensor 1)
+A030,5,Tank Characteristic (Fuel Level Sensor 1)
+A030,6,Parallel shift of tank characteristic by +/- 32 Ohm.
+A030,7, 
+A030,8,Standard Value: 128
+A030,9,Value Range: 96...160 (-8.0...+8.0 l)
+A030,10,Increments: 1 = 1 Ohm = 1/4 l
+;
+A035,0,Speed Threshold
+A035,5,Speed Threshold
+A035,6,This value represents the speed threshold of the
+A035,7,dynamic oil pressure system. The threshold can be
+A035,8,raised in increments of 250 RPM.
+;
+A38,0,
+;ERROR: Security
+A38,3,
+;access
+A38,4,
+;required
+;
+A39,0,
+;
+A39,1,
+;ERROR:
+A39,2,
+;Security
+A39,3,
+;access
+A39,4,
+;required
+;
+A040,0,Mileage since Service
+A040,5,Mileage since Service
+A040,6,Increments: 1 = 100 km/mi
+;
+A041,0,Time since Service
+A041,5,Time since Service
+A041,6,Increments: 1 = 1 day(s)
+;
+A042,0,Minimum Mileage to Service
+A042,5,Minimum Mileage to Service
+A042,6,Increments: 1 = 100 km/mi
+A042,7,00150 = Standard (15.000 km)
+A042,8,or (if coded to miles)
+A042,9,00??0 = Standard (??.000 mi)
+;
+A043,0,Maximum Mileage to Service
+A043,5,Maximum Mileage to Service
+A043,6,Increments: 1 = 100 km/mi
+A043,7,00150 = fixed Service Intervals (15.000 km - w/o Longlife)
+A043,8,00300 = flexible Service Intervals (30.000 km - with Longlife)
+A043,9,or (if coded to miles)
+A043,11,00??0 = fixed Service Intervals (??.000 mi - w/o Longlife)
+A043,13,00??0 = flexible Service Intervals (??.000 mi - with Longlife)
+;
+A044,0,Maximum Time to Service
+A044,5,Maximum Time to Service
+A044,6,Increments: 1 = 1 day(s)
+A044,7,00365 = fixed Service Intervals (w/o Longlife)
+A044,8,00730 = flexible Service Intervals (with Longlife)
+;
+A045,0,Oil Quality
+A045,5,Oil Quality
+A045,6,1 = fixed Service Intervals (w/o Longlife)
+A045,7,2 = flexible Service Intervals (with Longlife)
+;
+A047,0,Soot Entry
+A047,5,Soot Entry
+A047,6,Arithmetic value used to calculate the amount of soot in
+A047,7,the engine oil referenced to a distance of 100 km and used
+A047,8,as comparison value for the service interval display.
+;
+A048,0,Thermal Load
+A048,5,Thermal Load
+A048,6,Arithmetic value used to calculate the thermal stress of
+A048,7,the engine oil referenced to a distance of 100 km and used
+A048,8,as comparison value for the service interval display.
+;
+A049,0,Minimum Time to Service
+A049,5,Minimum Time to Service
+A049,6,Increments: 1 = 1 day(s)
+A049,7,00365 = fixed Service Intervals (w/o Longlife)
+A049,8,00365 = Gasoline Engine with flexible Service Intervals (with Longlife)
+A049,9,00730 = Diesel Engine with flexible Service Intervals (with Longlife)
+;
+A050,0,Basic Distance Value for Oil Change with fixed Service Interval
+A050,5,Basic Distance Value for Oil Change with fixed Service Interval
+A050,6,Increments: 1 = 100 km/mi
+A050,7,00150 = 15.000 km (Rest of World/Canada)
+A050,8,or (if coded to miles)
+A050,9,00090 = 9.000 mi (Great Britain)
+A050,9,00160 = 16.000 mi (USA)
+;
+A051,0,Basic Time Value for Oil Change with fixed Service Interval
+A051,5,Basic Time Value for Oil Change with fixed Service Interval
+A051,6,Increments: 1 = 1 day(s)
+A051,7,00372 = fixed Service Intervals (w/o Longlife)
+;
+;A060,0,
+;0
+;
+;A061,0,
+;5
+;
+;A062,0,
+;5
+;
+;A063,0,
+;5
+;
+;A064,0,
+;10
+;
+;
+;---------------------------------------------------
+;
+; selective output test
+;
+;---------------------------------------------------
+;
+;
+T662,Tachometer (G5)
+T663,Speedometer (G21)
+T664,Fuel Gauge
+T499,Vehicle Voltage Display (Y11)
+T500,Oil Temperature Display (Y12)
+T626,Glow Plug Indicator Light (K29)
+T661,Temperature Indicator
+T665,Seat Belt Warning Light (K19)
+T1047,Brake and Parking Brake Warning Light (K7)
+T400,Turn Signal: Acoustic Return Message
+T666,Gong
+T1023,Buzzer/Chime (H3)
+T798,Display: Segment Test
+T3079,Display: Test Picture
+;
+;
+;---------------------------------------------------
+;
+; service reset
+;
+;---------------------------------------------------
+;
+;
+RD,2,Service Reminder Status,1,
+RD,40,ST_DSS,100,DIST
+RD,41,ST_TSS,1,ST_D
+RD,42,ST_MIDTS,1000,DIST
+RD,43,ST_MADTS,1000,DIST
+RD,44,ST_MATTS,1,ST_D
+RD,45,ST_OQ,1,
+RD,47,ST_SQ,100,DIST
+RD,48,ST_TL,100,DIST
+RD,49,ST_MITTS,1,ST_D
+;
+RJ,0,0,Service Reset,,
+RJ,0,1,2,0
+;

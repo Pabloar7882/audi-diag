@@ -1,0 +1,186 @@
+;
+; VCDS Label File
+;
+; Copyright © 2008+ Ross-Tech, LLC
+;
+; Seat Leon/Toledo (1M) / Skoda Octavia (1U) / VW Bora/Golf (1J)
+; VW New Beetle (1C/9C) / VW Passat (3B) / VW Polo Classic (9V)
+;
+; Component: J379 - Central Locking (#35) - Generation II (> MY 2001)
+;
+; P/N: 1C0-962-258-???
+;
+; includes measuring blocks, adaptation and coding
+;
+; This file is part of a label files package,
+; make sure you have all of the following files.
+;
+; 1C-35.LBL
+; 1C0-962-258-II.LBL
+; 1C0-962-258-III.LBL
+;
+; created on 01/Jan/2008 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 20/Jul/2012
+;
+; requires VCDS 805.0 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,Driver Door
+001,1,Key Switch,Driver Door,Range: open/closed/not operated/implausible
+001,2,Int. Door Handle,Driver Door,Range: lock/unlock/not operated/implausible
+001,3,Lock Feedback,Driver Door,Range: locked/unlocked
+001,4,Safe Feedback,Driver Door,Range: safe/not safe
+;
+002,0,Passenger Door
+002,1,Key Switch,Passenger Door,Range: open/closed/not operated/implausible
+002,2,Int. Door Handle,Passenger Door,Range: lock/unlock/not operated/implausible
+002,3,Lock Feedback,Passenger Door,Range: locked/unlocked
+002,4,Safe Feedback,Passenger Door,Range: safe/not safe
+;
+003,0,Door Rear Left/Right
+003,1,Lock Feedback,Rear Right,Range: locked/unlocked
+003,2,Safe Feedback,Rear Right,Range: safe/not safe
+003,3,Lock Feedback,Rear Left,Range: locked/unlocked
+003,4,Safe Feedback,Rear Left,Range: safe/not safe
+;
+004,0,Door Contact Switches
+004,1,Door Contact,Driver Door,Range: Door open/Door Closed
+004,2,Door Contact,Passenger Door,Range: Door open/Door Closed
+004,3,Door Contact,Rear Left/Right,Range: Door open/Door Closed/Not Installed
+;
+005,1,Central Locking,Thermal Protection,Range: Yes/No
+005,2,Vehicle Speed
+005,3,Remote Control,Buttons,Range: 0 = Not Operated / 1 = Operated\n\n?xxx = Open\nx?xx = Close\nxx?x = Rear Lid\nxxx? = Panic
+005,4,Interior Monitor.,Sensor,Range: Yes/No/Not Installed
+;
+006,1,Status,Terminal S,Range: operated/not operated
+006,2,Key Number,,Range: 0...4 (0 = not operated)
+006,3,Key Switch,Rear Lod,Range: Open/Closed/Not Oper./Implausible
+006,4,Status,Terminal 15,Range: Term.15 ON/Term.15 OFF
+;
+007,1,Contact Switch,Engine Hood,Range: open/closed
+007,2,Contact Switch,Rear Lid,Range: open/closed
+007,3,Signal,Close Windows
+007,4,Signal,Open Windows
+;
+008,1,Supply Voltage,(Terminal 30)
+008,2,Rear Lid,Button/Handle,Range: Operated/Not Oper./Implausible
+008,3,Interior Monitor.,Deactivation,Range: ON/OFF/not installed
+;
+009,1,Permanent code,known,Specification: OK/n.OK
+009,2,Code within,effective range,Specification: OK/n.OK
+009,3,Algorithm,,Specification: OK/n.OK
+;
+010,0,Alarm Source
+;   1 = Door Contact Switch Driver Door
+;   2 = Door Contact Switch Passenger Door
+;   4 = Door Contact Switch Rear Left Door
+;   8 = Door Contact Switch Rear Right Door
+;  16 = Door Contact Switch Rear Lid/Tailgate
+;  17 = Immobilizer
+;  18 = Power Supply
+;  32 = Engine hood contact switch
+;  64 = Ignition (Terminal 15)
+; 128 = Interior Monitoring
+; 255 = No Alarm Source recognized
+010,1,Last source,,See Label File
+010,2,2nd last source,,See Label File
+010,3,3rd last source,,See Label File
+010,4,4th last source,,See Label File
+;
+011,1,Immobilizer,key recognition,Specification: yes/no/not installed
+011,2,Automatic,lock/unlock switch,Specification: operated/not oper./implausible
+011,3,Rear,first detent,Specification: open/closed/not installed
+;
+;
+;---------------------------------------------------
+;
+; Coding
+;
+;---------------------------------------------------
+;
+;
+C00,Central Locking (J379) Coding
+C01,00256 = 2 Doors with Selective Unlocking
+C02,00257 = 2 Doors with Unlocking of all Doors
+C03,04096 = 4 Doors with Selective Unlocking
+C04,04097 = 4 Doors with Unlocking of all Doors
+;
+;
+;---------------------------------------------------
+;
+; Adaptation
+;
+;---------------------------------------------------
+;
+;
+A01,0,Remote control adaptation
+A01,5,Remote control adaptation
+A01,6,Enter the number of keys that should be adapted. Save.
+A01,7, 
+A01,8,Now press button 1 or 2 on every remote that
+A01,9,should be adapted for at least 1 second.
+A01,10, 
+A01,11,Note #1: All keys must be adapted in one procedure.
+A01,12,Note #2: Adaptation of all keys must not exceed 15 seconds.
+;
+A003,0,Auto-Lock
+A003,5,Auto-Lock
+A003,6,The doors will lock automatically when the
+A003,7,vehicle reaches a speed of 15 km/h or 10 mph.
+A003,8, 
+A003,9,Specification: 0 = off/1 = on
+;
+A004,0,Auto-Unlock
+A004,5,Auto-Unlock
+A004,6,The doors will unlock automatically when the key
+A004,7,is removed from the ignition switch.
+A004,8, 
+A004,9,Specification: 0 = off/1 = on
+;
+A005,0,Interior Monitoring
+A005,5,Interior Monitoring
+A005,6,Activation of interior monitoring system.
+A005,7, 
+A005,8,Specification: 0 = off/1 = on
+;
+A006,0,Unlock Horn
+A006,5,Unlock Horn
+A006,6,Horn beep when unlocking via remote control.
+A006,7, 
+A006,8,Specification: 0 = off/1 = on
+;
+A007,0,Lock Horn
+A007,5,Lock Horn
+A007,6,Horn beep when locking via remote control.
+A007,7, 
+A007,8,Specification: 0 = off/1 = on
+;
+A008,0,Unlock Blink
+A008,5,Unlock Blink
+A008,6,Blink when unlocking via remote control.
+A008,7, 
+A008,8,Specification: 0 = off/1 = on
+;
+A009,0,Lock Blink
+A009,5,Lock Blink
+A009,6,Blink when locking via remote control.
+A009,7, 
+A009,8,Specification: 0 = off/1 = on
+;
+A010,0,Country Setting
+A010,5,Country Setting
+A010,6,Country setting for alarm horn.
+A010,7, 
+A010,8,1 - Rest of World (RoW)
+A010,9,2 - Germany
+A010,10,3 - Great Britain
+;

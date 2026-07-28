@@ -1,0 +1,36 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2006-2011 Ross-Tech, LLC
+;
+; Audi A4 (8D)
+;
+; Component: Airbag (#15)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 8D-15.LBL
+; 8D0-959-655-AI7.LBL (Airbag 7)
+; 8D0-959-655-AI8.LBL (Airbag 8)
+;
+; created on 20/Mar/2006 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 20/Sep/2011
+;
+; requires VCDS 805.0 or newer
+;
+;
+REDIRECT,8D0-959-655-AI7.LBL,8D0-959-655-C   ; Airbag 7
+REDIRECT,8D0-959-655-AI7.LBL,8D0-959-655-E   ; Airbag 7
+REDIRECT,8D0-959-655-AI8.LBL,8D0-959-655-F   ; Airbag 8
+REDIRECT,8D0-959-655-AI8.LBL,8D0-959-655-G   ; Airbag 8
+REDIRECT,8D0-959-655-AI8.LBL,8D0-959-655-J   ; Airbag 8
+REDIRECT,8D0-959-655-AI8.LBL,8D0-959-655-K   ; Airbag 8
+REDIRECT,8D0-959-655-AI7.LBL,8D0-959-655-L   ; Airbag 7
+REDIRECT,8D0-959-655-AI7.LBL,8D0-959-655-M   ; Airbag 7
+REDIRECT,8D0-959-655-AI8.LBL,8D0-959-655-TA  ; Airbag 8
+REDIRECT,8D0-959-655-AI8.LBL,8D0-959-655-TB  ; Airbag 8
+REDIRECT,8D0-959-655-AI8.LBL,8D0-959-655-TC  ; Airbag 8
+REDIRECT,8D0-959-655-AI8.LBL,8D0-959-655-TD  ; Airbag 8
+;

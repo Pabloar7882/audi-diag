@@ -1,0 +1,25 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2007-2011 Ross-Tech, LLC
+;
+; Skoda Superb (3U)
+;
+; Component: J453 - Steering Wheel Electronics (#16)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 3U-16.LBL
+; 1J0-907-487.LBL
+; 1J0-907-487-A.LBL
+;
+; created on 27/Sep/2007 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 16/Aug/2011
+;
+; requires VCDS 10.6.4 or newer
+;
+;
+REDIRECT,1J0-907-487-A.LBL,3U0-907-487-A
+;

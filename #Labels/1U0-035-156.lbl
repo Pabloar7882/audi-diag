@@ -1,0 +1,92 @@
+;
+; VCDS Label File
+;
+; Copyright © 2009 Ross-Tech, LLC
+;
+; Skoda Fabia (6Y) / Skoda Octavia (1U)
+;
+; Component: R - Radio (#56) - Symphony
+;
+; P/N: 17S-035-159-??? / 1U0-035-156-??? / 6Y0-035-156-???
+;
+; This file is part of a redirection package,
+; make sure you have all of the following files.
+;
+; 6Y-56.LBL
+; 1U0-035-156.LBL
+;
+; includes measuring blocks, adaptation and coding
+;
+; created on 15/Oct/2009 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 15/Oct/2009
+;
+; requires VCDS 908.0 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,General
+001,1,GALA/Speed Signal,,0 = Signal NOT recognized\n1 = Signal recognized
+001,2,Supply Voltage,(Terminal 30),Range: 5.0...18.0 V
+001,3,Dimming,Terminal 58d (CAN),Specification: 29.0...98.0 %
+001,4,Status,S-Contact (CAN),Range: ON/OFF
+;
+002,0,Speaker/Line-Out (Front)
+002,1,Location/Type
+002,2,Status
+002,3,Location/Type
+002,4,Status
+;
+003,0,Speaker/Line-Out (Rear)
+003,1,Location/Type
+003,2,Status
+003,3,Location/Type
+003,4,Status
+;
+004,0,Remote Feed Antenna
+004,1,Type
+004,2,Component
+004,3,Status
+;
+005,0,Amplifier / Telephone Mute
+005,1,Control Output,Amplifier,0 = OK\n1 = Short to Ground
+005,3,Telephone,Mute
+005,4,Status,Mute,Range: ON/OFF
+;
+006,0,Communication Status CD-Changer (R41)
+006,1,Component
+006,2,Status
+;
+080,0,Advanced Control Module Identification I
+080,1,Advanced,Identification
+;
+081,0,Advanced Control Module Identification II
+081,1,Serial Number
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Radio (R) Coding
+C03,00?xx: Speaker Channels
+C04,0 = No passive Speakers (Sound System)
+C05,2 = 2 passive Speakers Front and 0 passive Speakers Rear
+C06,3 = 0 passive Speakers Front and 2 passive Speakers Rear
+C07,4 = 4 passive Speakers
+C08,00x?x: Sound System Correction
+C09,0 = No Sound System (No Correction)
+C10,00xx?: Radio Configuration
+C11,+1 = Active/Remote Powered Antenna
+C12,+2 = CD-Player/Changer
+C13,+4 = CAN-Secondary Display (Board Computer/large Display)
+;

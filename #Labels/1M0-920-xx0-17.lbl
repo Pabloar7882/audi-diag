@@ -1,0 +1,321 @@
+;
+; VCDS Label File
+;
+; Copyright © 2010 Ross-Tech, LLC
+;
+; Seat Leon/Toledo (1M)
+;
+; Component: J285 - Instrument Cluster (#17)
+;
+; P/N: 1M0-920-??0-???
+;
+; includes measuring blocks, adaptation, coding, login
+;          and service reset
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 1M-17.LBL
+; 1M0-919-xxx-17.LBL
+; 1M0-920-xx0-17.LBL
+; 1M0-920-xx2-17.LBL
+;
+; created on 11/Aug/2010 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 13/Aug/2010
+;
+; requires VCDS 10.3 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,General
+001,1,Vehicle Speed
+001,2,Engine Speed
+001,3,Oil Pressure,Switch 2,Range: Oil Pr. 2 <min / Oil Pr. 2 OK
+001,4,Time
+;
+002,0,General
+002,1,Odometer
+002,2,Fuel Level
+002,3,Fuel Sender,Resistance
+002,4,Ambient,Temperature
+;
+003,0,General
+003,1,Coolant,Temperature
+003,2,Oil Level,,Range: Ok/n.Ok
+003,3,Oil,Temperature
+;
+020,0,Immobilizer - ID Block 1
+020,1,Digit 1 && 2
+020,2,Digit 3 && 4
+020,3,Digit 5 && 6
+020,4,Digit 7 && 8
+;
+021,0,Immobilizer - ID Block 2
+021,1,Digit 9 && 10
+021,2,Digit 11 && 12
+021,3,Digit 13 && 14
+;
+022,0,Immobilizer I
+022,1,Engine Start,permitted,Specification: 1 = Yes\nRange: 0 = No / 1 = Yes
+022,2,Engine (ECU),responds,Specification: 1 = Yes\nRange: 0 = No / 1 = Yes
+022,3,Key Status,,Specification: 1 = Key OK\nRange: 0 = Key not OK / 1 = Key OK
+022,4,Number of,adapted Keys,Specification: 1...4
+;
+023,0,Immobilizer II
+023,1,Variable Code,authorized,Specification: 1 = Yes\nRange: 0 = No / 1 = Yes
+023,2,Key Status,(Transponder),Range: 0 = not locked / 1 = locked
+023,3,Fixed Code,authorized,Specification: 1 = Yes\nRange: 0 = No / 1 = Yes
+;
+050,0,General
+050,1,Odometer
+050,2,Engine Speed
+050,3,Oil Temperature
+050,4,Coolant,Temperature
+;
+125,0,CAN-Databus Communication (Powertrain)
+125,1,Engine,,Range: Engine 0/Engine 1\nSpecification: Engine 1
+125,2,Transmission,,Range: Transm. 0/Transm. 1
+125,3,Brake Electronics,(J104),Range: ABS 0/ABS 1\nSpecification: ABS 1
+;
+126,0,CAN-Datenbus Kommunikation (Antrieb)
+126,2,Airbags,(J234),Range: Airbag 0/Airbag 1\nSpecification: Airbag 1
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+A002,0,Service Reminder
+A002,5,Service Reminder
+A002,6,0 = Service NOT Due
+A002,7,1 = Service Due
+A002,8, 
+A002,9,To reset the service reminder save 0 as new value.
+;
+A003,0,Consumption Correction
+A003,5,Consumption Correction
+A003,6,Standard Value: 100 %
+A003,7,Display Range: 85...115 %
+A003,8,Increments: 1 %
+A003,9, 
+A003,10,Calculation based on volume per distance (e.g. l/100km):
+A003,11,New Adaptation Value = Old Adaptation Value * Calculated Consumption / Old Display Value
+A003,12,Calculation based on distance per volume (e.g. MPG):
+A003,13,New Adaptation Value = Old Adaptation Value * Old Display Value / Calculated Consumption 
+;
+A004,0,Language
+A004,5,Language
+A004,6,1 = German
+A004,7,2 = English
+A004,8,3 = French
+A004,9,4 = Italian
+A004,10,5 = Spanish
+A004,11,6 = Portuguese
+A004,12,7 = No Text
+A004,13,8 = Czech
+;
+A009,0,Mileage/Odometer
+A009,5,Mileage/Odometer
+A009,6,Increments: 1 = 10 km or 1 = 10 mi
+A009,7, 
+A009,8,The distance can only be changed once until
+A009,9,the current value is not over 100 km/62 mi.
+;
+A016,0,Distance Impulse Number
+A016,5,Distance Impulse Number
+A016,6,The displayed value cannot be modified.
+;
+A021,0,Immobilizer (Key Adaptation)
+A021,3,Key Count
+A021,5,Immobilizer (Key Adaptation)
+A021,6,Prior to Adapting new Keys the Adaptation has to be enabled by
+A021,7,logging in using the Immobilizer PIN/SKC. The Adaptation Value
+A021,8,is the number of all Keys to be adapted (Maximum 8).
+A021,9,After Saving the Adaptation Value the first Key is adapted.
+A021,10,Proceed until all Keys are adapted:
+A021,11,- Switch the Ingnition OFF and take out the Key.
+A021,12,- Switch the Ignition ON using the next Key.
+A021,13,- The Immobilizer Lamp should light up for 2 Seconds and then switch OFF.
+A021,14,- The Key is now adapted.
+;
+A030,0,Tank Characteristic (Fuel Level Sensor)
+A030,5,Tank Characteristic (Fuel Level Sensor)
+A030,6,This channel is used to set the fuel gauge reserve mark
+A030,7,therfor fill the tank with 7 l of fuel and correct the
+A030,8,needle to hit the reserve mark. This is a parallel shift
+A030,9,of the tank characteristic.
+A030,10, 
+A030,11,Standard: 128
+A030,12,Range: 120...136 (-2.0...+2.0 l)
+A030,13,Increments: 1 = 1 Ohm = 1/4 l
+;
+A035,0,Speed Threshold
+A035,5,Speed Threshold
+A035,6,This value represents the speed threshold of the
+A035,7,dynamic oil pressure system. The threshold can be
+A035,8,raised in increments of 250 RPM.
+A035,9, 
+A035,10,Standard: 0
+A035,11,Range: 0...1000 U/min
+A035,12,Increments: 250 U/min
+;
+A040,0,Mileage since Service
+A040,5,Mileage since Service
+A040,6,Increments: 1 = 100 km
+;
+A041,0,Time since Service
+A041,5,Time since Service
+A041,6,Increments: 1 = 1 day(s)
+;
+A042,0,Minimum Mileage to Service
+A042,5,Minimum Mileage to Service
+A042,6,Increments: 1 = 1000 km/mi
+A042,7,00015 = Standard (15.000 km)
+A042,8,or (if coded to miles)
+A042,9,00009 = Standard (9.000 mi)
+;
+A043,0,Maximum Mileage to Service
+A043,5,Maximum Mileage to Service
+A043,6,Increments: 1 = 1000 km/mi
+A043,7,00015 = fixed Service Intervals (15.000 km - w/o Longlife)
+A043,8,00030 = Gasoline Engines with flexible Service Intervals (30.000 km - with Longlife)
+A043,9,or (if coded to miles)
+A043,10,00009 = fixed Service Intervals (9.000 mi - Great Britain - w/o Longlife)
+A043,11,00019 = Gasoline Engines with flexible Service Intervals (19.000 mi - with Longlife)
+;
+A044,0,Maximum Time to Service
+A044,5,Maximum Time to Service
+A044,6,Increments: 1 = 1 day(s)
+A044,7,00365 = fixed Service Intervals (w/o Longlife)
+A044,8,00730 = flexible Service Intervals (with Longlife)
+;
+A045,0,Oil Quality
+A045,5,Oil Quality
+A045,6,1 = fixed Service Intervals (w/o Longlife)
+A045,7,2 = Gasoline Engines with flexible Service Intervals (with Longlife)
+A045,8,4 = Diesel Engines with flexible Service Intervals (with Longlife)
+;
+A046,0,Total Consumption
+A046,5,Total Consumption
+A046,6,This value does not represent the actual consumption
+A046,7,but is rather an arithmetic value for the service interval display.
+;
+A047,0,Soot Entry
+A047,5,Soot Entry
+A047,6,Arithmetic value used to calculate the amount of soot in
+A047,7,the engine oil referenced to a distance of 100 km and used
+A047,8,as comparison value for the service interval display.
+;
+A048,0,Thermal Load
+A048,5,Thermal Load
+A048,6,Arithmetic value used to calculate the thermal stress of
+A048,7,the engine oil referenced to a distance of 100 km and used
+A048,8,as comparison value for the service interval display.
+;
+A050,0,Immobilizer (Vehicle Data learning)
+A050,1,Status
+A050,5,Immobilizer (Vehicle Data learning)
+A050,6,Please enter the Immobilizer PIN/SKC of the Engine Control Module (OLD PIN/SKC).
+A050,7,After that the Learning Process is being initiated the new Immobilizer Control
+A050,8,Module adopts the Vehicle-Identification-Number (VIN) and Immobilizer
+A050,9,Identification (IMMO-ID) of the Vehicle (from the OLD Engine Control Module).
+A050,10,Once the Adaptation is done switch the Ignition OFF for about 2 Minutes.
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Instrument Cluster (J285) Coding
+C01,??xxx: Equipment
+C02,+01 = Brake Pad Warning installed
+C03,+02 = Seatbelt Warning installed
+C04,+04 = Washer Fluid Warning installed
+C05,+16 = Secondary Display (Radio/Navigation) installed
+C06,xx?xx: Country
+C07,1 = Europe (EU)
+C08,4 = Great Britain (GB)
+C09,xxx?x: Engine
+C10,4 = 4-Cylinder Engine
+C11,5 = 5-Cylinder Engine
+C12,6 = 6-Cylinder Engine
+C13,xxxx?: Distance Impulse Number
+C14,2 = 3538 (1.6l AEH)
+C15,2 = 3538 (1.8l 20V AGN/APG/BAF/AVV with Manual Transmission)
+C16,2 = 3538 (1.8l 20V AGN/APT/APG with Automatic Transmission)
+C17,2 = 3538 (1.9l TDI ASV/AGR/ALH/AHF and 2.3l V5 AQN/AZX/AGZ with Manual Transmission)
+C18,4 = 3650 (1.8l 20VT AUQ/APP and 1.9l TDI ARL and 2.8l V6 AUE/AWR)
+C19,6 = 4146 (1.6l AKL/AZD/AUS/ATN and 1.9l SDI AQM/AZW with Manual Transmission)
+C20,7 = 4358 (1.4l 16V AHW/APE/AUA/AXP)
+;
+;
+;---------------------------------------------------
+;
+; login
+;
+;---------------------------------------------------
+;
+;
+L00,Instrument Cluster (J285) Login
+L01,13861 = Adaptation Enabling
+L02, 
+L03,Prior to Key Learning or adapting a used replacement
+L04,Instrument Cluster the Vehicle specific PIN/SKC (Login)
+L05,of the replacement Instrument Cluster has to be used
+L06,to enable the adaptation.
+L07,You'll find the PIN/SKC on the Key Tag of the additional
+L08,Key (of the Donor Car) or you can acquire it through your
+L09,responsible Distribution Center or Importer.
+;
+;
+;---------------------------------------------------
+;
+; service reset
+;
+;---------------------------------------------------
+;
+;
+RD,2,Service Reminder Status,1,
+RD,40,ST_DSS,100,DIST
+RD,41,ST_TSS,1,ST_D
+RD,42,ST_MIDTS,1000,DIST
+RD,43,ST_MADTS,1000,DIST
+RD,44,ST_MATTS,1,ST_D
+;
+RJ,0,0,Service Reset,,
+RJ,0,1,2,0
+;
+RJ,1,0,Change to fixed Service Intervals,,
+RJ,1,1,42,15
+RJ,1,2,43,15
+RJ,1,3,44,365
+RC,1,0,Priot to Changing the Type of Service Interval
+RC,1,1,the Instrument Cluster Coding has to be modified.
+;
+RJ,2,0,Change to flexible Service Intervals (Gasoline)
+RJ,2,1,42,15
+RJ,2,2,43,30
+RJ,2,3,44,730
+RC,2,0,Priot to Changing the Type of Service Interval
+RC,2,1,the Instrument Cluster Coding has to be modified.
+;
+RJ,3,0,Change to flexible Service Intervals (Diesel)
+RJ,3,1,42,15
+RJ,3,2,43,50
+RJ,3,3,44,730
+RC,3,0,Priot to Changing the Type of Service Interval
+RC,3,1,the Instrument Cluster Coding has to be modified.
+;

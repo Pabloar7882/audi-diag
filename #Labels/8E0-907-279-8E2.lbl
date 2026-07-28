@@ -1,0 +1,182 @@
+;
+; VCDS Label File
+;
+; Copyright © 2005+ Ross-Tech, LLC
+;
+; Audi A4 (8E2/8E5)
+;
+; Component: J519 - Central Electronics (#09)
+;
+; P/N: 8E0-907-279-???
+;
+; includes measuring blocks, adaptation and coding
+;
+; created by Eric Maurier (Eric@Ross-Tech.com // www.vag-com.fr)
+; updated on 27/Sep/2004 by Sebastian Stange (Sebastian@Ross-Tech.com)
+; updated on 25/Apr/2012 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 25/Apr/2012
+;
+; requires VCDS 11.11.3 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,(Output Signals)
+001,1,Supply Voltage
+001,2,Horn,,Range: ON/OFF
+001,3,Status,Terminal 75,Range: ON/OFF
+001,4,Headlight,Washer,Range: ON/OFF
+;
+002,0,Turn Signals (Output Signals)
+002,1,Turn Signals,Front Left,Range: 0.0...100.0 %
+002,2,Turn Signals,Rear Left,Range: 0.0...100.0 %
+002,3,Turn Signals,Front Right,Range: 0.0...100.0 %
+002,4,Turn Signals,Rear Right,Range: 0.0...100.0 %
+;
+003,0,Parking Lights (Output Signals)
+003,1,Parking Light,Front Left,Range: 0.0...100.0 %
+003,2,Parking Light,Rear Left,Range: 0.0...100.0 %
+003,3,Parking Light,Front Right,Range: 0.0...100.0 %
+003,4,Parking Light,Rear Right,Range: 0.0...100.0 %
+;
+004,0,(Output Signals)
+004,1,High Beam,Left,Display Range: 0.0...100.0 %
+004,2,High Beam,Right,Display Range: 0.0...100.0 %
+004,3,License Plate,Light,Display Range: 0.0...100.0 %
+004,4,Emergency Flasher,Illumination,Display Range: 0.0...100.0 %
+
+5,0,Output signals: wipers,
+5,1,Front wiper,
+5,2,Front washer,
+5,3,Rear wiper,
+5,4,Rear washer,
+
+6,0,Input signals,
+6,1,Rotary,light switch
+6,2,Warning button,activation, 
+6,3,Terminal 75,
+6,4,Wiper speed
+
+
+7,0,Input signals on comfort bus,
+7,1,High beams,
+7,2,Flashing,
+7,3,Turn signal L,
+7,4,Turn signal R,
+
+
+8,0,Input signals on comfort bus: wipers,
+8,1,Front wiper,
+8,2,Front washer,
+8,3,Rear wiper,
+8,4,Rear washer,
+
+9,0,Input signals on comfort bus,
+9,1,Terminal 15,
+9,2,S Contact,
+9,3,Speed interval,
+9,4,Vacant,
+
+10,0,Output signals (highline only),
+10,1,Low beam left,
+10,2,Low beam right,
+10,3,Backup light,left
+10,4,Backup light,right
+
+11,0,Output signals (highline only),
+11,1,Fog light FL,
+11,2,Fog light FR,
+11,3,Fog light rear,
+11,4,Vacant,
+
+12,0,Output signals (highline only),
+12,1,Brake light,left
+12,2,Brake light,right
+12,3,Brake light,center
+12,4,Vacant
+
+13,0,Input signals (highline only),
+13,1,Brake switch
+13,2,Brake switch,(test)
+13,3,Light sensor
+13,4,Vacant
+
+14,0,Input signals bus confort(highline only),
+14,1,Driver`s door,open
+14,2,Speed,
+14,3,Outside temp,
+14,4,Vacant,
+
+080,0,Advanced Control Module Identification I
+080,1,Identification
+080,2,Revision
+080,3,Production,Date
+080,4,Manufacturer &,Test Stand Number
+;
+081,0,Advanced Control Module Identification II
+081,1,Vehicle Ident.,Number (VIN)
+081,2,Control Module,Serial Number
+;
+125,0,CAN-Databus Communication (Comfort)
+125,1,Instrument Cluster,,Specification: Instruments 1
+125,2,Steering Wheel,Electronics,Specification: St. Wheel 1
+125,3,Comfort System,,Specification: Central 1
+125,4,Trailer Electronics,,Specification: Trailer 1
+;
+126,0,CAN-Databus Communication (Comfort)
+126,1,Door Electronics,Driver's Door,Specification: Dr. Door 1
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Central Electronics (J519) Coding
+C01,0?xxx: Light Sensor
+C02,0 = Light Sensor not installed
+C03,1 = Light Sensor installed
+C04,0x?xx: Trailer Hitch
+C05,0 = Trailer Hitch not installed
+C06,1 = Trailer Hitch installed
+C07,0xx?x: Headlights
+C08,0 = Halogen Headlights
+C09,1 = Xenon Headlights
+C10,0xxx?: Country
+C11,1 = Rest of World
+C12,2 = Northern Countries (Finland/Sweden/Norway/Denmark)
+C13,3 = USA
+C14,4 = Canada
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+A001,0,Coming Home Activation Time
+A001,5,Coming Home Activation Time
+A001,6,Standard: 30 Seconds
+A001,7,Range: 30...60 Seconds (Increments 1 s)
+;
+A002,0,Brake Light Dimming
+A002,5,Brake Light Dimming
+A002,6,Range: 0...100 %
+A002,6,Standard (Limousine/Sedan): 24 %
+A002,7,Standard (Wagon/Avant): 0 %
+;
+A081,0,Component Protection (Vehicle Identification Number)
+A081,5,Component Protection (Vehicle Identification Number)
+A081,6,To Start the Vehicle Identification Number (VIN)
+A081,7,Learning Process enter/save 46992 as new Value.
+;

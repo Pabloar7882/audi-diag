@@ -1,0 +1,21 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2011 Ross-Tech, LLC
+;
+; Component: Engine (#01)
+;
+; This file is part of a label filepackage,
+; make sure you have all of the following files.
+;
+; 05-01.LBL
+;
+; created on 22/Aug/2011 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 23/Aug/2011
+;
+; requires VCDS 805.0 or newer
+;
+;
+;05B-910-401      ; CEMA (MAR) CR-TDI-BIT 350-8
+;

@@ -1,0 +1,32 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2012+ Ross-Tech, LLC
+;
+; Component: Sub System #02 for 7H0 (#09-02)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 7H-09-01.LBL
+; 7H-09-02.LBL
+; 6R0-959-801-42.CLB (J386 - Driver's Door Electronics)
+; 6R0-959-802-52.CLB (J387 - Passenger's Door Electronics)
+;
+; created on 29/May/2012 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 29/May/2012
+;
+; requires VCDS 11.11.3 or newer
+;
+;
+;---------------------------------------------------
+;
+; Slave #02: Driver Door Control Module (Standard Equipment with Rain/Light Sensor)
+; Slave #02: Passenger Door Control Module (Standard Equipment w/o Rain/Light Sensor)
+;
+;---------------------------------------------------
+;
+REDIRECT,6R0-959-801.CLB,6R0-959-801-???,SL
+REDIRECT,6R0-959-802.CLB,6R0-959-802-???,SL
+;

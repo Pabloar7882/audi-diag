@@ -1,0 +1,99 @@
+;
+; VCDS Label File
+;
+; Copyright © 2012 Ross-Tech, LLC
+;
+; Audi A2 (8Z) / Audi A3 (8L) / Audi A4 (8D) / Audi A6 (4B)
+;
+; Component: Navigation System (#37) - BNS 3.x
+;
+; P/N: 4B0-919-887-?
+;
+; includes measuring blocks and adaptation
+;
+; This file is part of a redirection package,
+; make sure you have all of the following files.
+;
+; 4B-37.LBL
+; 8Z-37.LBL
+; 4B0-919-887-BNS3.LBL
+;
+; created on 10/Mar/2012 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modificationon on 10/Mar/2012
+;
+; requires VCDS 11.11.2 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,General
+001,1,Speed Signal,recognized,Range: 0 = not recognized / 1 = recognized
+001,2,Supply Voltage,(Terminal 30),Range: 0.0...20.0 V\nSpecification: 8.0...15.0 V
+;
+003,0,GPS-Antenna (Active/Remote Supplied)
+003,1,GPS-Antenna
+003,2,GPS-Antenna,Status,Range: OK/Short Circuit/Open Circuit
+;
+004,0,External Display
+004,1,External Display
+004,2,External Display,Status,Range: OK/n.OK
+;
+005,0,Internal Databus
+005,1,Internal,Databus
+005,2,Status,Databus,Range: OK/Not OK
+;
+006,0,Vehicle Speed
+006,1,ABS-Sensor,Rear Left
+006,2,Calculated,Vehicle Speed,Based on GALA Signal as well as\nWheel Impuls and Circumference.
+;
+008,0,Front Speaker
+008,1,Front Speaker
+008,2,Status,Front Speaker,Range: OK/Short Circuit/Open Circuit
+;
+010,0,Telephone Mute Status
+010,1,Telephone Mute
+010,2,Telephone,Mute Status,Range: ON/OFF
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+A002,0,Wheel Impulse
+A002,5,Wheel Impulse
+A002,6,The Distance Impulse describes the amount
+A002,7,of ABS Pulses per Wheel Revolution.
+A002,8, 
+A002,9,8 = All Models
+;
+A003,0,Production Diagnostics
+A003,5,Production Diagnostics
+A003,6,The Result of the Production Diagnostics is
+A003,7,displayed in Measuring Value Block 007 Field 1.
+A003,8, 
+A003,9,0 = Production Diagnostics inactive
+A003,10,1 = Production Diagnostics active
+;
+A004,0,Speaker System
+A004,5,Speaker System
+A004,6,If a Radio System is installed the Radio Speaker
+A004,7,Front Left will be used for Navigation Instructions.
+A004,8,Otherwise a separate Speaker will be used/installed.
+A004,9, 
+A004,10,0 = External Speaker (Radio installed)
+A004,11,1 = Internal Speaker
+;
+A005,0,Country
+A005,5,Country
+A005,6,0 = Europe (EU)
+A005,7,1 = North American Region (NAR)
+;

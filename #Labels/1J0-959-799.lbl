@@ -1,0 +1,221 @@
+;
+; VCDS Label File
+;
+; Copyright © 2001-2011 Ross-Tech, LLC
+;
+; Seat Leon/Toledo (1M) / Skoda Octavia (1U) / VW Bora/Golf (1J)
+; VW New Beetle (1C/9C) / VW Passat (3B) / VW Polo Classic (9V)
+;
+; Component: J393 - Comfort System (#46) - Generation II (< MY 2002)
+;
+; P/N: 1J0-959-799-???
+;
+; includes measuring blocks, adaptation and coding
+;
+; based on 1J0-959-799.lbl by Mike Sauve (www.alientech.net)
+; updated/enhanced on 28/Mar/2005 by Sebastian Stange (sebastian@ross-tech.com)
+;
+; last modification on 21/Feb/2011
+;
+; requires VCDS 805.0 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,General (Driver Side)
+001,1,Child Safety Lock,Button (E319),Range: Yes/No/Not Installed
+001,2,Interior Locking,Button (E150),Range:  Lock/Unlock/Not Oper./Not Installed
+001,3,Window Regulator,Hall Signal,Range: Rotating/Stop
+;
+002,0,Window Regulator Buttons (Driver's Door)
+002,1,WR-Button (E40),Driver Door,Range: auto. open/auto. close/man. open/man. close/close not operated/implausible
+002,2,WR-Button (E81),Passenger Door,Range: autom. open/autom. close/man. open/man. close/not operated/implausible
+002,3,WR-Button (E53),Rear Left Door,Range: autom. open/autom. close/man. open/man. close/not operated/implausible
+002,4,WR-Button (E55),Rear Right Door,Range: autom. open/autom. close/man. open/man. close/not operated/implausible
+;
+003,0,Central Locking (Driver Door)
+003,1,Central Locking,Key Switch Drv.,Range: open/closed/not operated/implausible
+003,2,Rotary Latch &,Thermal-Protection,0x = Rotary Latch/Door closed\n1x = Rotary Latch/Door open\nx0 = Thermal Protection active\nx1 = Thermal Protection inactive
+003,3,Central Locking,Feedback Driver,Range: Locked/Unlocked
+003,4,Safe Feedback,Driver Door,Range: safe/not safe
+;
+004,0,Mirror Adjustment && Folding
+004,1,Mirror Adjustment,Switch Driver (E43),Range: Pos X+/Pos X-/Pos Y+/Pos Y-/not operated
+004,2,Mirror Selection,Switch Driver (E48,Range: left/right/fold/not operated
+004,3,Mirror Folding,Switch (E263),Range: released/engaged/not installed
+;
+005,0,General (Passenger Side)
+005,1,WR-Button (E107),Passenger Door,Range: autom. open/autom. close/man. open/man. close/not operated/implausible
+005,2,Interior Locking,Switch Pass. (E198),Range: Lock/Unlock/Not Oper./Not Installed\n\Note: North American Region (NAR) only
+005,3,Mirror Folding,Switch (E263),Range: released/engaged/not installed
+;
+006,0,Central Locking (Passenger Door)
+006,1,Central Locking,Key Switch Pass.,Range: open/closed/not operated/implausible
+006,2,Rotary Latch &,Thermal-Protection,0x = Rotary Latch/Door closed\n1x = Rotary Latch/Door open\nx0 = Thermal Protection active\nx1 = Thermal Protection inactive
+006,3,Central Locking,Feedback Pass.,Range: Locked/Unlocked
+006,4,Safe Feedback,Passenger Door,Range: safe/not safe
+;
+007,0,Central Locking (Rear Right Door)
+007,1,WR-Button (E54),Rear Right Door,Range: autom. open/autom. close/man. open/man. close/not operated/implausible
+007,2,Rotary Latch &,Thermal-Protection,0x = Rotary Latch/Door closed\n1x = Rotary Latch/Door open\nx0 = Thermal Protection active\nx1 = Thermal Protection inactive
+007,3,Central Locking,Feedback Rear Right,Range: Locked/Unlocked
+007,4,Safe Feedback,Rear Right Door,Range: safe/not safe
+;
+008,0,Central Locking (Rear Left Door)
+008,1,WR-Button (E52),Rear Left Door,Range: autom. open/autom. close/man. open/man. close/not operated/implausible
+008,2,Rotary Latch &,Thermal-Protection,0x = Rotary Latch/Door closed\n1x = Rotary Latch/Door open\nx0 = Thermal Protection active\nx1 = Thermal Protection inactive
+008,3,Central Locking,Feedback Rear Left,Range: Locked/Unlocked
+008,4,Safe Feedback,Rear Left Door,Range: safe/not safe
+;
+009,1,Illuination,(Terminal 58d),Range: 0...100 %
+009,2,Vehicle Speed,,Steps: 2 km/h
+009,3,Remote Control,Button,Range: Open/Closed/Rear Lid Release/Panic
+009,4,Interior Monitoring,Sensor (G273),Range: Yes/No/Not Installed
+;
+010,1,Terminal S,Status,Range: operated/not operated
+010,2,Mirror heating,(E231),Range: on/off/not installed
+010,3,Rear Lid/Tailgate,Key Switch (E165),Range: open/closed/not operated/implausible
+010,4,Terminal 15,Status,Range: Terminal 15 ON/Terminal 15 OFF
+;
+011,0,Engine Hood && Rear Lid
+011,1,Hood Contact,Switch (F120),Range: operated/not operated/not installed
+011,2,Rear Lid/Tailgate,Contact Sw. (F124),Range: open/closed
+011,3,Sliding/Tilting,Sunroof released,Range: Yes/No
+;
+012,0,CAN-Databus Communication
+012,1,CAN-Databus,Status,Specification: 2-wire
+012,2,Door Control,Modules (Front),Range: Driver/Passenger
+012,3,Door Control,Modules (Rear),Range: RL/RL and RR/RR
+012,4,Additional,Equipment,Range: Memory
+;
+013,0,Remote Control
+013,1,Permanent Code,known,Range: OK/n.OK
+013,2,Code within,effective Range,Range: OK/n.OK
+013,3,Algorithm,Status,Range: OK/n.OK
+013,4,Remote Control,Key Number,Range: 0...4 (0 = not operated)
+;
+014,1,Supply Voltage,(Terminal 30)
+014,2,Rear Lid Button (E188),Rear Lid Handle (E234),Range: not operated/remote switch/lid lever/implausible
+014,3,Interior Monitoring,Switch-Off (E267),Range: on/off/not installed
+014,4,Central Locking,Thermal Protection,?xxxx = Drivers Side\nx?xxx = Passengers Side\nxx?xx = Rear Left (RL)\nxxx?x = Rear Right (RR)\nxxxx? = Rear Lid\n\nRange: 0 = inactive / 1 = active
+;
+015,0,Alarm Source
+;   1 = Rear Lid/Tailgate Contact Switch
+;   2 = Rear Left Rotary Latch Switch
+;   4 = Rear Right Rotary Latch Switch
+;   8 = Passenger Door Rotary Latch Switch
+;  16 = Ignition
+;  17 = Immobilizer
+;  32 = Interior Monitoring
+;  64 = Engine Hood Contact Switch
+; 128 = Driver's Door Rotary Latch Switch
+; 255 = No Alarm
+015,1,1st Alarm Source,,1 = Rear Lid/Tailgate Contact Switch\n2 = Rear Left Rotary Latch Switch\n4 = Rear Right Rotary Latch Switch\n8 = Passenger Door Rotary Latch Switch\n16 = Ignition\n17 = Immobilizer\n32 = Interior Monitoring\n64 = Engine Hood Contact Switch\n128 = Driver's Door Rotary Latch Switch\n255 = No Alarm
+015,2,2nd Alarm Source,,1 = Rear Lid/Tailgate Contact Switch\n2 = Rear Left Rotary Latch Switch\n4 = Rear Right Rotary Latch Switch\n8 = Passenger Door Rotary Latch Switch\n16 = Ignition\n17 = Immobilizer\n32 = Interior Monitoring\n64 = Engine Hood Contact Switch\n128 = Driver's Door Rotary Latch Switch\n255 = No Alarm
+015,3,3rd Alarm Source,,1 = Rear Lid/Tailgate Contact Switch\n2 = Rear Left Rotary Latch Switch\n4 = Rear Right Rotary Latch Switch\n8 = Passenger Door Rotary Latch Switch\n16 = Ignition\n17 = Immobilizer\n32 = Interior Monitoring\n64 = Engine Hood Contact Switch\n128 = Driver's Door Rotary Latch Switch\n255 = No Alarm
+015,4,4th Alarm Source,,1 = Rear Lid/Tailgate Contact Switch\n2 = Rear Left Rotary Latch Switch\n4 = Rear Right Rotary Latch Switch\n8 = Passenger Door Rotary Latch Switch\n16 = Ignition\n17 = Immobilizer\n32 = Interior Monitoring\n64 = Engine Hood Contact Switch\n128 = Driver's Door Rotary Latch Switch\n255 = No Alarm
+;
+016,1,Immobilizer,Key Recognition,Range: yes/no/not installed
+016,2,Automatic,Lock/Unlock Switch,Range: operated/not oper./implausible
+016,3,Rear Lid,first Detent,Range: open/closed/not installed
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Comfort System (J393) Coding
+C01,Central Locking (2-Power Windows):
+C02,00256 = Selective unlocking
+C03,00257 = Unlocking of all doors
+C04, 
+C05,Central Locking (2-Power Windows and Memory Seats):
+C06,00258 = Selective unlocking
+C07,00259 = Unlocking of all doors
+C08, 
+C09,Central Locking (4-Power Windows):
+C10,04096 = Selective unlocking
+C11,04097 = Unlocking of all doors
+C12, 
+C13,Central Locking (4-Power Windows and Memory Seats):
+C14,04098 = Selective unlocking
+C15,04099 = Unlocking of all doors
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+A01,0,Remote control adaptation
+A01,5,Remote control adaptation
+A01,6,Enter the number of keys that should be adapted. Save.
+A01,7, 
+A01,8,Now press button 1 or 2 on every remote that
+A01,9,should be adapted for at least 1 second.
+A01,10, 
+A01,11,Note #1: All keys must be adapted in one procedure.
+A01,12,Note #2: Adaptation of all keys must not exceed 15 seconds.
+;
+A003,0,Auto-Lock
+A003,5,Auto-Lock
+A003,6,The doors will lock automatically when the
+A003,7,vehicle reaches a speed of 15 km/h or 10 mph.
+A003,8, 
+A003,9,Range: 0 = OFF / 1 = ON
+;
+A004,0,Auto-Unlock
+A004,5,Auto-Unlock
+A004,6,The doors will unlock automatically when the key
+A004,7,is removed from the ignition switch.
+A004,8, 
+A004,9,Range: 0 = OFF / 1 = ON
+;
+A005,0,Interior Monitoring
+A005,5,Interior Monitoring
+A005,6,Activation of interior monitoring system.
+A004,7, 
+A004,8,Range: 0 = OFF / 1 = ON
+;
+A006,0,Unlock Horn
+A006,5,Unlock Horn
+A006,6,Horn beep when unlocking via remote control.
+A006,7, 
+A006,8,Range: 0 = OFF / 1 = ON
+;
+A007,0,Lock Horn
+A007,5,Lock Horn
+A007,6,Horn beep when locking via remote control.
+A007,7, 
+A007,8,Range: 0 = OFF / 1 = ON
+;
+A008,0,Unlock Blink
+A008,5,Unlock Blink
+A008,6,Blink when unlocking via remote control.
+A008,7, 
+A008,8,Range: 0 = OFF / 1 = ON
+;
+A009,0,Lock Blink
+A009,5,Lock Blink
+A009,6,Blink when locking via remote control.
+A009,7, 
+A009,8,Range: 0 = OFF / 1 = ON
+;
+A010,0,Country Setting
+A010,5,Country Setting
+A010,6,Country setting for Alarm Horn.
+A010,7, 
+A010,8,1 = Rest of World (RoW)
+A010,9,2 = Germany (DE)
+A010,10,3 = Great Britain (GB)
+;

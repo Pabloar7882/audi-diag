@@ -1,0 +1,65 @@
+;
+; VCDS Label File
+;
+; Copyright © 2009 Ross-Tech, LLC
+;
+; Audi A8 (4D)
+;
+; Component: J104 - Brake Electronics (#03) - Bosch 5.0 ABS/EDS/ASR
+;
+; P/N: 4D0-907-379-???
+;
+; includes measuring blocks and coding
+;
+; This file is part of a redirection package,
+; make sure you have all of the following files.
+;
+; 4D-03.LBL
+; 4D0-907-379-ABS.LBL (Bosch 5.0 ABS & ABS/EDS)
+; 4D0-907-379-ASR.LBL (Bosch 5.0 ABS/EDS/ASR)
+; 4D0-907-379-ESP.LBL (Bosch 5.0 ABS/EDS/ASR/ESP)
+;
+; created on 23/Mar/2009 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 23/Mar/2009
+;
+; requires VCDS 805.0 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,Wheel Speed
+001,1,Wheel Speed,Front Left,Display Range: 0.0...255.0 km/h
+001,2,Wheel Speed,Front Right,Display Range: 0.0...255.0 km/h
+001,3,Wheel Speed,Rear Left,Display Range: 0.0...255.0 km/h
+001,4,Wheel Speed,Rear Right,Display Range: 0.0...255.0 km/h
+;
+002,0,Status Bits
+002,1,Brake Light Switch,,Display Range: 0/1
+002,2,Return Flow Pump,,Display Range: 0/1
+002,3,Solenoid Valve,Relay,Display Range: 0/1
+;
+003,0,Traction Control (ASR)
+003,1,Engine Speed
+003,2,Engine Torque,,0.0 % = Schubphase\n20.0...30.0 % = Idle\n100.0 % = Maximum Torque
+003,3,ASR-Button,,0 = Not Oper.\n1 = Operated
+;
+;
+;---------------------------------------------------
+;
+; Codierung
+;
+;---------------------------------------------------
+;
+;
+C00,Brake Electronics (J104/Bosch 5.0) Coding
+C01,00000 = 2.8l 6-Cylinder with Manual Transmission (012)
+C02,00001 = 2.8l 6-Cylinder with Automatic Transmission (01K)
+C03,00002 = 3.7l 8-Cylinder with Automatic Transmission (01V)
+C04,00003 = 2.8l 6-Cylinder with Automatic Transmission (01V)
+;

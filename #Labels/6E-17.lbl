@@ -1,0 +1,26 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2005-2011 Ross-Tech, LLC
+;
+; Component: J285 - Instrument Cluster (#17)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 6E-17.LBL
+; 6X-17.LBL
+; 6E0-919-xxx-17.LBL
+; 6X0-920-xxx-17.LBL
+;
+; created on 15/Aug/2005 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 08/Dec/2011
+;
+; requires VCDS 805.0 or newer
+;
+;
+REDIRECT,6E0-919-xxx-17.CLB,6E0-919-???-???
+;
+REDIRECT,6X0-920-xxx-17.LBL,6E0-920-???-???
+;

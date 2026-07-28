@@ -1,0 +1,25 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2009 Ross-Tech, LLC
+;
+; Audi A4 (8E)
+;
+; Component: Radio (#56)
+;
+; This file is part of a redirection package,
+; make sure you have all of the following files.
+;
+; 8B-37.LBL
+; 8B-56.LBL
+; 8E0-035-192-RNSE.LBL
+;
+; created on 06/Aug/2009 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 06/Aug/2009
+;
+; requires VCDS 805.0 or newer
+;
+;
+REDIRECT,8E0-035-192-RNSE.LBL,8B0-035-192-P      ; RNS-E // Customer Workaround
+;

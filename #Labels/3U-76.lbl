@@ -1,0 +1,28 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2010-2011 Ross-Tech, LLC
+;
+; Skoda Superb (3U)
+;
+; Component: J446 - Parking Aid (#76)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 3U-76.LBL
+; 3U0-919-283-7X1.LBL (4-Channel Parking Aid / PR-7X1)
+; 3U0-919-283-7X2.LBL (8-Channel Parking Aid / PR-7X2)
+;
+; created on 26/Jun/2010 by Niels Ezerman
+; updated on 16/Aug/2011 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 16/Aug/2011
+;
+; requires VCDS 805.0 or newer
+;
+;
+REDIRECT,3U0-919-283-7X1.LBL,3U0-919-283
+REDIRECT,3U0-919-283-7X1.LBL,3U0-919-283-A
+REDIRECT,3U0-919-283-7X2.LBL,3U0-919-283-B
+;

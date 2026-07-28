@@ -1,0 +1,116 @@
+;
+; VCDS Label File
+;
+; Copyright © 2007-2012 Ross-Tech, LLC
+;
+; Audi A6 (4B)
+;
+; Component: J429 - Central Locking (#35)
+;
+; P/N: 4B0-962-258-???
+;
+; includes measuring blocks, coding and adaptation
+;
+; created on 06/Jun/2001 by Paul Cunningham (cunningham64@home.com)
+; updated on 18/Aug/2010 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 18/Feb/2012
+;
+; requires VCDS 805.0 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,Driver Door Status
+001,1,Key Switch,Driver Door,Range: open/close/not operated
+001,2,Interior Locking,Switch (E150),Range: lock/unlock/not operated
+001,3,Feedback,Driver Door,Range: locked/unlocked
+001,4,SAFE-Feedback,Driver Door,Range: safe/not safe
+;
+002,0,Passenger Door Status
+002,1,Key Switch,Passenger Door,Range: open/close/not operated
+002,3,Feedback,Passenger Door,Range: locked/unlocked
+002,4,SAFE-Feedback,Passenger Door,Range: safe/not safe
+;
+003,0,Rear Door Status
+003,1,Feedback,Rear Right Door,Range: locked/unlocked
+003,2,SAFE-Feedback,Rear Right Door,Range: safe/not safe
+003,3,Feedback,Rear Left Door,Range: locked/unlocked
+003,4,SAFE-Feedback,Rear Left Door,Range: safe/not safe
+;
+004,0,Door Contact Switches
+004,1,Door Contact,Driver's Door,Range: Door OPEN/Door CLOSED
+004,2,Door Contact,Passenger Door,Range: Door OPEN/Door CLOSED
+004,3,Door Contact,Rear Right Door,Range: Door OPEN/Door CLOSED
+004,4,Door Contact,Rear Left Door,Range: Door OPEN/Door CLOSED
+;
+005,0,Rear Lid/Tailgate
+005,1,Key Switch,Rear Lid/Tailgate,Range: open/close/not operated
+005,2,Feedback,Rear Lid/Tailgate,Range: Lid open/Lid closed
+005,3,Remote Control,Rear Lid/Tailgate,Range: open/not operated
+005,4,Softtouch,Rear Lid/Tailgate,Range: open/not operated
+;
+006,1,Interior Light,,Range: ON/OFF
+006,2,Terminal 15,Shut-Off Delay,Range: Relay ON/Relay OFF
+006,3,Comfort Operation,Remote Control,Range: open/close/not operated
+006,4,Trunk Light,,Range: ON/OFF
+;
+007,0,Remote Control
+007,1,Active,Remote Control,Range: 0.0...4.0 (0 = Remote Control not operated / 1...4 = Remote Control Memory Location)
+007,2,Active Command,Remote Control,0 = not operated / 1 = operated\n\nxxx? = Panic (North-American-Region only)\nxx?x = Rear Lid\nx?xx = Close\n?xxx = Open
+007,3,Key Positions,,0 = not occupied / 1 = occupied\n\nxxx? = Memory Location 1\nxx?x = Memory Location 2\nx?xx = Memory Location 3\n?xxx = Memory Location 4
+;
+008,1,Vehicle Speed
+008,2,Immobilizer,Authorization,Range: ON = Authorization OK / OFF = Authorization NOT OK
+;
+009,0,Coding
+009,1,Coding I,,?0x = Remote Control\nx0? = Unlocking Conformation via Remote Control
+009,2,Coding II,,?xxx = Door/Window Regulator Logic\nx?xx = Anti-Theft-System Confirmation (via Siren/Horn)\nxx?x = Locking Conformation via Remote Control\nxxx? = Lichtsteuerung Avant ODER Alarmzyklus Sounder
+009,3,Coding III,,?xxx = Right-Hand-Drive (RHD)\nx?xx = Comfort Operation via Remote Control\nxx?x = Auto-Lock/Unlock\nxxx? = Rear Lid/Tailgate locked above 5 km/h
+009,4,Coding IV,,?xxx = Anti-Theft-System\nx?xx = Selective Central Locking (SCL)\nxx?x = Anti-Theft-System Confirmation (via Turn Signals)\nxxx? = Rear Lid/Tailgate Unlocking
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Central Locking (J429) Coding
+C01,+000001 = Rear Lid/Tailgate Unlocking active
+C02,+000002 = Anti-Theft-System Confirmation (via Turn Signals)
+C03,+000004 = Selective Central Locking (SCL)
+C04,+000008 = Anti-Theft-System installed
+C05,+000016 = Rear Lid/Tailgate locked above 5 km/h
+C06,+000032 = Auto-Lock/Unlock (Locking at 15 km/h)
+C07,+000064 = Comfort Operation via Remote Control active
+C08,+000128 = Right-Hand-Drive (RHD) Vehicle
+C09,+000256 = Alarm Type/Cycle for Sound Rest of World (RoW)
+C10,+000512 = Locking Conformation via Remote Control (1x Turn Signals) active
+C11,+001024 = Anti-Theft-System Confirmation (via Siren/Horn)
+C12,+002048 = Door/Window Regulator Logic (North-American-Region only / Terminal 87)
+C13,+004096 = Unlocking Conformation via Remote Control (2x Turn Signals) active
+C14,+008192 = SAFE-Function inactive (North-American-Region only)
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+A021,0,Remote Control Adaptation (Memory Location)
+A021,5,Remote Control Adaptation (Memory Location)
+A021,6,Enter the desired Memory Location for the Key/Remote (1-4) which you want to adapt.
+A021,7,Once you saved the Value press either the OPEN or CLOSE Button on the Remote Control.
+A021,8, 
+A021,9,Additional Keys/Remotes can be Adapted while choosing a different Memory Location.
+A021,10,Repeat these steps until all Keys/Remotes have been adapted.
+;

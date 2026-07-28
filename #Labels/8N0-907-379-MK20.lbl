@@ -1,0 +1,91 @@
+;
+; VCDS Label File
+;
+; Copyright © 2011 Ross-Tech, LLC
+;
+; Audi TT (8N)
+;
+; Component: J104 - Brake Electronics (#03) - MK20 ABS/ASR
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 8N-03.LBL
+; 8N0-907-379-MK20.LBL   (MK20)
+; 8N0-907-379-MK20-E.LBL (MK20 ESP)
+; 8N0-907-379-MK60-A.LBL (MK60 AWD)
+; 8N0-907-379-MK60-F.LBL (MK60 FWD)
+;
+; includes measuring blocks, basic setting, login, coding and misc
+;
+; created on 21/Apr/2011 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 21/Apr/2011
+;
+; requires VCDS 10.6.4 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks & basic setting
+;
+;---------------------------------------------------
+;
+;
+001,0,Current Wheel Speed
+001,1,Speed Sensor,Front Left (G47),Range: 0.0...255.0 km/h
+001,2,Speed Sensor,Front Right (G45),Range: 0.0...255.0 km/h
+001,3,Speed Sensor,Rear Left (G46),Range: 0.0...255.0 km/h
+001,4,Speed Sensor,Rear Right (G44),Range: 0.0...255.0 km/h
+;
+B001,0,Brake Pump Bleeding
+B001,1,Status, , 
+B001,2, , , 
+B001,3, , , 
+B001,4, , , 
+;
+002,0,Starting Wheel Speed
+002,1,Speed Sensor,Front Left (G47),Range: 0.0...254.0 km/h\nSpecification (Standing): 255.0 km/h
+002,2,Speed Sensor,Front Right (G45),Range: 0.0...254.0 km/h\nSpecification (Standing): 255.0 km/h
+002,3,Speed Sensor,Rear Left (G46),Range: 0.0...254.0 km/h\nSpecification (Standing): 255.0 km/h
+002,4,Speed Sensor,Rear Right (G44),Range: 0.0...254.0 km/h\nSpecification (Standing): 255.0 km/h
+;
+003,0,Brake Light Switch
+003,1,Brake Light,Switch (F),Range: 0 = Not Operated / 1 = Operated
+;
+125,0,CAN-Databus Communication (Powertrain)
+125,1,Engine,Electronics,Range: Engine 0/Engine 1\nSpecification: Engine 1
+;
+;
+;---------------------------------------------------
+;
+; Login
+;
+;---------------------------------------------------
+;
+;
+L00,Brake Electronic (MK20 ABS/ASR) Login
+L01,40168 = Basic Setting Enabling
+;
+;
+;---------------------------------------------------
+;
+; Coding
+;
+;---------------------------------------------------
+;
+;
+C00,Brake Electronic (MK20 ABS/ASR) Coding
+C01,13204 = Audi TT (8N) with Front-Wheel-Drive (FWD)
+C02,13504 = Audi TT (8N) with All-Wheel-Drive (AWD)
+;
+;
+;---------------------------------------------------
+;
+; misc
+;
+;---------------------------------------------------
+;
+;
+SN,MK20 ABS/ASR
+;

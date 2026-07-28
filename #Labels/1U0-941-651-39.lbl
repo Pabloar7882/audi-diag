@@ -1,0 +1,65 @@
+;
+; VCDS Label File
+;
+; Copyright © 2012 Ross-Tech, LLC
+;
+; Skoda Octavia (1U)
+;
+; Component: J344 - Automatic Headlight Aim Control (#39)
+;
+; P/N: 1U0-941-651
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 1U-29.LBL
+; 1U-39.LBL
+; 1U0-941-651-29.LBL
+; 1U0-941-651-39.LBL
+;
+; includes measuring blocks and coding
+;
+; created on 28/Mar/2012 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 28/Mar/2012
+;
+; requires VCDS 11.11.3 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,General
+001,1,Voltage,(Terminal 15)
+001,2,Voltage,(Terminal 56b)
+;
+002,0,Sensors && Position Motors
+002,3,Adjustment Signal,Master > Slave
+002,4,Adjustment,Position Motor
+;
+003,0,Gas Discharge Lamp
+003,1,Current,Discharge Lamp,Range: 0.0...100.0 W\nSpecification: 32.0...65.0 W
+003,2,Voltage,Discharge Lamp,Range: 0.0...100.0 V\nSpecification: 45.0...95.0 V
+;
+080,0,Advanced Control Module Identification I
+080,1,Identification
+080,2,Revision
+080,3,Production,Date
+080,4,Manufacturer &,Test Stand Number
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Automatic Headlight Aim Control (J343) Coding
+C01,00005 = Skoda Octavia (1U) with Front-Wheel-Drive (FWD)
+C02,00006 = Skoda Octavia (1U) with All-Wheel-Drive (AWD)
+;

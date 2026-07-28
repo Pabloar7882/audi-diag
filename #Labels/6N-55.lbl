@@ -1,0 +1,22 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2012 Ross-Tech, LLC
+;
+; Component: J431 - Automatic Headlight Aim Control (#55)
+;
+; This file is part of a label file package
+; make sure you have all of the following files.
+;
+; 6N-55.LBL
+; 6N0-907-503.LBL
+;
+; created on 28/Mar/2012 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 28/Mar/2012
+;
+; requires VCDS 11.11.2 or newer
+;
+;
+REDIRECT,6N0-907-503.LBL,6N0-941-273-???
+;

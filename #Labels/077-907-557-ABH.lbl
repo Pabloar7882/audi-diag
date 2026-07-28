@@ -1,0 +1,60 @@
+;
+; VCDS Label File
+;
+; Copyright © 2011 Ross-Tech, LLC
+;
+; Audi V8 (4C) / Audi 100 (4A)
+;
+; Component: J220 - Engine (#01) - ABH
+;
+; P/N: 441-907-557-??? / 4A0-907-557-???
+;
+; includes measuring blocks, basic setting and coding
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 44-01.LBL
+; 4A-01.LBL
+; 077-907-557-ABH.LBL  (4.2l SR     @ 280 HP - ABH)
+;
+; created on 15/Mar/2011 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modificationon on 15/Mar/2011
+;
+; requires VCDS 10.6.4 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks & basic setting
+;
+;---------------------------------------------------
+;
+;
+000,0,Decimal Measuring Values
+000,1,Coolant Temperature,Specification: 189...210 (85.0...100.0 °C)
+000,2,Engine Load,Specification: 32...46
+000,3,Engine Speed,Specification: 49...75 (690...750 RPM)
+000,4,Idle Speed Stabilization (Operating Range),Specification: 123...140
+000,5,Idle Speed Stabilization (Characteristic Curve Zero Point),Specification: 80...128
+000,6,Idle Speed Stabilization (Load Adaptation),Specification: 120...138
+000,7,Idle Speed Stabilization (Characteristic Curve Control),Specification: 42...53
+000,8,Lambda Control,Specification: 121...135
+000,9,Lambda Adaptation,Specification: 78...178
+000,10,Ignition Timing,Specification: 42...47 (3.8...10.4 °BDTC)
+;
+B000,0,Active Charcoal Valve closing
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Engine Control Unit (J220) Coding
+C01,Coding is being done via Coding Bridges in the Wiring.
+C02,Please refer to the Factory Repair Manual for Details.
+;

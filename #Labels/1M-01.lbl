@@ -1,0 +1,24 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2006-2011 Ross-Tech, LLC
+;
+; Component: Engine (#01)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 06-01.LBL
+; 1M-01.LBL
+; 06A-906-032-BAM.LBL  (1.8l TE      @ 225 PS - BAM)
+;
+; created on 02/Dec/2006 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 07/Feb/2011
+;
+; requires VCDS 805.0 or newer
+;
+;
+;1ML-906-032      ; AMK (1M)
+REDIRECT,06A-906-032-BAM.LBL,1ML-906-032-A    ; BAM (1M)
+;

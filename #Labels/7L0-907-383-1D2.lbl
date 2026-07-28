@@ -1,0 +1,109 @@
+;
+; VCDS Label File
+;
+; Copyright © 2010-2011 Ross-Tech, LLC
+;
+; VW Touareg (7L)
+;
+; Component: J345 - Trailer Recognition (#69) - PR-1D2/1D6
+;
+; P/N: 7L0-907-383-???
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 7L-69.LBL
+; 7L0-907-383-1D2.LBL (PR-1D2/1D6)
+; 7L0-907-383-1D9.LBL (PR-1D9)
+;
+; includes measuring blocks, coding and selective output tests
+;
+; created on 23/Nov/2010 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 20/Jan/2011
+;
+; requires VCDS 10.6.3 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,Voltage Supply I
+001,1,Voltage,(Terminal 30)
+001,2,Status Term. 30,(switched),Range: ON/OFF\nSignal Type: Input
+;
+002,0,Input Signals I
+002,2,Brake Light Switch,,Range: ON/OFF\nSignal Type: Input
+;
+003,0,Output Signals I
+003,1,Turn Signal,Rear Left,Range: ON/OFF\nSignal Type: Output
+003,2,Turn Signal,Rear Right,Range: ON/OFF\nSignal Type: Output
+003,3,Tail Light,Rear Left,Range: ON/OFF\nSignal Type: Output
+003,4,Tail Light,Rear Right,Range: ON/OFF\nSignal Type: Output
+;
+004,0,Output Signals II
+004,1,Brake Lights,Rear,Range: ON/OFF\nSignal Type: Output
+004,2,Back-Up Lights,Rear,Range: ON/OFF\nSignal Type: Output
+004,3,Rear Fog Lights,,Range: ON/OFF\nSignal Type: Output
+;
+008,0,Input Signals III
+008,1,Status,Terminal 15,Range: ON/OFF\nSignal Type: Input/CAN
+008,2,Status,Terminal X,Range: ON/OFF\nSignal Type: Input/CAN
+008,4,Trailer,recognized,Range: ON/OFF\nSignal Type: Input/CAN
+;
+009,0,Input Signals III
+009,1,Turn Signal,Left,Range: ON/OFF\nSignal Type: Input/CAN
+009,2,Turn Signal,Right,Range: ON/OFF\nSignal Type: Input/CAN
+009,3,Emergency Flasher,Warning Lights,Range: ON/OFF\nSignal Type: Input/CAN
+;
+010,0,Input Signals IV
+010,1,Brake Light Switch,,Range: ON/OFF\nSignal Type: Input/CAN
+;
+011,0,Input Signals V
+011,1,Side Marking,Lights,Range: ON/OFF\nSignal Type: Input/CAN
+011,2,Parking Light,Left,Range: ON/OFF\nSignal Type: Input/CAN
+011,3,Parking Light,Right,Range: ON/OFF\nSignal Type: Input/CAN
+;
+012,0,Input Signals VI
+012,1,Rear Fog Light,,Range: ON/OFF\nSignal Type: Input/CAN
+012,2,Back-Up Light,,Range: ON/OFF\nSignal Type: Input/CAN
+;
+080,0,Advanced Control Module Identification I
+;
+081,0,Advanced Control Module Identification II
+;
+082,0,Advanced Control Module Identification III
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Trailer Recognition (J345) Coding
+C01,000000?: Country
+C02,1 = Rest of World (RoW)
+C03,2 = North America (USA/Canada)
+;
+;
+;---------------------------------------------------
+;
+; selective output test
+;
+;---------------------------------------------------
+;
+;
+T2562,Brake Lights (Trailer)
+T2564,Tail Lights Left (Trailer - M60)
+T2563,Tail Lights Right (Trailer - M61)
+T2566,Turn Signals Left (Trailer - M62)
+T2565,Turn Signals Right (Trailer - M63)
+T2567,Rear Fog Lights (Trailer - M64)
+T2568,Back-Up Lights (Trailer)
+;

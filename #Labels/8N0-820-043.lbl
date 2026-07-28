@@ -1,0 +1,155 @@
+;
+; VCDS Label File
+;
+; Copyright © 2011 Ross-Tech, LLC
+;
+; Audi TT (8N)
+;
+; Component: J255 - Heating/Air Conditioning (#08)
+;
+; P/N:  8N0-820-043 / 8N0-820-043-A
+;
+; includes measuring blocks, basic setting and coding
+;
+; created on 22/Apr/2011 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 24/Oct/2011
+;
+; requires VCDS 10.6.3 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks & basic setting
+;
+;---------------------------------------------------
+;
+;
+B000,0,Potentiometer && Flap Alignment
+B000,1,Temperature Flap Control Motor (V68),Specification: 0
+B000,2,Central Flap Control Motor (V70),Specification: 0
+B000,3,Footwell/Defroster Flap Control Motor  (V85),Specification: 0
+B000,4,Back Pressure Flap Control Motor (V71),Specification: 0
+B000,11,The Basic Setting (Duration max. 30 Seconds) must be performed when:
+B000,12,- Climatronic Control Module (J255) replaced
+B000,13,- Flap Motor or Fan Control replaced
+;
+001,0,General
+001,1,Current,Shut-Off Criteria,See Factory Repair Manual for further Details\n\n0 = Compressor ON\n1 = Compressor OFF: Refrigerant Pressure too High\n3 = Compressor OFF: Refrigerant Pressure too Low\n5 = Compressor OFF: Engine not running or less than 300 RPM\n6 = Compressor OFF: ECON Mode active\n7 = Compressor OFF: System deactivated (by Driver)\n8 = Compressor OFF: Ambient Temperature too Low\n10 = Compressor OFF: Supply Voltage too Low\n11 = Compressor OFF: Engine Temperature too High\n12 = Compressor OFF: Requested by Engine Control Unit (ECU)\n13 = Compressor OFF: Activation Delay due to high Engine Speed\n14 = Compressor OFF: Pressure Switch (F129) OR High Pressure Sensor (G65) faulty
+;  0 = Compressor ON
+;  1 = Compressor OFF: Refrigerant Pressure too High
+;  3 = Compressor OFF: Refrigerant Pressure too Low
+;  5 = Compressor OFF: Engine not running or less than 300 RPM
+;  6 = Compressor OFF: ECON Mode active
+;  7 = Compressor OFF: System deactivated (by Driver)
+;  8 = Compressor OFF: Ambient Temperature too Low
+; 10 = Compressor OFF: Supply Voltage too Low
+; 11 = Compressor OFF: Engine Temperature too High
+; 12 = Compressor OFF: Requested by Engine Control Unit (ECU)
+; 13 = Compressor OFF: Activation Delay due to high Engine Speed
+; 14 = Compressor OFF: Pressure Switch (F129) OR High Pressure Sensor (G65) faulty
+;001,2,
+;0.0
+001,3,Voltage,(Terminal 15)
+001,4,Standing Time,,Range: 0...240 Min\n\n250 = Battery disconnected\n255 = Communication Error
+;
+002,0,Temperature Flap Control Motor/Potentiometer (V68/G92)
+002,1,Potentiom. (G92),(actual),Range: 5...250\nTolerance (to Specification): 3
+002,2,Potentiom. (G92),(specified),Range: 5...250
+002,3,Learned,(Cooling),Specification: 190...250
+002,4,Learned,(Heating),Specification: 5...50
+;
+003,0,Central Flap Control Motor/Potentiometer (V70/G112)
+003,1,Potentiom. (G112),(actual),Range: 5...250\nTolerance (to Specification): 3
+003,2,Potentiom. (G112),(specified),Range: 5...250
+003,3,Learned,(Dashboard),Specification: 190...250
+003,4,Learned,(Footwell),Specification: 5...50
+;
+004,0,Footwell/Defroster Flap Control Motor/Potentiometer (V85/G114)
+004,1,Potentiom. (G114),(actual),Range: 5...250\nTolerance (to Specification): 3
+004,2,Potentiom. (G114),(specified),Range: 5...250
+004,3,Learned,(Footwell),Specification: 190...250
+004,4,Learned,(Defrost),Specification: 5...50
+;
+005,0,Air Flow Flap Control Motor/Potentiometer (V71/G113)
+005,1,Potentiom. (G113),(actual),Range: 5...250\nTolerance (to Specification): 3
+005,2,Potentiom. (G113),(specified),Range: 5...250
+005,3,Learned,(Fresh Air.),Specification: 210...250
+005,4,Learned,(Recircul.),Specification: 5...30
+;
+006,0,Temperatures & Sun Intensity
+006,1,Outside Air (calc.),Temperature
+006,2,Fresh Air Intake,Temperature (G89)
+006,3,Outside Air,Temperature (G17)
+006,4,Sun Intensity,Sensor (G107),Range: 0.0...100.0 % (~4.5...0.5 V)
+;
+007,0,Temperatures (Interior)
+007,1,Outlet Temperature,Center (G192),Typically not installed!
+007,2,Outlet Temperature,Footwell (G192)
+007,3,Interior Temp.,Sensor (G56)
+007,4,Coolant,Temperature
+;
+008,0,Voltage Supply
+008,1,Fresh Air Blower,(V2) specified,Specification: 0.0...12.5 V
+008,2,Fresh Air Blower,(V2) actual,Tolerance (to Specification): < 0.7 V
+008,3,Dimming,Terminal 58d,Range: 0.0...100.0 %
+008,4,Dimming,Terminal 58s,Range: 0.0...100.0 %
+;
+009,0,General
+009,1,Engine Speed
+009,2,Vehicle Speed
+009,3,Auxiliary,Heating,0 = Auxiliary Heater inactive\n1 = Auxiliary Heater active
+009,4,Key Number,,Range: 0.0...4.0 (0 = Not recognized)
+;
+010,0,General
+010,1,Coolant Temp.,too High,0 = Temperature Switch (Instrument Cluster) open\n1 = Temperature Switch (Instrument Cluster) open
+010,2,Klimakompressor-,eingriff,0 = Ausgang Klimakompressoreingriff "offen"\n1 = Ausgang Klimakompressoreingriff "geschlossen"
+010,3,Press. Switch (F129),OR Sensor (G65)
+010,4,Convertible Top,Status,0 = Top closed OR Not Top (Coupe)\n1 = Top open
+;
+011,0,Compressor Shut-Off Criteria
+;  0 = Compressor ON
+;  1 = Compressor OFF: Refrigerant Pressure too High
+;  3 = Compressor OFF: Refrigerant Pressure too Low
+;  5 = Compressor OFF: Engine not running or less than 300 RPM
+;  6 = Compressor OFF: ECON Mode active
+;  7 = Compressor OFF: System deactivated (by Driver)
+;  8 = Compressor OFF: Ambient Temperature too Low
+; 10 = Compressor OFF: Supply Voltage too Low
+; 11 = Compressor OFF: Engine Temperature too High
+; 12 = Compressor OFF: Requested by Engine Control Unit (ECU)
+; 13 = Compressor OFF: Activation Delay due to high Engine Speed
+; 14 = Compressor OFF: Pressure Switch (F129) OR High Pressure Sensor (G65) faulty
+011,1,Last,Shut-Off Criteria,See Factory Repair Manual for further Details\n\n0 = Compressor ON\n1 = Compressor OFF: Refrigerant Pressure too High\n3 = Compressor OFF: Refrigerant Pressure too Low\n5 = Compressor OFF: Engine not running or less than 300 RPM\n6 = Compressor OFF: ECON Mode active\n7 = Compressor OFF: System deactivated (by Driver)\n8 = Compressor OFF: Ambient Temperature too Low\n10 = Compressor OFF: Supply Voltage too Low\n11 = Compressor OFF: Engine Temperature too High\n12 = Compressor OFF: Requested by Engine Control Unit (ECU)\n13 = Compressor OFF: Activation Delay due to high Engine Speed\n14 = Compressor OFF: Pressure Switch (F129) OR High Pressure Sensor (G65) faulty
+011,2,Second to Last,Shut-Off Criteria,See Factory Repair Manual for further Details\n\n0 = Compressor ON\n1 = Compressor OFF: Refrigerant Pressure too High\n3 = Compressor OFF: Refrigerant Pressure too Low\n5 = Compressor OFF: Engine not running or less than 300 RPM\n6 = Compressor OFF: ECON Mode active\n7 = Compressor OFF: System deactivated (by Driver)\n8 = Compressor OFF: Ambient Temperature too Low\n10 = Compressor OFF: Supply Voltage too Low\n11 = Compressor OFF: Engine Temperature too High\n12 = Compressor OFF: Requested by Engine Control Unit (ECU)\n13 = Compressor OFF: Activation Delay due to high Engine Speed\n14 = Compressor OFF: Pressure Switch (F129) OR High Pressure Sensor (G65) faulty
+011,3,Third to Last,Shut-Off Criteria,See Factory Repair Manual for further Details\n\n0 = Compressor ON\n1 = Compressor OFF: Refrigerant Pressure too High\n3 = Compressor OFF: Refrigerant Pressure too Low\n5 = Compressor OFF: Engine not running or less than 300 RPM\n6 = Compressor OFF: ECON Mode active\n7 = Compressor OFF: System deactivated (by Driver)\n8 = Compressor OFF: Ambient Temperature too Low\n10 = Compressor OFF: Supply Voltage too Low\n11 = Compressor OFF: Engine Temperature too High\n12 = Compressor OFF: Requested by Engine Control Unit (ECU)\n13 = Compressor OFF: Activation Delay due to high Engine Speed\n14 = Compressor OFF: Pressure Switch (F129) OR High Pressure Sensor (G65) faulty
+011,4,Fourth to Last,Shut-Off Criteria,See Factory Repair Manual for further Details\n\n0 = Compressor ON\n1 = Compressor OFF: Refrigerant Pressure too High\n3 = Compressor OFF: Refrigerant Pressure too Low\n5 = Compressor OFF: Engine not running or less than 300 RPM\n6 = Compressor OFF: ECON Mode active\n7 = Compressor OFF: System deactivated (by Driver)\n8 = Compressor OFF: Ambient Temperature too Low\n10 = Compressor OFF: Supply Voltage too Low\n11 = Compressor OFF: Engine Temperature too High\n12 = Compressor OFF: Requested by Engine Control Unit (ECU)\n13 = Compressor OFF: Activation Delay due to high Engine Speed\n14 = Compressor OFF: Pressure Switch (F129) OR High Pressure Sensor (G65) faulty
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Heating/Air Conditioning (J255) Coding
+C01,00?xx: Country/Market
+C02,0 = Rest of World (RoW)
+C03,1 = North American Region (NAR)
+C04,2 = Japan (JP)
+C05,0xx?x: Engine/Cylinders
+C06,4 = 4-Cylinder Engine
+C07,6 = 6-Cylinder Engine
+C08,00xx?: Vehicle Type/Engine Type
+C09,0 = Gasoline Engine with Left-Hand-Drive (LHD)
+C10,1 = Gasoline Engine with Right-Hand-Drive (RHD)
+; NOT RELEVANT:
+; 3 = Diesel Engine with Left-Hand-Drive (LHD)
+; 4 = Diesel Engine with Right-Hand-Drive (RHD)
+C11, 
+C12,NOTE: The Number of Cylinders has no Influence on the
+C13,Functionality. If the Coding for 6-Cylinders is not available
+C14,you can use the one for 4-Cylinders instead.
+
+;

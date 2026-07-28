@@ -1,0 +1,81 @@
+;
+; VCDS Label File
+;
+; Copyright © 2011+ Ross-Tech, LLC
+;
+; Audi A4 (8D) / Audi A6 (4A) / Audi A8 (4D)
+;
+; Component: J362 - Immobilizer (#25)
+;
+; P/N: 4A0-953-234-???
+;
+; includes measuring blocks, adaptation, login and misc
+;
+; created on 18/Nov/2011 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 19/Jul/2012
+;
+; requires VCDS 11.11.0 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,Immobilizer
+001,1,Engine Start,permitted,Specification: 1 (Yes)\nRange: 1 (Yes) / 0 (No)
+001,2,Engine (ECU),responds,Specification: 1 (Yes)\nRange: 1 (Yes) / 0 (No)
+001,3,Key/Transponder,Status,Specification: 1 (OK)\nRange: 1 (OK) / 0 (NOT OK)
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+A001,0,Immobilizer (Key Adaptation)
+A001,3,Key Count
+A001,5,Immobilizer (Key Adaptation)
+A001,6,Prior to Adapting new Keys the Adaptation has to be enabled by
+A001,7,logging in using the Immobilizer PIN/SKC. The Adaptation Value
+A001,8,is the number of all Keys to be adapted (Max. 4). After Saving
+A001,9,the Adaptation Value the first Key is adapted. The Learning of
+A001,10,all Keys should not exceed 30 Seconds.
+A001,11,Proceed until all Keys are adapted:
+A001,12,- Switch the Ingnition OFF and take out the Key.
+A001,13,- Switch the Ignition ON using the next Key.
+A001,14,- The Immobilizer Lamp should light up for 2 Seconds and then switch OFF.
+A001,15,- The Key is now adapted.
+;
+;
+;---------------------------------------------------
+;
+; Login
+;
+;---------------------------------------------------
+;
+;
+L00,Immobilizer (J362) Login
+L01,Prior to Key Learning or adapting a new USED Immobilizer
+L02,Control Module the Vehicle specific PIN/SKC (IMMO-Login)
+L03,of the new USED Immobilizer Control Module has to be used
+L04,to enable the adaptation.
+L05,You'll find the PIN/SKC on the Key Tag of the additional
+L06,Key (of the Donor Car) or you can acquire it through your
+L07,responsible Distribution Center or Importer.
+;
+;
+;---------------------------------------------------
+;
+; misc
+;
+;---------------------------------------------------
+;
+;
+SN,IMMO I
+;

@@ -1,0 +1,78 @@
+;
+; VCDS Label File
+;
+; Copyright © 2009 Ross-Tech, LLC
+;
+; VW Polo (6N) / VW LT (2D)
+;
+; Component: J362 - Immobilizer (#25)
+;
+; P/N: 6N0-953-257-???
+;
+; includes measuring blocks, long coding and selective output tests
+;
+; This file is part of a redirection package,
+; make sure you have all of the following files.
+;
+; 2D-25.LBL
+; 6N0-953-257.LBL
+;
+; created on 10/Feb/2009 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 30/Apr/2009
+;
+; requires VCDS 805.1 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,General
+001,1,Number of,adapted Keys,Specification: 0.0...8.0
+001,2,Reader Coil,Status,Specification: 1 = OK\n\n0 = not OK\n1 = OK
+001,3,Key Status,(Transponder),Specification: 1 = OK\n\n0 = not OK (possibly defective)\n1 = OK
+001,4,Key,authorized,Specification: 1 = Yes\n\n0 = No\n1 = Yes
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Immobilizer (J362) Coding
+C01,02400 = Diesel Engine (except TDI and SDI-Engines)
+C02,09600 = Gasoline Engines including TDI and SDI-Engine
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+
+;
+;
+;---------------------------------------------------
+;
+; login
+;
+;---------------------------------------------------
+;
+;
+L00,Immobilizer (J362) Login
+L01,Prior to Key Learning or adapting a new USED Immobilizer
+L02,Control Module the Vehicle specific PIN/SKC (IMMO-Login)
+L03,of the new USED Immobilizer Control Module has to be used
+L04,to enable the adaptation.
+L05,You'll find the PIN/SKC on the Key Tag of the additional
+L06,Key (of the Donor Car) or you can acquire it through your
+L07,responsible Distribution Center or Importer.
+;

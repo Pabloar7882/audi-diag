@@ -1,0 +1,123 @@
+;
+; VCDS Label File
+;
+; Copyright © 2010 Ross-Tech, LLC
+;
+; Audi A2 (8Z)
+;
+; Component: J104 - Brake Electronics (#03) - MK20
+;
+; P/N: 8Z0-907-37?-???
+;
+; includes measuring blocks, basic settings, coding, login and misc
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 8Z-03.LBL
+; 8Z0-907-379-MK20.LBL (MK20)
+; 8Z0-907-379-MK60.LBL (MK60)
+;
+; created on 06/Dec/2010 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 06/Dec/2010
+;
+; requires VCDS 10.6.0 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks & basic setting
+;
+;---------------------------------------------------
+;
+;
+001,0,Current Wheel Speed
+001,1,Speed Sensor,Front Left (G47),Specification: 0.0...255.0 km/h
+001,2,Speed Sensor,Front Right (G45),Specification: 0.0...255.0 km/h
+001,3,Speed Sensor,Rear Left (G46),Specification: 0.0...255.0 km/h
+001,4,Speed Sensor,Rear Right (G44),Specification: 0.0...255.0 km/h
+;
+B001,0,Brake Pump Bleeding
+B001,1,Status &,Instructions, 
+B001,2, , , 
+B001,3, , , 
+B001,4, , , 
+;
+002,0,Starting Wheel Speed
+002,1,Speed Sensor,Front Left (G47),Specification: 0.0...254.0 km/h (255.0 km/h = standing)
+002,2,Speed Sensor,Front Right (G45),Specification: 0.0...254.0 km/h (255.0 km/h = standing)
+002,3,Speed Sensor,Rear Left (G46),Specification: 0.0...254.0 km/h (255.0 km/h = standing)
+002,4,Speed Sensor,Rear Right (G44),Specification: 0.0...254.0 km/h (255.0 km/h = standing)
+;
+003,0,Switches
+003,1,Brake Light,Switch (F),Specification: not oper./operated
+003,2,Brake Recognition,Switch (F83),Specification: not oper./operated
+;
+004,0,Steering Angle / Lateral Acceleration / Rotation Rate
+004,1,Steering Angle,Sensor (G85),Specification: ± 4.5 °
+004,2,Lateral Acc.,Sensor (G200),Specification: ± 0.5 m/s²
+004,3,Rotation Rate,,Specification: ± 2.5 °/s
+;
+005,0,Brake Pressure
+005,1,Brake Pressure,Sensor,Specification: ±7 bar
+005,2,Brake Pressure,Sensor,Specification: ±7 bar
+;
+B060,0,Adjustment of Steering Angle Sensor (G85)
+B060,1,Adjustment, , 
+B060,2,Adjustment,Status, 
+B060,3,Steering Angle,Sensor (G85),Range: -720.0...+720.0 °\nTolerance (when straight): ±4.5 °
+;
+B063,0,Adjustment of Lateral Acceleration Sensor (G200)
+B063,1,Adjustment, , 
+B063,2,Adjustment,Status, 
+B063,3,Lateral Acc.,Sensor (G200),Specification: ± 2.5 m/s²
+;
+B066,0,Adjustment of Brake Pressure Sensor (G201)
+B066,1,Adjustment, , 
+B066,2,Adjustment,Status, 
+B066,3,Brake Pressure,Sensor (G201),Specification: ± 7.0 bar
+;
+125,0,CAN-Databus Powertrain (Communication)
+125,1,Engine,,Range: Engine 1/Engine 0\nSpecification: Engine 1
+125,2,Steering Angle,Sensor(G85),Range: Steer. ang. 1/Steer. ang. 0\nSpecification: Steer. ang. 1
+;
+225,0,CAN-Databus Powertrain (Timeout)
+225,1,Engine,,Range: Engine 1/Engine 0\nSpecification: Engine 1
+225,2,Steering Angle,Sensor(G85),Range: Steer. ang. 1/Steer. ang. 0\nSpecification: Steer. ang. 1
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Brake Electronics (J104/MK20) Coding
+C01,10758 = 1.4l/55kW MPI (electro-hydraulic Steering)
+C02,10758 = 1.4l/55kW TDI (electro-hydraulic Steering)
+C03,10764 = 1.2l/45kW TDI (mechanical Steering)
+C04,10765 = 1.2l/45kW TDI (electro-hydraulic Steering)
+;
+;
+;---------------------------------------------------
+;
+; login
+;
+;---------------------------------------------------
+;
+;
+L00,Brake Electronics (J104/MK20) Login
+L01,40168 = Basic Setting Enabling
+;
+;
+;---------------------------------------------------
+;
+; misc
+;
+;---------------------------------------------------
+;
+;
+SN,MK20
+;

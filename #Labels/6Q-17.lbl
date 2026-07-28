@@ -1,0 +1,23 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2004-2010 Ross-Tech, LLC
+;
+; VW Polo (9N)
+;
+; Component: J285 - Instrument cluster (#17)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 6Q-17.LBL
+; 6Q0-920-xxx-17.LBL
+;
+; created on 21/Oct/2004 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 05/Dec/2010
+;
+; requires VCDS 10.6.0 or newer
+;
+REDIRECT,6Q0-920-xxx-17.LBL,6Q0-920-???-???
+;

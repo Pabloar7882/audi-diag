@@ -1,0 +1,145 @@
+;
+; VCDS Label File
+;
+; Copyright © 2009-2011 Ross-Tech, LLC
+;
+; Audi A4 (8D)
+;
+; Component: J255 - Heating/Air Conditioning (#08) - 1 Display
+;
+; P/N: 8D0-820-043-???
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 8D-08.LBL
+; 8D0-820-043-1D.LBL (1 Display)
+; 8D0-820-043-2D.LBL (2 Displays)
+;
+; includes measuring blocks, basic setting and coding
+;
+; created by Will
+; updated on 22/Mar/2009 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 24/Oct/2011
+;
+; requires VCDS 11.9.0 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks & basic setting
+;
+;---------------------------------------------------
+;
+;
+B000,0,Flap Motor Position learning
+B000,1,Temperature Regulator Flap Motor (V68),Specification: 0
+B000,2,Central Air Flap Motor (V70),Specification: 0
+B000,3,Footwell/Defroster Flap Motor (V85),Specification: 0
+B000,4,Air Flow Flap Motor (V71),Specification: 0
+B000,11,The Basic Setting (Duration max. 30 Seconds) must be performed when:
+B000,12,- Climatronic Control Module (J255) replaced
+B000,13,- Flap Motor or Fan Control replaced
+;
+001,0,Compressor Operation
+001,1,Compressor,Shut-Off,0 = Compressor ON\n1 = Compressor OFF by Pressure Switch (F129): Refrigerant Pressure too High\n3 = Compressor OFF by Pressure Switch (F129): Refrigerant Pressure too Low\n5 = Compressor OFF by Engine speed less than 300 rpm\n6 = Compressor OFF by ECON Button\n7 = Compressor OFF by OFF Button (via Fresh Air Blower Speed Buttons)\n8 = Compressor OFF by Ambient Temperature below 5 °C (42 °F)\n10 = Compressor OFF by Voltage below 9.5 V\n11 = Compressor OFF by excessive engine temperature\n12 = Compressor OFF by Engine OR Transmission Control Module\n13 = Compressor OFF by Compressor cut-in lag when Engine (RPM>6000) OR Activation Delay\n14 = Compressor OFF by Pressure Switch (F129) 30 times activated
+;   0 = Compressor ON
+;   1 = Compressor OFF by Pressure Switch (F129): Refrigerant Pressure too High
+;   3 = Compressor OFF by Pressure Switch (F129): Refrigerant Pressure too Low
+;   5 = Compressor OFF by Engine speed less than 300 rpm
+;   6 = Compressor OFF by ECON Button
+;   7 = Compressor OFF by OFF Button (via Fresh Air Blower Speed Buttons)
+;   8 = Compressor OFF by Ambient Temperature below 5 °C (42 °F)
+;  10 = Compressor OFF by Voltage below 9.5 V
+;  11 = Compressor OFF by excessive engine temperature
+;  12 = Compressor OFF by Engine OR Transmission Control Module
+;  13 = Compressor OFF by Compressor cut-in lag when Engine (RPM>6000) OR Activation Delay
+;  14 = Compressor OFF by Pressure Switch (F129) 30 times activated
+001,2,Voltage AC Clutch,V (>9.5 w/comp off)
+001,3,Voltage at,Terminal 15
+001,4,Standing Time, min  (0..240)
+;
+002,0,Temperature Regulator Flap -V68- Motor Position Sensor Feedback Values
+002,1,Actual value,Sensor G92,Range: 0...255\nTolerance (to Spec.): 3
+002,2,Specified value,Sensor G92,If deviation from actual value - do "Basic setting"
+002,3,Learned value,Cool (200..250),End stop learned value during "Basic setting"
+002,4,Learned value,Heat (5..30),End stop learned value during "Basic setting"
+;
+003,0,Central air flap motor -V70- and position sensor -G112-
+003,1,Actual value,sensor G112,Range: 0...255\nTolerance (to Spec.): 3
+003,2,Specified value,sensor G112,If deviation from actual value - do "Basic setting"
+003,3,Learned value,Instrum.(200..250),End stop learned value during "Basic setting"
+003,4,Learned value,Foot/Defr.(5..30),End stop learned value during "Basic setting"
+;
+004,0,Footwell/defroster flap motor -V85- and position sensor -G114-
+004,1,Actual value,sensor G114,Range: 0...255\nTolerance (to Spec.): 3
+004,2,Specified value,sensor G114,If deviation from actual value - do "Basic setting"
+004,3,Learned value,Footwell(200..250),End stop learned value during "Basic setting"
+004,4,Learned value,Defroster(5..30),End stop learned value during "Basic setting"
+;
+005,0,Air flow flap motor -V71- and position sensor -G113-
+005,1,Actual value,sensor G113,Range: 0...255\nTolerance (to Spec.): 3
+005,2,Specified value,sensor G113,Range: 0...255\nTolerance (to Spec.): 3
+005,3,Learned value,Fresh Air,End stop learned value during "Basic setting"
+005,4,Learned value,Recirculate ON,End stop learned value during "Basic setting"
+;
+006,0,Temperature I && Photo Sensor
+006,1,Outside Air Temp,Instrument Cluster,Displays lowest value of sensors -G89- and -G17- in instrument cluster
+006,2,Air Intake Temp,Evap Housing Duct,Temp Sensor -G89- on evaporator housing
+006,3,Outside Air Temp,Front Bumper,Sensor -G17- in front of bumper-mounted cooling fan
+006,4,Sunlight Photo,Sensor (G107),Range: 0.0...100.0 % (equals 4.5...0.5 V)
+;
+007,0,Temperature II
+007,1,Centre Vent Outlet,(G191) Temp
+007,2,Footwell (G192),Temperature
+007,3,Dash Panel (G56),Temperature 
+007,4,Coolant,Temperature
+;
+008,0,Voltages: Fresh Air Blower && Illumination
+008,1,Fresh Air Blower,(V2 - specified),Display Range: 0 V = Blower Off / 3.6 V = Blower Speed 1 / 12 V = Blower Speed 7
+008,2,Fresh Air Blower,(V2 - actual),Specification: ± 0.8 V to Specification (in Field 1)
+008,3,Illumination,(Terminal 58d),Duty cycle based on Instruments light sensor & intensity dial
+008,4,Side Lights,(Terminal 58),Keypad search illumination brightness
+;
+009,0,Vehicle Data
+009,1,Engine RPM
+; Vehicle speed = 0 if no speed signal recognized since ign. on
+; Vehicle speed = 1 if speed signal recognized since ign. on
+; Actual speed displayed when vehicle is driven
+009,2,Vehicle Speed
+009,3,Aux. Heating,On/Off,Range: 0 = inactive | 1 = active
+009,4,Not Assigned
+;
+010,0,Compressor Intervention
+010,1,Coolant Hot,,Intervention: ECM or TCM has switched off compressor,0=Thermo Sw. open (Coolant Temp OK),1=Thermo Sw. closed (Coolant Temp too High)
+010,2,Compressor Status
+010,3,A/C High Pressure,Switch (F129)
+010,4,Not Assigned
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Heating/Air Conditioning (J255) Coding
+C01,0?xxx: Vehicle Type
+C02,0 = Audi A4 (8D) from Part Number Index M
+C03,4 = Audi A4 (8D) with Part Number Index K/L
+C04,0x?xx: Country
+C05,0 = Rest of World (RoW)
+C06,1 = Nort American Region (NAR)
+C07,2 = Japan (JP)
+C08,0xx?x: Engine (Cylinder)
+C09,4 = 4-Cylinder Engine
+C10,6 = 6-Cylinder Engine
+C11,8 = 8-Cylinder Engine
+C12,0xxx?: Vehicle & Engine (Type)
+C13,0 = Gasoline Engine with Left-Hand-Drive (LHD)
+C14,1 = Gasoline Engine with Right-Hand-Drive (RHD)
+C15,3 = Diesel Engine with Left-Hand-Drive (LHD)
+C16,4 = Diesel Engine with Right-Hand-Drive (RHD)
+;

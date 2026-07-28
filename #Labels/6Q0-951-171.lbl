@@ -1,0 +1,51 @@
+;
+; VCDS Label File
+;
+; Copyright © 2011 Ross-Tech, LLC
+;
+; VW Polo (6N) / VW Polo (9N)
+;
+; Component: G209 - Interior Monitoring (#45)
+;
+; P/N: 6N0-951-171-??? / 6Q0-951-171-???
+;
+; This file is part of a label file package
+; make sure you have all of the following files.
+;
+; 6N-45.LBL
+; 6Q0-951-171.LBL
+;
+; includes measuring blocks
+;
+; created on 05/Mar/2012 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 05/Mar/2012
+;
+; requires VCDS 10.6.4 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,General
+001,1,Sensor Status,,Range: active/inactive
+001,2,Alarm recognized,,Range: Yes/No
+001,3,Communication,Wire,Range: ON/OFF
+001,4,Interior Monit.,Shut-Off Button,Range: operated/not oper.
+;
+002,0,General
+002,1,Voltage,Terminal 30
+002,2,Status,Terminal 15,Range: Term. 15 ON/Term. 15 OFF
+002,3,
+; Ja, ,
+;
+003,0,Adaptation Values (not relevant for Customer Support)
+003,1,Adaptation,Value Channel 1
+003,2,Adaptation,Value Channel 2
+003,3,Adaptation,Value Channel 3
+003,4,Work Shop Code,(WSC)
+;

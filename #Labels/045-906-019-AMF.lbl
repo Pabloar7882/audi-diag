@@ -1,0 +1,335 @@
+;
+; VCDS Label File
+;
+; Copyright © 2011-2012 Ross-Tech, LLC
+;
+; Audi A2 (8Z) / Seat Arosa (6H) / Seat Ibiza (6L) / Skoda Fabia (6Y)
+; VW Lupo (6X) / VW Polo (6N) / VW Polo (9N)
+;
+; Component: J248 - Engine (#01) - AMF/BAY 1.4l TDI 55kW/75PS
+;
+; P/N: 045-9??-019-???
+;
+; includes measuring blocks, basis setting, coding,
+;          login, adaptation and misc
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 04-01.LBL
+; 045-906-019-AMF.LBL (1.4l TDI @  75 HP - AMF/BAY)
+;
+; created on 08/Dec/2011 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 22/Feb/2012
+;
+; requires VCDS 11.9.0 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks & basic setting
+;
+;---------------------------------------------------
+;
+;
+000,0,Basic Functions
+000,1,Engine Speed (G28),Specification (Idle): 41...45 (900...980 RPM)\nSpecification (Full Load): 134...154 (2800...3200 RPM)
+000,2,Injection Start,Specification (Idle): 97...117 (3...9 °BDTC)\nSpecification (Full Load): 79...56 (15...22 °BDTC)
+000,3,Accel. Pedal Pos. Sensor 1 (G79),Specification (Idle): 0 (0 %)\nSpecification (Full Load): 255 (100 %)
+000,4,Injection Quantity,Specification (Idle): 11...33 (3.0...10.0 mg/Str.)\nSpecification (Full Load): 156...175 (43...48 mg/Str.)
+000,5,Boost Pressure,Specification (Idle): 88...108 (900...1100 mbar)
+000,6,Atmospheric Pressure,Specification: 181...222 (900...1100 mbar)
+000,7,Coolant Temperature (G62),Specification: 80...36 (80...110 °C)
+000,8,Intake Air Temperature (G72),Specification: 190...51 (5...100 °C)
+000,9,Fuel Temperature (G81),Specification: 85...178 (20...85°C)
+000,10,Mass Air Flow,Specification (Idle): 60...96 (200...320 mg/Str.)\nSpecification (Full Load): max. 210 (max. 700 mg/Str.)
+;
+001,0,Injection Quantity
+001,1,Engine Speed,(G28),Specification (Idle): 900...980 RPM\nSpecification (Full Load): 2800...3200 RPM
+001,2,Injection Quantity,,Specification: 3.0...10.0 mg/Str.
+001,3,Injection Duration,(specified),Specification (Idle): 4.0...7.0 °CF
+001,4,Coolant,Temperature (G62),Range: -40.5...+135.0 °C\nSpecification (Warm): 80.0...110.0 °C
+;
+002,0,Idle Speed
+002,1,Engine Speed,(G28),Specification (Idle): 900...980 RPM\nSpecification (Full Load): 2800...3200 RPM
+002,2,Accel. Pedal Pos.,Sensor 1 (G79),Range: 0.0...100.0 %\nSpecification (Idle): 0.0 %\nSpecification (Full Load): 99.0...100.0 %
+002,3,Operation Status,,-x-xx--1 = Climate Control ON\n-x-x1--x = Idle Switch closed\n-x-1x--x = Kick-Down (only Automatic Transmission)\n-1-xx--x = Idle Speed raised
+; -x-xx--1 = Climate Control ON
+; -x-x1--x = Idle Switch closed
+; -x-1x--x = Kick-Down (only Automatic Transmission)
+; -1-xx--x = Idle Speed raised
+002,4,Coolant,Temperature (G62),Range: -40.5...+135.0 °C\nSpecification (Warm): 80.0...110.0 °C
+;
+003,0,Exhaust Gas Recirculation (EGR)
+003,1,Engine Speed,(G28),Specification (Idle): 900...980 RPM\nSpecification (Full Load): 2800...3200 RPM
+003,2,Exhaust Gas,Recirculat. (spec.),Specification (Idle): 220.0...300.0 mg/Str.
+003,3,Exhaust Gas,Recirculat. (actual),Specification (Idle): 200.0...32s0.0 mg/Str.
+003,4,Exhaust Gas,Recirc. Duty Cycle,Specification (Idle): 30.0...80.0 %
+;
+004,0,Start of Injection
+004,1,Engine Speed,(G28),Specification (Idle): 900...980 RPM\nSpecification (Full Load): 2800...3200 RPM
+004,2,Injection Start,(specified),Specification (Idle): 3.0...9.0 °BDTC\nSpecification (Full Load): 15.0...22.0 °BDTC
+004,3,Injection Duration,(specified),Specification (Idle): 4.0...7.0 °CF\nSpecification (Full Load): 17.0...24.0 °CF
+004,4,Torsion Value,,Specification: -5.0...+5.0 °CF
+;
+005,0,Start Conditions (last Engine Start)
+005,1,Engine Speed,(G28),Specification (Idle): 900...980 RPM\nSpecification (Full Load): 2800...3200 RPM
+005,2,Starting,Quantity
+005,3,Start of,Injection (act.)
+005,4,Coolant,Temperature (G62),Range: -40.5...+135.0 °C\nSpecification (Warm): 80.0...110.0 °C
+;
+006,0,Cruise Control System (CCS)
+006,1,Vehicle Speed,(actual)
+006,2,Cruise Control,Pedal Monitoring,-1--x--x = Clutch Pedal Switch operated\n-x--1--x = Brake Pedal Switch (F47) operated\n-x--x--1 = Brake Light Switch (F) operated
+; -1--x--x = Clutch Pedal Switch operated
+; -x--1--x = Brake Pedal Switch (F47) operated
+; -x--x--1 = Brake Light Switch (F) operated
+006,3,Accel. Pedal Pos.,Sensor 1 (G79),Range: 0.0...100.0 %\nSpecification (Idle): 0.0 %\nSpecification (Full Load): 99.0...100.0 %
+006,4,Cruise Control,Status,0 = Cruise Control System (CCS) Function enabled and active\n1 = Cruise Control System (CCS) enabled but inactive\n2 = Accelerate (+)\n4 = Decelerate (-)\n8 = Resume\n16 = Brake Pedal operated\n32 = Maintain Cruising Speed\n255 = Cruise Control System (CCS) Function disabled
+;   0 = Cruise Control System (CCS) Function enabled and active
+;   1 = Cruise Control System (CCS) Function enabled but inactive
+;   2 = Accelerate (+)
+;   4 = Decelerate (-)
+;   8 = Resume
+;  16 = Brake Pedal operated
+;  32 = Maintain Cruising Speed
+; 255 = Cruise Control System (CCS) Function disabled
+;
+007,0,Temperatures
+007,1,Fuel Temperature,(G81),Specification (Cold): ca. Ambient Temperature
+007,2,Oil Temperatur,(G8),Specification (Cold): ca. Ambient Temperature
+007,3,Intake Air,Temperature (G72),Specification (Cold): ca. Ambient Temperature
+007,4,Coolant,Temperature (G62),Range: -40.5...+135.0 °C\nSpecification (Cold): ca. Ambient Temperature
+;
+008,0,Injection Quantity Limitation I (Torque Limitation)
+008,1,Engine Speed,(G28),Specification (Idle): 900...980 RPM\nSpecification (Full Load): 2800...3200 RPM
+008,2,Torque Request,(Driver),Specification (Full Load): 50.0...65.0 mg/Str.\n\n< 50.0 mg/Str. = Accel. Pedal not fully pressed/incorrectly adjusted
+008,3,Torque Limitation,,Specification (Full Load): 43.0...48.0 mg/Str.\n\n< 43.0 mg/Str. = Engine Speed to high/los\n48.0 mg/Str. > = Injection Quantity modified (Tuning)
+008,4,Smoke Limitation,,Specification (Full Load): 46.0...55.0 mg/Str.\n\n< 29.0 mg/Str. = Check Mass Air Flow (MAF) Sensor
+;
+009,0,Injection Quantity Limitation II (Torque Limitation)
+009,1,Engine Speed,(G28),Specification (Idle): 900...980 RPM\nSpecification (Full Load): 2800...3200 RPM
+009,2,Torque Request,(Cruise Control)
+009,4,Torque Restriction
+;
+010,0,Charge Pressure Control
+010,1,Mass Air Flow,(actual),Specification (Full Load): min. 700.0 mg/Str.
+010,2,Atmospheric,Pressure,Specification: 900.0...1100.0 mbar
+010,3,Boost Pressure,(actual),Specification (Idle): 900.0...1100.0 mbar\nSpecification (Full Load): 1800.0...2200.0 mbar
+010,4,Accel. Pedal Pos.,Sensor 1 (G79),Specification (Idle): 0.0 %\nSpecification (Full Load): 99.0...100.0 %
+;
+011,0,Charge Pressure Control
+011,1,Engine Speed,(G28),Specification (Idle): 900...980 RPM\nSpecification (Full Load): 2800...3200 RPM
+011,2,Boost Pressure,(specified),Specification (Idle): 900.0...1100.0 mbar\nSpecification (Full Load): 1800.0...2200.0 mbar
+011,3,Boost Pressure,(actual),Specification (Idle): 900.0...1100.0 mbar\nSpecification (Full Load): 1800.0...2100.0 mbar
+011,4,Charge Pressure,Control Duty Cycle,Specification (Full Load): 40.0...95.0 %
+;
+012,0,Glow Plugs
+012,1,Glow Status,,00000000 = Waiting for Coolant Temperature\n00000001 = Waiting for ECO Start Request\n00010000 = Pre-Glow\n01010000 = No Pre-Glow\n10110000 = Post-Glow\n11000000 = No Post-Glow\n11110000 = Interim Glow\n00110000 = Readiness Glowing\n01110000 = Glow Start\n10110001 = Waiting for Post-Glow\n11010000 = No Post-Glow\n11110001 = Waiting for Interim Glow\n11111111 = Glowing OFF
+; 00000000 = Waiting for Coolant Temperature
+; 00000001 = Waiting for ECO Start Request
+; 00010000 = Pre-Glow
+; 01010000 = No Pre-Glow
+; 10110000 = Post-Glow
+; 11000000 = No Post-Glow
+; 11110000 = Interim Glow
+; 00110000 = Readiness Glowing
+; 01110000 = Glow Start
+; 10110001 = Waiting for Post-Glow
+; 11010000 = No Post-Glow
+; 11110001 = Waiting for Interim Glow
+; 11111111 = Glowing OFF
+012,2,Pre-Glow Period
+012,3,Supply Voltage,(Terminal 30),Range: 0.0...20.0V\nSpecification: 12.0...15.0 V
+012,4,Coolant,Temperature (G62),Range: -40.5...+135.0 °C\nSpecification (Warm): 80.0...110.0 °C
+;
+013,0,Idle Stabilization (Injection Quantity Deviation)
+013,1,Injection Quantity,Deviation Cyl. 1,Specification: -2.8...+2.8 mg/Str.
+013,2,Injection Quantity,Deviation Cyl. 2,Specification: -2.8...+2.8 mg/Str.
+013,3,Injection Quantity,Deviation Cyl. 3,Specification: -2.8...+2.8 mg/Str.
+;
+015,0,Fuel Consumption
+015,1,Engine Speed,(G28),Specification (Idle): 900...980 RPM\nSpecification (Full Load): 2800...3200 RPM
+015,2,Injection Quantity,(actual)
+015,3,Fuel Consumption
+015,4,Injection Quantity,(specified)
+;
+016,0,Auxiliary Heating
+016,1,Generator Load,,Range: 0.0...100.0 %
+016,2,Auxiliary Heating,Shut-Off Conditions,xxxxxxx1 = Coolant Temparature above 80.0 °C\nxxxxxx1x = Generator Malfunction\nxxxxx1xx = Battery Voltage too Low\nxxxx1xxx = Engine Speed too Low\nxxx1xxxx = Start Delay active\nxx1xxxxx = System Malfunction (G62 OR G72 FAULTY)\n1xxxxxxx = Ambient Temperature above 5.0 °C
+; xxxxxxx1 = Coolant Temparature above 80.0 °C
+; xxxxxx1x = Generator Malfunction
+; xxxxx1xx = Battery Voltage too Low
+; xxxx1xxx = Engine Speed too Low
+; xxx1xxxx = Start Delay active
+; xx1xxxxx = System Malfunction (G62 OR G72 FAULTY)
+; 1xxxxxxx = Ambient Temperature above 5.0 °C
+016,3,Heating Element,Activation,1x = Relay for High Heat Output (J360) ON\nx1 = Relay for Low Heat output (J359) ON
+; 1x = Relay for High Heat Output (J360) ON
+; x1 = Relay for Low Heat output (J359) ON
+016,4,Supply Voltage,(Terminal 30),Range: 0.0...20.0 V\nSpecification: 13.0...15.0 V
+;
+017,0,Readiness Code (EOBD)
+017,1,EOBD/CARB,Mode 01 DATA A,x---0000 = No Fault Codes stored\n0---xxxx = MIL OFF\n1---xxxx = MIL ON
+; x---0000 = No Fault Codes stored
+; 0---xxxx = MIL OFF
+; 1---xxxx = MIL ON
+017,2,EOBD/CARB,Mode 01 DATA B,-xxx-xx1 = Activation Misfire Recognition OIN\n-xxx-x1x = Activation Fuel Supply System ON\n-xxx-1xx = Activation Comprehensive Components ON\n-xxx-xxx = EOBD-Test Misfire Recognition finished \n-x0x-xxx = EOBD-Test Fuel Supply System finished\n-0xx-xxx = EOBD-Test Comprehensive Components finished
+; -xxx-xx1 = Activation Misfire Recognition OIN
+; -xxx-x1x = Activation Fuel Supply System ON
+; -xxx-1xx = Activation Comprehensive Components ON
+; -xxx-xxx = EOBD-Test Misfire Recognition finished 
+; -x0x-xxx = EOBD-Test Fuel Supply System finished
+; -0xx-xxx = EOBD-Test Comprehensive Components finished
+017,3,EOBD/CARB,Mode 01 DATA C,xx1----- = Activation Oxygen/Lambda Sensor ON\nx1x----- = Activation Oxygen/Lambda Sensor Heating ON\n1xx----- = Activation Exhaust Gas Recirculation (EGR) ON
+; xx1----- = Activation Oxygen/Lambda Sensor ON
+; x1x----- = Activation Oxygen/Lambda Sensor Heating ON
+; 1xx----- = Activation Exhaust Gas Recirculation (EGR) ON
+017,4,EOBD/CARB,Mode 01 DATA D,xx0----- = EOBD-Test Oxygen/Lambda Sensor finished\nx0x----- = EOBD-Test Oxygen/Lambda Sensor Heating finished\n0xx----- = EOBD-Test Exhaust Gas Recirculation (EGR) finished
+; xx0----- = EOBD-Test Oxygen/Lambda Sensor finished
+; x0x----- = EOBD-Test Oxygen/Lambda Sensor Heating finished
+; 0xx----- = EOBD-Test Exhaust Gas Recirculation (EGR) finished
+;
+018,0,Injector Status
+; 000 = No Faults detected
+; 002 = Control while Starting
+; 004 = Small Injection Quantity or Piezo Injector OFF
+; 008 = Energy Limits/Maximum Current reached
+; 016 = Begin of Injection Period (BIP)/Valve Closing Time implausible
+; 032 = Piezo Capacity implausible
+; 064 = Piezo Energy implausible
+; 128 = Begin of Injection Period (BIP) not plausible > Electrical Fault
+018,1,Injector Status,Cylinder 1,000 = No Faults detected\n002 = Control while Starting\n004 = Small Injection Quantity or Piezo Injector OFF\n008 = Energy Limits/Maximum Current reached\n016 = Begin of Injection Period (BIP)/Valve Closing Time implausible\n032 = Piezo Capacity implausible\n064 = Piezo Energy implausible\n128 = Begin of Injection Period (BIP) not plausible > Electrical Fault
+018,2,Injector Status,Cylinder 2,000 = No Faults detected\n002 = Control while Starting\n004 = Small Injection Quantity or Piezo Injector OFF\n008 = Energy Limits/Maximum Current reached\n016 = Begin of Injection Period (BIP)/Valve Closing Time implausible\n032 = Piezo Capacity implausible\n064 = Piezo Energy implausible\n128 = Begin of Injection Period (BIP) not plausible > Electrical Fault
+018,3,Injector Status,Cylinder 3,000 = No Faults detected\n002 = Control while Starting\n004 = Small Injection Quantity or Piezo Injector OFF\n008 = Energy Limits/Maximum Current reached\n016 = Begin of Injection Period (BIP)/Valve Closing Time implausible\n032 = Piezo Capacity implausible\n064 = Piezo Energy implausible\n128 = Begin of Injection Period (BIP) not plausible > Electrical Fault
+;
+020,0,Injection Quantity Limitation (from ABS)
+020,1,Engine Speed,(G28),Specification (Idle): 900...980 RPM\nSpecification (Full Load): 2800...3200 RPM
+020,2,Engine Torque
+020,3,ASR Limitation
+020,4,MSR Limitation
+;
+021,0,CAN-Databus Status (Powertrain)
+021,1,Engine Electronics
+021,2,Transmission,Electronics
+021,3,Brake Electronics
+021,4,Brake Electronics,(ESP)
+;
+022,0,Shut-Off Status
+022,1,Shut-Off Status,Cruise Control
+022,2,Switch Monitoring,Cruise Control,000 = Neutral\n001 = OFF (Switched)\n002 = OFF (Tipped)\n003 = SET (CCS ON)\n004 = Tip Down\n005 = Deceleration (-)\n006 = RESUME/RESET\n007 = Tip Up\n008 = Acceleration (+)
+; 000 = Neutral
+; 001 = OFF (Switched)
+; 002 = OFF (Tipped)
+; 003 = SET (CCS ON)
+; 004 = Tip Down
+; 005 = Deceleration (-)
+; 006 = RESUME/RESET
+; 007 = Tip Up
+; 008 = Acceleration (+)
+022,3,Shut-Off Status,Charge Pressure,001 = Cold Start\n002 = System Malfunction\n004 = Control Deviation\n016 = Diagnostic Interference
+; 001 = Cold Start
+; 002 = System Malfunction
+; 004 = Control Deviation
+; 016 = Diagnostic Interference
+022,4,Shut-Off Status,Climate Control,001 = Launch Condition\n002 = Shut-Off: Launch Condition\n004 = Acceleration Condition\n008 = Shut-Off: Acceleration Condition\n016 = Shut-Off: Start Condition\n032 = System Malfunction recognized\n064 = Shut-Off: System Malfunction recognized\n128 = Shut-Off: Idle Speed too Low
+; 001 = Launch Condition
+; 002 = Shut-Off: Launch Condition
+; 004 = Acceleration Condition
+; 008 = Shut-Off: Acceleration Condition
+; 016 = Shut-Off: Start Condition
+; 032 = System Malfunction recognized
+; 064 = Shut-Off: System Malfunction recognized
+; 128 = Shut-Off: Idle Speed too Low
+;
+023,0,Injector Switching Time Deviation
+023,1,Switch Time Deviat.,Cylinder 1
+023,2,Switch Time Deviat.,Cylinder 2
+023,3,Switch Time Deviat.,Cylinder 3
+;
+026,0,Checksum
+026,1,Checksum,,Calculation is performed with Engine OFF.\n0 means the Calculation isn't finished yet.
+;
+027,0,Adaptive Cruise Control / Speed Limiter
+027,1,Engine Speed,(G28),Specification (Idle): 900...980 RPM\nSpecification (Full Load): 2800...3200 RPM
+027,3,Vehicle Speed
+027,4,Vehicle Speed,Limit
+;
+080,0,Advanced Control Module Identification I
+080,1,Identification
+080,2,Revision
+080,3,Production,Date
+080,4,Manufacturer &,Test Stand Number
+;
+125,0,CAN-Databus Powertrain (Communication)
+125,1,Transmission,Electronics,Range: Transm. 1/Transm. 0\nSpecification: Transm. 1
+125,2,Brake Electronics,(J104),Range: ABS 1/ABS 0\nSpecification: ABS 1
+125,3,Instrument Cluster,(J285),Range: Instruments 1/Instruments 0\nSpecification: Instruments 1
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+;A000,0,Reset Learned Values
+;A000,5,Reset Learned Values
+;A000,6,To Reset the learned Values Save this Adaptation Channel.
+;
+A002,0,Idle Speed Adjustment
+A002,1,Engine Speed,(actual)
+A002,2,Accel. Pedal Pos.,Sensor 1 (G79)
+A002,3,Operation Status
+A002,4,Coolant,Temperature (G62)
+;
+A050,0,Immobilizer (Vehicle Data learning)
+A050,1,Status
+A050,5,Immobilizer (Vehicle Data learning)
+A050,6,Please enter the Immobilizer PIN/SKC of the Instrument Cluster (OLD PIN/SKC).
+A050,7,After that the Learning Process is being initiated the new Engine Control
+A050,8,Module adopts the Vehicle-Identification-Number (VIN) and Immobilizer
+A050,9,Identification (IMMO-ID) of the Vehicle (from the OLD Instrument Cluster).
+A050,10,Once the Adaptation is done switch the Ignition OFF for about 2 Minutes.
+;
+A091,0,Immobilizer Status
+A091,5,Immobilizer Status (Read Only)
+A091,6,0 = Immobilizer not matched (NEW)
+A091,7,1 = Immobilizer disabled
+A091,8,4 = Immobilizer matched (System OK)
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Engine Control Module (J248) Coding
+C01,00001 = Automatic Transmission
+C02,00002 = Manual Transmission with Front-Wheel-Drive (FWD)
+C03,00003 = Manual Transmission with All-Wheel-Drive (AWD)
+;
+;
+;---------------------------------------------------
+;
+; login
+;
+;---------------------------------------------------
+;
+;
+L00,Engine Control Module (J248) Login
+L01,11463 = Cruise Control System (CCS) Activation
+L02,16167 = Cruise Control System (CCS) Deactivation
+L03,12233 = Adaptation Enabling
+L04, 
+L05,Note (Immobilizer): Prior to adapting a new USED Engine Control
+L06,Modile the Vehicle specific PIN/SKC (IMMO-Login) of the new USED
+L07,Engine Control Module (ECM) has to be used to enable the adaptation.
+L08,You'll find the PIN/SKC on the Key Tag of the additional Key
+L09,(of the Donor Car) or you can acquire it through your responsible
+L10,Distribution Center or Importer.
+;

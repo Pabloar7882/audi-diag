@@ -1,0 +1,22 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2009 Ross-Tech, LLC
+;
+; Component: J255 - A/C Heating Electronics (#08)
+;
+; This file is part of a redirection package,
+; make sure you have all of the following files.
+;
+; 10-08.LBL
+; 1K0-907-044.LBL
+;
+; creaqted on 22/Jun/2009 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 22/Jun/2009
+;
+; requires VCDS 805.0 or newer
+;
+;
+REDIRECT,1K0-907-044.LBL,100-907-044-??? ; Climatronic
+;

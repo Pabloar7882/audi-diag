@@ -1,0 +1,219 @@
+;
+; VAG-COM Label File
+;
+; Audi A4 (8E)
+;
+; Component: J364 - Auxiliary Heater (#18)
+;
+; P/N: 8E0-265-105-X
+;
+; includes measuring blocks, coding and adaptation
+;
+; created on 28/Jan/2012 by Jochen Bender (a4quattro@gmx.net)
+;
+; last modification: 02/Feb/2012
+;
+; requires VAG-COM 402.3 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring block information
+;
+;---------------------------------------------------
+;
+;
+001,1,Battery voltage,,Display range: 11...14 Volt
+001,2,Voltage at ECU,,Display range: 11...14 Volt
+001,3,Undervoltage limit,,Display range: Volt
+001,4,Type of under-, voltage turn-off,,Display range: Automatic/Fixed
+;
+002,1,Actual heater, temperature,,Display range: °C
+002,2,N279 valve trigger,,Display range: %
+002,3,Lowest temp., since start,,Display range: °C
+002,4,Actual speed of, comb. air blower,,Display range: 1/min
+;
+003,1,Power factor, comb. air blower,,Display range: %
+003,2,Power factor, circul. pump,,Display range: %
+003,3,Power factor, glow plug,,Display range: %
+003,4,Power factor, dosage pump,,Display range: %
+;
+004,1,Signal from, flame detector,,Display range: recogneized/ not recogneized
+004,2,Signal to air cond., fan control,,Display range: %
+004,3,Power factor, actual heat load,,Display range: %
+004,4,Fuel consumption, since start in ml,,Display range: ml
+;
+005,1,Time until, turn-off,, Display range: s
+005,2,Actual working time, since start,,Display range: s
+005,3,Signals from CAN-, bus status 1,,Display range: bits
+005,4,Signals from CAN-, bus status 2,,Display range: bits
+;
+006,1,Actual status, auxiliary heater,,Display range: Start/Stop
+006,2,Actual or last, duty type,,Display range: Pump on/?
+006,3,Actual start/stop, condition from CAN,,Display range: ?
+006,4,N/A
+;
+007,1,Signal status, rem. control R64,,
+007,2,Status of analog, control port,,(not used for factory heaters)
+007,3,Counter f. stops, due to overtemp.,,
+007,4,Counter f. errors, in heater mode,,
+;
+008,1,Total burn time., (with flame) in h,,
+008,2,Total operation, time in h,,
+008,3,Total glow cycles, (start cyles),,
+008,4,Total fuel cons., in Liter,,
+;
+009,1,Lowest temp., since start,,Display range: °C
+009,2,Outside temp., comm. from -J285-,,Display range: °C
+009,3,Coolant temp., comm. from -J285-,,Display range: °C
+009,4,Outside temp., comm. from -J255-,,Display range: °C
+;
+010,1,Lowest temp., since start,,Display range: °C
+010,2,Engine speed comm., from -J285- in 1/min,,
+010,3,Time until, turn-off,, Display range: s
+010,4,N/A
+;
+011,1,Last turn-off, issued by ..,,(special look-up table necessary)
+011,2,2nd last turn-o., issued by ..,,(special look-up table necessary)
+011,3,3rd last turn-o., issued by ..,,(special look-up table necessary)
+011,4,4th last turn-o., issued by ..,,(special look-up table necessary)
+;
+012,1,Boundary condition, of last turn-o.,,
+012,2,Boundary condition, of last turn-o.,,
+012,3,Boundary condition, of last turn-o.,,
+012,4,Boundary condition, of last turn-o.,,
+;
+013,1,Boundary condition, 2nd last turn-o.,,
+013,2,Boundary condition, 2nd last turn-o.,,
+013,3,Boundary condition, 2nd last turn-o.,,
+013,4,Boundary condition, 2nd last turn-o.,,
+;
+014,1,Boundary condition, 3rd last turn-o.,,
+014,2,Boundary condition, 3rd last turn-o.,,
+014,3,Boundary condition, 3rd last turn-o.,,
+014,4,Boundary condition, 3rd last turn-o.,,
+;
+015,1,Unburnt fuel, quantity,,
+015,2,Unburnt fuel, quantity,,
+015,3,Unburnt fuel, quantity,,
+015,4,Unburnt fuel, quantity,,
+;
+080,1,Manufacturer, mark of -J364-,,
+080,2,Day of manuf.,of ECU -J364-,,
+080,3,Revision level, of -J364-,,
+080,4,Teststand ID where, -J364- was checked,,
+080,5,Manufacturer ID, of ECU -J364-,,
+;
+082,1,ID of updater, (flash tool ID),,
+082,2,Date of last, SW update,,
+082,3,HW rev. level, of ECU -J364-,,
+082,4,SW rev. level, of ECU -J364-,,
+;
+090,1,Heater tested, during manuf.,, Display Range: ARDIC TEST: Y/ARDIC TEST: N
+090,3,Heater tested, during manuf.,, Display Range: BERIFORS TEST: Y/BERIFORS TEST: N
+;
+;
+;---------------------------------------------------
+;
+; coding information
+;
+;---------------------------------------------------
+;
+;
+C00,Auxiliary Heater (-J364-) Coding
+C01,00?xx: Shutoff valve -N279-
+C02,0 = Shutoff valve -N279- not installed
+C03,1 = Shutoff valve -N279- installed (coding not recommended if valve is available in 4 cyl. Diesel;
+C04,requires adaption value "0001x" in channel 18 of instrument cluster -J285- to activate "Incl. Motor")
+C05,
+C06,00x?x: Circulation pump -V55-
+C07,0 = Circulation pump not installed (variant not planned)
+C08,1 = Circulation pump installed
+C09,
+C10,00xx?: Type of undervoltage turn-off
+C11,1 = Temperature dependent voltage correction value (factory default)
+C12,2 = Fixed voltage value (on customer request; refer to settings in adaption channel 1)
+;
+;
+;---------------------------------------------------
+;
+; adaptation information
+;
+;---------------------------------------------------
+;
+;
+A001,0,Undervoltage heater turn-off setting
+A001,5,Undervoltage heater turn-off setting
+A001,6,Turn-off temperature dependent (if factory default Coding 00xx1)
+A001,7,Factory setting is 12.17V which equates to encryption value "9138"
+A001,8,Recommended setting range is 9.98V - 12.65V encrytion look up table below:
+A001,9,
+A001,10,Encrytion value   Voltage value   Encrytion value   Voltage value
+A001,11,      9106     =     9.98V               9130     =    11.60V
+A001,12,      9110     =    10.25V               9138     =    12.17V
+A001,13,      9120     =    10.90V               9145     =    12.65V
+A001,14,
+A001,15,Turn-off at fixed value (if coding 00xx2 on customer request AND/OR if heater is in
+A001,16,automatic heating mode at Coding 00xx1) factory setting is 9.5V which equates to "9097"
+A001,17,Recommended setting range 8.00V - 12.99V encrytion look up table below:
+A001,18,
+A001,19,Encrytion value   Voltage value   Encrytion value   Voltage value
+A001,20,      9077     =     8.00V               9120     =    10.90V
+A001,21,      9090     =     9.00V               9130     =    11.60V
+A001,22,      9097     =     9.50V               9140     =    12.30V
+A001,23,      9100     =     9.60V               9150     =    12.99V
+A001,24,      9110     =    10.25V
+;
+A002,0,Dosage pump -V54- control to adjust CO2 volume in exhaust
+A002,5,Dosage pump -V54- control to adjust CO2 volume in exhaust
+A002,6,The adjustment is done by changing the pulse frequency
+A002,7,
+A002,8,Gasoline version: Factory default is 147ms (147/1000 sec) equates to 6.8Hz (pulses per second)
+A002,9,Diesel version: Factory default is 176ms (176/1000 sec) equates to 5.7Hz (pulses per second)
+A002,10,
+A002,11,Remark: The correct setpoint for CO2 volume is 9.5% +/-0.04% (for both Gasoline and Diesel engines)
+A002,12,The CO2 volume changes by 0.07% per 1ms. Example: The measured CO2 value is 8.8% and the setting
+A002,13,is 176ms -> changing it to 166ms results in a CO2 setpoint value of 9.5%.
+;
+A003,0,Aux. heater turn-off condition after engine stop
+A003,5,Aux. heater turn-off condition after engine stop
+A003,6,Setting "1" = Heater keeps running until the remaining set time is elapsed (factory default)
+A003,7,Setting "2" = Heater turns off with engine stop (on customer request)
+;
+A004,0,Learn remote control unit
+A004,5,Learn remote control unit
+A004,6,
+A004,7,Start the learn process by entering "1" =>> "LERNEN" appears.
+A004,8,Press the "Turn ON" button of the remote control unit within 30sec =>> "ERKANNT" appears.
+A004,9,
+A004,10,Up to 4 remote control units can be learned. Learning a 5th remote control unit automatically
+A004,11,deletes the 1st remote control unit!
+:
+A005,0,Matching the ECU -J364- to fuel type (Gasoline or Diesel)
+A005,5,Matching the ECU -J364- to fuel type (Gasoline or Diesel)
+A005,6,Setting "1" = The ECU -J364- is set to Diesel
+A005,7,Setting "2" = The ECU -J364- is set to Gasoline
+A005,8,Remark: With this adjustment it is possible to use one and the same ECU -J364- in either Gasoline or
+A005,9,Diesel cars but never swap the entire aux. heater because of the different heater hardware!!
+;
+A006,0,Set ECU -J364- to operate in automatic heating mode (at outside temp. < 5°C and "ECON" off)
+A006,5,Set ECU -J364- to operate in automatic heating mode
+A006,6,Setting "0" = Automatic heating ON (factory default)
+A006,7,Setting "1" = Automatic heating OFF (on customer request; works only for Gasoline engines)
+;
+A081,0,Learn Vehicle Identification Number (VIN)
+A081,5,Learned Values (Vehicle Data)
+A081,6,To start the process for vehicle data (VIN)
+A081,7,learning just enter and save "26467" as new value.
+; 
+A087,0,Setting for lowest speed of combustion air blower -V6- >>> Enter "22222" in LOGIN first <<<
+A087,5,Setting for lowest speed of combustion air blower -V6-
+A087,6,The following procedure is to correct smoking heaters while switching from full throttle to
+A087,7,part throttle mode (only necessary for cars up to model year 2004!).
+A087,8,
+A087,9,Factory default for ECUs until index B is "00048" (= 4800/min). Change this value to "00065"
+A087,10,(= 6500/min) and save it. The lowest allowed speed is now set to 6500/min. Please start heater
+A087,11,until the heater switches from full to part throttle and see whether the smoking phenomenon is mitigated.
+A087,12,
+A087,13,Remark: You need to login in ECU (function "11") with login code "22222" at first!
+;

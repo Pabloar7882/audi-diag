@@ -1,0 +1,28 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2007+ Ross-Tech, LLC
+;
+; Component: J255 - Heating & Air Conditioning (#08)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 7M-08.LBL
+; 7M3-907-040.LBL
+; 7M3-907-049.LBL
+;
+; created on 09/Oct/2007 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 08/Oct/2012
+;
+; requires VCDS 10.6.4 or newer
+;
+;
+REDIRECT,7M3-907-040.LBL,7M3-907-040-??? ; VW Sharan
+REDIRECT,7M3-907-040.LBL,7M5-907-040-??? ; Ford Galaxy
+REDIRECT,7M3-907-040.LBL,7M7-907-040-??? ; Seat Alhambra
+;
+REDIRECT,7M3-907-049.LBL,7M3-907-049-??? ; VW Sharan / Seat Alhambra
+REDIRECT,7M3-907-049.LBL,7M5-907-049-??? ; Ford Galaxy
+;

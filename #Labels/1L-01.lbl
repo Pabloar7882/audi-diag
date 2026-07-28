@@ -1,0 +1,25 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2004-2011 Ross-Tech, LLC
+;
+; Component: Engine (#01)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 03-01.LBL
+; 06-01.LBL
+; 1L-01.LBL
+; 6K-01.LBL
+; 037-906-025-ADY.LBL (2.0l E   @ 115 HP - ADY/AGG/AKR)
+;
+; created on 03/Sep/2004 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 18/Aug/2011
+;
+; requires VCDS 10.6.4 or newer
+;
+;
+REDIRECT,037-906-025-ADY.LBL,1L0-906-025-D  ; AGG (1L)
+;

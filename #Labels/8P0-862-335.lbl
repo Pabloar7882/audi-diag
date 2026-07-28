@@ -1,0 +1,196 @@
+;
+; VCDS Label File
+;
+; Copyright © 2006-2011 Ross-Tech, LLC
+;
+; Audi A2 (8Z) / Audi A3 (8P) / Audi A4 (8E) / Audi A4 (8K) / Audi A5 (8T)
+; Audi A6 (4B) / Audi R8 (42) / Audi TT (8N) / Audi TT (8J)
+;
+; Component: R36 - Telephone Preperation (#77)
+;
+; P/N: 8P0-962-335-???
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 8P-77.LBL
+; 8T-77.LBL
+; 8P0-862-335.LBL
+;
+; includes measuring blocks, adaptation and coding
+;
+; created on 18/Jul/2006 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 01/Sep/2011
+;
+; requires VCDS 805.0 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,Voltage
+001,1,Voltage,(Terminal 30),Specification: 9.0...15.0 V
+;
+005,0,Input Signals
+005,1,Input Signals,,1xxx = Communication to Mobile Phone active\nx1xx = Mobile Phone Switched ON\nxx1x = Mobile Phone inserted\nxxx1 = Push-To-Talk (PTT) Button pressed
+;
+010,0,Signal Strengths
+010,1,Signal Strengths
+010,2,Reception,Signal Strengths,Display Range: -113.0...33.0 dBm\n128.0 dBM = No Communication with Mobile Phone
+;
+011,0,Main Antenna
+011,1,Main Antenna
+011,2,Main Antenna,Status,Display Range: OK/Short Circuit/Open Circuit/Not Possible
+;
+014,0,Bluetooth Devices
+014,1,Bluetooth Devices
+014,2,Connected,Bluetooth Devices
+;
+019,0,Microphone Input
+019,1,Microphone Input,Voltage
+019,2,Microphone Input,Status
+;
+020,0,Connected Bluetooth Devices && Reception Signal Strength
+;
+080,0,Advanced Control Module Identification I
+;
+081,0,Advanced Control Module Identification II
+081,1,Serial Number
+;
+082,0,Advanced Control Module Identification III
+;
+133,0,Bluetooth Antenna
+133,1,Bluetooth Antenna
+133,2,Bluetooth Antenna,Status
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+A128,0,Output Volume
+A128,5,Output Volume
+A128,6,Basic Output Volume Adjustment
+A128,7,Range: -6...+6 dB
+A128,8, 
+A128,9,0 = ±0 dB / 1 = +1 dB / 2 = +2 dB
+A128,10,3 = +3 dB / 4 = +4 dB / 5 = +5 dB / 6 = +6 dB
+A128,11,128 = -1 dB / 129 = -2 dB / 130 = -3 dB
+A128,12,131 = -4 dB / 132 = -5 dB / 133 = -6 dB
+;
+A129,0,Afterrun Time
+A129,5,Afterrun Time
+A129,6,The time the mobile phone plate is active after "Ignition OFF".
+A129,7, 
+A129,8,Range: 0...6 (30 Seconds to 30 Minutes)
+A129,9,Increments: 1 = 5 Minutes (0 = 30 Seconds)
+;
+A130,0,Delay Time (Audio Components)
+A130,5,Delay Time (Audio Components)
+A130,6,Adjustment of the delay times to compensate the
+A130,7,audio component delay and acoustic running times.
+A130,8, 
+A130,9,Range: 0...12 ms
+;
+A131,0,Microphone Sensitivity
+A131,5,Microphone Sensitivity
+A131,6,Microphone Sensitivity Adjustment
+A131,7,Range: -6...+6 dB
+A131,8, 
+A131,9,0 = ±0 dB / 1 = +1 dB / 2 = +2 dB
+A131,10,3 = +3 dB / 4 = +4 dB / 5 = +5 dB / 6 = +6 dB
+A131,11,128 = -1 dB / 129 = -2 dB / 130 = -3 dB
+A131,12,131 = -4 dB / 132 = -5 dB / 133 = -6 dB
+;
+A132,0,Speed Dependent Volume Adjustment (GALA)
+;0
+;
+A133,0,Bluetooth
+A133,5,Bluetooth
+A133,6,0 = Bluetooth OFF
+A133,7,1 = Bluetooth ON
+;
+A134,0,Hands Free Function
+A134,5,Hands Free Function
+A134,6,0 = Hands-free active while Bluetooth connection is active but without cell phone engaged
+A134,7,1 = Hands-free only active with cell phone engaged
+;
+A135,0,Bluetooth Pass Key
+A135,5,Bluetooth Pass Key
+A135,6,Set the 4-digit Bluetooth pass key using this channel.
+;
+A136,0,Delay Time (Voice Control)
+A136,5,Delay Time (Voice Control)
+A136,6,Adjustment of the delay time between mute signal
+A136,7,and start of the voice control recognition.
+A136,8, 
+A136,9,Standard: 5 (= 0.5 Seconds)
+;
+A137,0,Bluetooth Visibility Time
+A137,5,Bluetooth Visibility Time
+A137,6,Time for which the Bluetooth Telephone Preparation
+A137,7,stays visible for other Bluetooth Devices. After
+A137,8,this time only previously connected Devices can
+A137,9,connect to the Bluetooth Telephone Preparation.
+A137,10, 
+A137,11,Range: 0/1...30 Minutes
+A137,12,Standard: 0 (always visible)
+;
+A138,0,Voice Control Volume
+A138,5,Voice Control Volume
+A138,6,This Channel allows to alter
+A138,7,the Maximum Voice Control Volume.
+;
+A139,0,Call Volume
+A139,5,Call Volume
+A139,6,This Channel allows to alter
+A139,7,the Maximum Call Volume.
+;
+A141,0,Bluetooth Confirmation Tone
+A141,5,Bluetooth Confirmation Tone
+A141,6,The Bluetooth Confirmation Tone can be activated/deactivated.
+A141,7, 
+A141,8,0 = Confirmation Tone inactive
+A141,9,1 = Confirmation Tone active
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Telephone Preperation (R36) Coding
+C01,0?xxxxx: Brand
+C02,0 = Audi
+C03,1 = Seat
+C04,0x?xxxx: Functions
+C05,0 = Basic (for RNS-E basic/Radio)
+C06,1 = Comfort (for RNS-E high/RNS-Low) 
+C07,0xx?xxx: Steering Wheel
+C08,0 = No Multi-Function OR Standard Steering Wheel (Old Style without Menu Thumb Wheels)
+C09,1 = Modular Steering Wheel (New Style with Menu Thumb Wheels) 
+C10,0xxx?xx: Installation List
+C11,1 = Diagnostics via CAN / 2 = Multi-Function Steering Wheel & Diagnostics via CAN
+C12,3 = Head Unit (e.g. RNS-E) & Diagnostics via CAN
+C13,4 = Multi-Function Steering Wheel & Head Unit (e.g. RNS-E) & Diagnostics via CAN
+C14,5 = Diagnostics via K-Line / 6 = Multi-Function Steering Wheel & Diagnostics via K-Line
+C15,7 = Head Unit (e.g. RNS-E) & Diagnostics via K-Line
+C16,8 = Multi-Function Steering Wheel & Head Unit (e.g. RNS-E) & Diagnostics via K-Line 
+C17,0xxxx?x: Language (Voice Control)
+C18,0 = Voice Control OFF OR via external Device (e.g. RNS-E)
+C19,1 = German / 2 = English (UK) / 3 = French / 4 = Italian / 5 = Spanish / 7 = English (US)
+C20,9 = Speaker dependent (Voice Commands inactive, Acoustic Name Selection active) 
+C21,0xxxxx?: Language (Display)
+C22,0 = No Display / 1 = German / 2 = English (UK) / 3 = French
+C23,4 = Italian / 5 = Spanish / 7 = English (US)
+;

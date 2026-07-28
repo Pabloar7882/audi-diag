@@ -1,0 +1,279 @@
+;
+; VCDS Label File
+;
+; Copyright © 2010-2012 Ross-Tech, LLC
+;
+; Component: J285 - Instrument Cluster (#17)
+;
+; P/N: 7D0-920-??0-???
+;
+; includes measuring blocks, adaptation, coding,
+;          login and service reset
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 7D-17.LBL
+; 7D0-919-xxx-17.LBL
+; 7D0-920-xxx-17.LBL
+;
+; created on 03/Dec/2010 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 05/Apr/2012
+;
+; requires VCDS 10.6.0 or newer
+;
+;
+;---------------------------------------------------
+;
+; measuring blocks
+;
+;---------------------------------------------------
+;
+;
+001,0,General
+001,1,Vehicle Speed
+001,2,Engine Speed
+001,3,Oil Pressure,Switch 2,Range: Oil Pr. 2 <min / Oil Pr. 2 OK
+001,4,Time
+;
+002,0,General
+002,1,Odometer
+002,2,Fuel Level
+002,3,Fuel Sender,Resistance
+002,4,Ambient,Temperature
+;
+003,0,General
+003,1,Coolant,Temperature
+003,2,Oil Level,,Range: Ok/n.Ok
+003,3,Oil,Temperature
+;
+050,0,General
+050,1,Odometer
+050,2,Engine Speed
+050,3,Oil Temperature
+050,4,Coolant,Temperature
+;
+125,0,CAN-Databus Communication (Powertrain)
+125,1,Engine,,Range: Engine 0/Engine 1\nSpecification: Engine 1
+125,2,Transmission,,Range: Transm. 0/Transm. 1
+125,3,Brake Electronics,(J104),Range: ABS 0/ABS 1\nSpecification: ABS 1
+;
+;
+;---------------------------------------------------
+;
+; adaptation
+;
+;---------------------------------------------------
+;
+;
+A002,0,Service Reminder
+A002,5,Service Reminder
+A002,6,0 = Service NOT Due
+A002,7,1 = Service Due
+A002,8, 
+A002,9,To reset the service reminder save 0 as new value.
+;
+A003,0,Consumption Correction
+A003,5,Consumption Correction
+A003,6,Standard Value: 100 %
+A003,7,Display Range: 85...115 %
+A003,8,Increments: 1 %
+A003,9, 
+A003,10,Calculation based on volume per distance (e.g. l/100km):
+A003,11,New Adaptation Value = Old Adaptation Value * Calculated Consumption / Old Display Value
+A003,12,Calculation based on distance per volume (e.g. MPG):
+A003,13,New Adaptation Value = Old Adaptation Value * Old Display Value / Calculated Consumption 
+;
+A004,0,Language
+A004,5,Language
+A004,6,1 = German
+A004,7,2 = English
+A004,8,3 = French
+A004,9,4 = Italian
+A004,10,5 = Spanish
+A004,11,6 = Portuguese
+A004,12,7 = Symbols (Not Text)
+A004,13,8 = Czech
+;
+A009,0,Mileage/Odometer
+A009,5,Mileage/Odometer
+A009,6,Increments: 1 = 10 km or 1 = 10 mi
+A009,7, 
+A009,8,The distance can only be changed once until
+A009,9,the current value is not over 100 km/62 mi.
+A009,10, 
+A009,11,NOTE: Perform Login first.
+;
+A030,0,Tank Characteristic (Fuel Level Sensor)
+A030,5,Tank Characteristic (Fuel Level Sensor)
+A030,6,This channel is used to set the fuel gauge reserve mark
+A030,7,therfor fill the tank with 9 l of fuel and correct the
+A030,8,needle to hit the reserve mark. This is a parallel shift
+A030,9,of the tank characteristic.
+A030,10, 
+A030,11,Standard: 128
+A030,12,Range: 120...136 (-2.0...+2.0 l)
+A030,13,Increments: 1 = 1 Ohm = 1/4 l
+;
+A035,0,Speed Threshold
+A035,5,Speed Threshold
+A035,6,This value represents the speed threshold of the
+A035,7,dynamic oil pressure system. The threshold can be
+A035,8,raised in increments of 250 RPM.
+A035,9, 
+A035,10,Standard: 0
+A035,11,Range: 0...1000 U/min
+A035,12,Increments: 250 U/min
+;
+A040,0,Mileage since Service
+A040,5,Mileage since Service
+A040,6,Increments: 1 = 100 km
+;
+A041,0,Time since Service
+A041,5,Time since Service
+A041,6,Increments: 1 = 1 day(s)
+;
+A042,0,Minimum Mileage to Service
+A042,5,Minimum Mileage to Service
+A042,6,Increments: 1 = 1000 km/mi
+A042,7,00015 = Standard (15.000 km)
+;
+A043,0,Maximum Mileage to Service
+A043,5,Maximum Mileage to Service
+A043,6,Increments: 1 = 1000 km/mi
+A043,7,00015 = fixed Service Intervals (15.000 km - w/o Longlife)
+A043,8,00030 = Gasoline Engines with flexible Service Intervals (30.000 km - with Longlife)
+A043,9,00035 = 6-Cyl. Diesel Engines with flexible Service Intervals (35.000 km - with Longlife)
+A043,10,00050 = 4/5-Cyl. Diesel Engines with flexible Service Intervals (50.000 km - with Longlife)
+;
+A044,0,Maximum Time to Service
+A044,5,Maximum Time to Service
+A044,6,Increments: 1 = 1 day(s)
+A044,7,00365 = fixed Service Intervals (w/o Longlife)
+A044,8,00730 = flexible Service Intervals (with Longlife)
+;
+A045,0,Oil Quality
+A045,5,Oil Quality
+A045,6,1 = All Engines with fixed Service Intervals (w/o Longlife)
+A045,7,2 = Gasoline Engines with flexible Service Intervals (with Longlife)
+A045,8,3 = 6-Cyl. Diesel Engines with flexible Service Intervals (with Longlife)
+A045,9,4 = 4/5-Cyl. Diesel Engines with flexible Service Intervals (with Longlife)
+;
+A046,0,Total Consumption
+A046,5,Total Consumption
+A046,6,This value does not represent the actual consumption
+A046,7,but is rather an arithmetic value for the service interval display.
+;
+A047,0,Soot Entry
+A047,5,Soot Entry
+A047,6,Arithmetic value used to calculate the amount of soot in
+A047,7,the engine oil referenced to a distance of 100 km and used
+A047,8,as comparison value for the service interval display.
+;
+A048,0,Thermal Load
+A048,5,Thermal Load
+A048,6,Arithmetic value used to calculate the thermal stress of
+A048,7,the engine oil referenced to a distance of 100 km and used
+A048,8,as comparison value for the service interval display.
+;
+;
+;---------------------------------------------------
+;
+; coding
+;
+;---------------------------------------------------
+;
+;
+C00,Instrument Cluster (J285) Coding
+C01,??xxx: Equipment
+C02,+01 = Brake Pad Warning installed
+C03,+02 = Seatbelt Warning installed
+C04,+04 = Washer Fluid Warning installed
+C05,+08 = Multi-Function-Display (MFD) installed (MY 2001+)
+C06,+16 = Secondary Display (Radio/Navigation) installed
+C07,xx?xx: Country
+C08,1 = Europe (EU) / 2 = USA (US) / 3 = Canada (CDN) / 4 = Great Britain (GB)
+C09,5 = Japan (JP) /6 = Saudi Arabia (SA) / 7 = Australia (AUS)
+C10,xxx?x: Engine Type I (MY 2000)
+C11,1 = 2.4l/55 kW AJA and 2.4l/57kW AAB (i = 2.69) / 2 = 1.9l/50kW ABL (i = 2.99)
+C12,4 = 4-Cylinder Engine / 5 = 5-Cylinder Engine / 6 = 6-Cylinder Engine
+C13,xxx?x: Engine Type I (MY 2001+)
+C14,0 = Fixed Service Interval (PR-QG0) w/o Sensor for Oil Level/Temperature (G266)
+C15,1 = Flexible Service Interval (PR-QG1) with Sensor for Oil Level/Temperature (G266)
+C16,2 = Fixed Service Interval (PR-QG2) with Sensor for Oil Level/Temperature (G266)
+C17,3 = No Service Interval for North American Region (NAR)
+C18,xxxx?: Engine Type II
+C19,1 = 3355 (all other Engine/Transmission Combinations)
+C20,2 = 3407 (2.5l/75kW ACV/AUF with Manual Transmission)
+C21,3 = 3523 (2.5l/75kW ACV/AUF with Manual Transmission and All-Wheel-Drive)
+C22,4 = 3465 (2.5l/111kW AHY with Manual Transmission and 16" Chassis/Suspension)
+C23,5 = 3300 (2.8l/150kW AMV with Manual Transmission)
+C24,6 = 3325 / 7 = 3500 / 8 = 3550
+
+;
+;
+;---------------------------------------------------
+;
+; login
+;
+;---------------------------------------------------
+;
+;
+L00,Instrument Cluster (J285) Login
+L01,13861 = Adaptation Enabling
+;
+;
+;---------------------------------------------------
+;
+; service reset
+;
+;---------------------------------------------------
+;
+;
+RD,2,Service Reminder Status,1,
+RD,40,ST_DSS,100,DIST
+RD,41,ST_TSS,1,ST_D
+RD,42,ST_MIDTS,1000,DIST
+RD,43,ST_MADTS,1000,DIST
+RD,44,ST_MATTS,1,ST_D
+RD,45,ST_OQ,1,
+RD,46,ST_TC,100,DIST
+RD,47,ST_SQ,100,DIST
+RD,48,ST_TL,100,DIST
+;
+RJ,0,0,Service Reset,,
+RJ,0,1,2,0
+;
+RJ,1,0,Change to fixed Intervals
+RJ,1,1,45,1
+RJ,1,2,42,15
+RJ,1,3,43,15
+RJ,1,4,44,365
+RC,1,0,When changing between service intervals on this model
+RC,1,1,make sure to change the instrument cluster coding first!
+;
+RJ,2,0,Change to flexible Intervals (Gasoline Engines)
+RJ,2,1,45,2
+RJ,2,2,42,15
+RJ,2,3,43,30
+RJ,2,4,44,730
+RC,2,0,When changing between service intervals on this model
+RC,2,1,make sure to change the instrument cluster coding first!
+;
+RJ,3,0,Change to flexible Intervals (4/5-Cyl. Diesel Engines)
+RJ,3,1,45,4
+RJ,3,2,42,15
+RJ,3,3,43,50
+RJ,3,4,44,730
+RC,3,0,When changing between service intervals on this model
+RC,3,1,make sure to change the instrument cluster coding first!
+;
+RJ,4,0,Change to flexible Intervals (6-Cyl. Diesel Engines)
+RJ,4,1,45,3
+RJ,4,2,42,15
+RJ,4,3,43,35
+RJ,4,4,44,730
+RC,4,0,When changing between service intervals on this model
+RC,4,1,make sure to change the instrument cluster coding first!
+;

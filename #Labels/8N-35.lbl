@@ -1,0 +1,24 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2007-2011 Ross-Tech, LLC
+;
+; Audi TT (8N)
+;
+; Component: J429 - Central Locking (35)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 8N-35.LBL
+; 8Nx-962-267.LBL
+;
+; created on 04/Nov/2007 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 18/Aug/2011
+;
+; requires VCDS 10.6.4 or newer
+;
+;
+REDIRECT,8Nx-962-267.LBL,8N?-962-267-???
+;

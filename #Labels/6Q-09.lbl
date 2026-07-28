@@ -1,0 +1,28 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2004-2011 Ross-Tech, LLC
+;
+; Component: J519 - Central Electrics (#09)
+;
+; This file is part of a label file package,
+; make sure you have all of the following files.
+;
+; 6Q-09.LBL
+; 6Qx-937-049-B.LBL
+; 6Qx-937-049-C.LBL
+;
+; created on 01/Aug/2004 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 18/Aug/2011
+;
+; requires VCDS 10.6.4 or newer
+;
+;
+REDIRECT,6Qx-937-049-B.LBL,6Q?-937-049
+REDIRECT,6Qx-937-049-B.LBL,6Q?-937-049-B
+REDIRECT,6Qx-937-049-C.LBL,6Q?-937-049-C
+REDIRECT,6Qx-937-049-C.LBL,6Q?-937-049-D
+REDIRECT,6Qx-937-049-C.LBL,6Q?-937-049-E
+REDIRECT,6Qx-937-049-C.LBL,6Q?-937-049-F
+;

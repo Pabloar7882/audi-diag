@@ -1,0 +1,23 @@
+;
+; VCDS Redirect File
+;
+; Copyright © 2009 Ross-Tech, LLC
+;
+; Component: R - Radio (#56)
+;
+; This file is part of a redirection package,
+; make sure you have all of the following files.
+;
+; 17-56.LBL
+; 1U-56.LBL
+; 1U0-035-156.LBL
+;
+; created on 15/Oct/2009 by Sebastian Stange (Sebastian@Ross-Tech.com)
+;
+; last modification on 15/Oct/2009
+;
+; requires VCDS 805.0 or newer
+;
+;
+REDIRECT,1U0-035-156.LBL,17S-035-159-C      ; SYMPHONY
+;
