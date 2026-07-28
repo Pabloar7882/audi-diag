@@ -1,139 +1,139 @@
-# 🚗 Audi A4 B5 1.9 TDI — Diagnóstico KW1281
+# 🚗 Audi A4 B5 1.9 TDI — KW1281 Diagnostics
 
-> ⚠️ **EM DESENVOLVIMENTO** — Este projeto encontra-se em fase ativa de desenvolvimento. Funcionalidades podem mudar. Contribuições são bem-vindas!
+> ⚠️ **IN DEVELOPMENT** — This project is under active development. Features may change. Contributions welcome!
 
-Ferramenta de diagnóstico automotivo para **Audi A4 B5 1999 1.9 TDI (motor AFN, ECU EDC15)** via cabo KKL/VAG-COM USB (chip FTDI), feita em **Python/PyQt6**.
+Automotive diagnostics tool for **Audi A4 B5 1999 1.9 TDI (AFN engine, EDC15 ECU)** via KKL/VAG-COM USB cable (FTDI chip), built in **Python/PyQt6**.
 
-## Funcionalidades
+## Features
 
-- **Protocolo KW1281 completo**: Inicialização 5 baud (0x33) → 10400 baud com handshake de palavras-chave
-- **Telemetria tempo real**: Blocos de Medição 003 (MAF/RPM), 007 (Temperaturas), 011 (MAP/Boost) a 10 Hz
-- **Dashboard PyQt6**: Gauges animados nativos (RPM, MAP, MAF, Boost, Temperaturas, Carga Motor, Wastegate/N75)
-- **Arquitetura assíncrona**: Comunicação serial em thread worker dedicada + asyncio
-- **Logging MySQL/MariaDB**: Bulk INSERT bufferizado (1s / 100 linhas) com reconexão automática
-- **Modo headless**: Logging sem GUI (ideal para datalogging em pista)
-- **Auto-detecção FTDI**: Lista todas as portas COM e identifica adaptadores KKL
+- **Full KW1281 Protocol**: 5-baud init (0x33) → 10400 baud with keyword handshake
+- **Real-time Telemetry**: Measuring Blocks 003 (MAF/RPM), 007 (Temperatures), 011 (MAP/Boost) at 10 Hz
+- **PyQt6 Dashboard**: Native animated gauges (RPM, MAP, MAF, Boost, Temperatures, Engine Load, Wastegate/N75)
+- **Async Architecture**: Serial communication in dedicated worker thread + asyncio
+- **MySQL/MariaDB Logging**: Buffered bulk INSERT (1s / 100 rows) with auto-reconnect
+- **Headless Mode**: Logging without GUI (ideal for track datalogging)
+- **FTDI Auto-detection**: Lists all COM ports and identifies KKL adapters
 
-## Requisitos de Hardware
+## Hardware Requirements
 
-- **Carro**: Audi A4 B5 1999 1.9 TDI (motor AFN, ECU EDC15)
-- **Cabo KKL USB** com chip **FTDI** (VID 0x0403, PIDs 0x6001/0x6010/0x6011/0x6014/0x6015)
-- **Sistema**: Windows 10/11 com Python 3.11+ (ou usar o `.exe` standalone)
+- **Car**: Audi A4 B5 1999 1.9 TDI (AFN engine, EDC15 ECU)
+- **KKL USB Cable** with **FTDI** chip (VID 0x0403, PIDs 0x6001/0x6010/0x6011/0x6014/0x6015)
+- **OS**: Windows 10/11 with Python 3.11+ (or use the standalone `.exe`)
 
-## Instalação
+## Installation
 
 ```cmd
-:: Clone o repositório
+:: Clone repository
 git clone https://github.com/Pabloar7882/audi-diag.git
 cd audi_diag
 
-:: Crie ambiente virtual
+:: Create virtual environment
 python -m venv venv
 venv\Scripts\activate
 
-:: Instale dependências
+:: Install dependencies
 pip install -r requirements.txt
 ```
 
-## Banco de Dados (MySQL/MariaDB)
+## Database (MySQL/MariaDB)
 
 ```sql
--- Crie database e usuário
+-- Create database and user
 CREATE DATABASE audi_diag CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'audi_diag'@'localhost' IDENTIFIED BY 'sua_senha_forte';
+CREATE USER 'audi_diag'@'localhost' IDENTIFIED BY 'your_strong_password';
 GRANT ALL PRIVILEGES ON audi_diag.* TO 'audi_diag'@'localhost';
 FLUSH PRIVILEGES;
 
--- Schema é auto-criado na primeira execução, ou manualmente:
+-- Schema is auto-created on first run, or manually:
 mysql -u audi_diag -p audi_diag < sql\schema.sql
 ```
 
-> **Tip**: Use [HeidiSQL](https://www.heidisql.com/) ou [DBeaver](https://dbeaver.io/) como GUI para gerir a base de dados no Windows.
+> **Tip**: Use [HeidiSQL](https://www.heidisql.com/) or [DBeaver](https://dbeaver.io/) as GUI for database management on Windows.
 
-## Configuração
+## Configuration
 
-Copie e edite o ficheiro de configuração:
+Copy and edit the configuration file:
 
 ```cmd
 copy config\config.yaml config\config.local.yaml
 notepad config\config.local.yaml
 ```
 
-Principais ajustes:
+Key settings:
 
 ```yaml
 serial:
-  port: "COM3"              # Sua porta KKL (use --list-ports para ver)
-  baudrate: 10400           # Padrão KW1281
-  auto_detect: true         # Auto-encontra adaptador FTDI
+  port: "COM3"              # Your KKL port (use --list-ports to see)
+  baudrate: 10400           # KW1281 standard
+  auto_detect: true         # Auto-find FTDI adapter
 
 database:
   host: "localhost"
   port: 3306
   database: "audi_diag"
   user: "audi_diag"
-  password: "sua_senha"     # ALTERE ISTO!
+  password: "your_password" # CHANGE THIS!
 
 telemetry:
   poll_interval_ms: 100     # 10 Hz
   blocks: [3, 7, 11]        # MB003, MB007, MB011
 ```
 
-## Uso
+## Usage
 
-### Dashboard GUI
+### GUI Dashboard
 ```cmd
 python main.py
 ```
 
-### Modo Headless (sem GUI)
+### Headless Mode (no GUI)
 ```cmd
 python main.py --headless
 python main.py --headless --config config\config.local.yaml
 ```
 
-### Listar portas COM disponíveis
+### List Available COM Ports
 ```cmd
 python main.py --list-ports
 ```
 
-Exemplo de saída:
+Example output:
 ```
 ============================================================
-  PORTAS COM DETETADAS NO WINDOWS
+  DETECTED COM PORTS ON WINDOWS
 ============================================================
-  [COM3] USB Serial Port (FTDI) ← RECOMENDADO (FTDI KKL)
+  [COM3] USB Serial Port (FTDI) ← RECOMMENDED (FTDI KKL)
               Serial: ABC12345
               VID:PID=0403:6001
   [COM5] USB-SERIAL CH340
 
 ------------------------------------------------------------
-  Adaptadores KKL FTDI encontrados: 1
-  → Use COM3 na configuração
+  FTDI KKL Adapters Found: 1
+  → Use COM3 in configuration
 ============================================================
 ```
 
-### Outros comandos
+### Other Commands
 ```cmd
-:: Criar schema da base de dados e sair
+:: Create database schema and exit
 python main.py --create-schema
 
-:: Sobrescrever porta e baudrate
+:: Override port and baudrate
 python main.py --port COM4 --baud 10400
 
-:: Nível de log verbose
+:: Verbose log level
 python main.py --log-level DEBUG
 ```
 
-## Blocos de Medição (EDC15 AFN)
+## Measuring Blocks (EDC15 AFN)
 
-| Bloco | Nome | Parâmetros Principais |
-|-------|------|----------------------|
-| **003** | MAF/RPM | RPM, MAF Atual/Espec (mg/curso), Carga Motor (%), Posição Acelerador (%), IQ Atual/Espec |
-| **007** | Temperaturas | Refrigeração, Admissão, Combustível, Óleo, Ambiente, EGR (°C) |
-| **011** | MAP/Boost | MAP Atual/Espec (mbar), Pressão Boost (mbar), Duty Wastegate (%), Duty N75 (%), Duty EGR (%) |
+| Block | Name | Key Parameters |
+|-------|------|----------------|
+| **003** | MAF/RPM | RPM, MAF Actual/Spec (mg/stroke), Engine Load (%), Throttle Position (%), IQ Actual/Spec |
+| **007** | Temperatures | Coolant, Intake Air, Fuel, Oil, Ambient, EGR (°C) |
+| **011** | MAP/Boost | MAP Actual/Spec (mbar), Boost Pressure (mbar), Wastegate Duty (%), N75 Duty (%), EGR Duty (%) |
 
-## Arquitetura
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -158,74 +158,74 @@ python main.py --log-level DEBUG
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Protocolo KW1281 (Resumo)
+## KW1281 Protocol (Summary)
 
-### Sequência de Inicialização 5 Baud
+### 5-Baud Initialization Sequence
 ```
-1. Abrir serial a 5 baud, 8N1
-2. Enviar pulso break (25ms low)
-3. Enviar endereço: 0x33
-4. Aguardar sync ECU: 0x55
-5. Enviar Keyword 1: 0x01 → Eco invertido: 0xFE
-6. Enviar Keyword 2: 0x8A (10400 baud) → Eco invertido: 0x75
-7. Aguardar 300ms para troca de baudrate
-8. Reabrir serial em 10400 baud
-9. Enviar Start Communication (0x81)
-10. Resposta positiva: 0xC1
+1. Open serial at 5 baud, 8N1
+2. Send break pulse (25ms low)
+3. Send address: 0x33
+4. Wait for ECU sync: 0x55
+5. Send Keyword 1: 0x01 → Inverted echo: 0xFE
+6. Send Keyword 2: 0x8A (10400 baud) → Inverted echo: 0x75
+7. Wait 300ms for baudrate switch
+8. Reopen serial at 10400 baud
+9. Send Start Communication (0x81)
+10. Positive response: 0xC1
 ```
 
-### Formato de Blocos (10400 baud)
-- Cada bloco: `[Length][Address][Command/Type][Data...][Checksum]`
-- Checksum: Soma 8-bit de todos os bytes, invertida + 1
-- Tipos: DATA (0x01), ACK (0x00), END (0x02), NAK (0x03)
+### Block Format (10400 baud)
+- Each block: `[Length][Address][Command/Type][Data...][Checksum]`
+- Checksum: 8-bit sum of all bytes, inverted + 1
+- Types: DATA (0x01), ACK (0x00), END (0x02), NAK (0x03)
 
-## Estrutura do Projeto
+## Project Structure
 
 ```
 audi_diag/
 ├── main.py                  # Entry point (CLI + GUI)
-├── requirements.txt         # Dependências
-├── AudiDiag.spec            # Spec PyInstaller
+├── requirements.txt         # Dependencies
+├── AudiDiag.spec            # PyInstaller spec
 ├── config/
-│   ├── config.yaml          # Configuração padrão
-│   └── config.local.yaml    # Overrides locais (gitignored)
+│   ├── config.yaml          # Default configuration
+│   └── config.local.yaml    # Local overrides (gitignored)
 ├── sql/
-│   └── schema.sql           # Schema MySQL
+│   └── schema.sql           # MySQL schema
 ├── src/
 │   ├── __init__.py
-│   ├── kw1281_handler.py    # Protocolo KW1281
+│   ├── kw1281_handler.py    # KW1281 protocol
 │   ├── telemetry_worker.py  # Worker thread + Qt signals
 │   ├── database_logger.py   # MySQL bulk logging
-│   ├── main_window.py       # Dashboard PyQt6
+│   ├── main_window.py       # PyQt6 dashboard
 │   ├── config/
 │   │   └── config_loader.py
 │   └── db/
 │       └── database_logger.py
 └── dist/
-    └── AudiDiag.exe         # Executável standalone
+    └── AudiDiag.exe         # Standalone executable
 ```
 
-## Solução de Problemas
+## Troubleshooting
 
-### "Acesso negado" na porta COM
-- Feche outros programas a usar a porta (VCDS, PuTTY, Arduino IDE)
-- Verifique no **Gerenciador de Dispositivos** → Portas (COM e LPT)
+### "Access denied" on COM port
+- Close other programs using the port (VCDS, PuTTY, Arduino IDE)
+- Check **Device Manager** → Ports (COM & LPT)
 
-### Nenhum adaptador detetado
+### No adapter detected
 ```cmd
 python main.py --list-ports
 ```
-- Instale drivers FTDI: https://ftdichip.com/drivers/vcp-drivers/
-- Cabos baratos com chip CH340/CP2102 **não funcionam** (precisa FTDI)
+- Install FTDI drivers: https://ftdichip.com/drivers/vcp-drivers/
+- Cheap cables with CH340/CP2102 chips **will not work** (needs FTDI)
 
-### Erro de conexão MySQL
-- Verifique se serviço MySQL/MariaDB está a correr: `services.msc`
-- Teste: `mysql -h localhost -u audi_diag -p`
+### MySQL Connection Error
+- Verify MySQL/MariaDB service is running: `services.msc`
+- Test: `mysql -h localhost -u audi_diag -p`
 
-### Gauges não atualizam
-- Ignição deve estar **ON** (painel aceso)
-- Cabo bem encaixado na tomada OBD-2 (pino 7 = K-line)
+### Gauges Not Updating
+- Ignition must be **ON** (dashboard lights on)
+- Cable firmly seated in OBD-2 port (pin 7 = K-line)
 
-## Licença
+## License
 
-Uso educacional / pessoal. Não afiliado à Volkswagen AG / Audi AG.
+Educational / personal use. Not affiliated with Volkswagen AG / Audi AG.
