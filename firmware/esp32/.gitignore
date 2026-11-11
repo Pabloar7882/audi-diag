@@ -1,0 +1,5 @@
+.venv/
+.platformio/
+.pio/
+build-native/
+sdkconfig.*

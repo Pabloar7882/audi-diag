@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "decoders": [],
+  "groups": [
+    {
+      "group_id": 1,
+      "source_refs": [
+        {
+          "file": "diagnostic_groups.py",
+          "line": null
+        }
+      ],
+      "name": "Authorized test group",
+      "status": "ACTIVE_ALLOWED"
+    }
+  ],
+  "sensors": [
+    {
+      "group_id": 1,
+      "sensor_id": "afn.group001.coolant_candidate",
+      "field_id": 1,
+      "name": "Coolant temperature candidate",
+      "unit": "°C",
+      "status": "METADATA_ONLY",
+      "decoder_id": null,
+      "ecu_candidates": ["028-906-021-AFN"],
+      "range": {
+        "min": -40,
+        "max": 120,
+        "text": "-40..120 °C"
+      },
+      "source_refs": [
+        {
+          "file": "028-906-021-AFN.LBL",
+          "line": 12,
+          "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+        }
+      ]
+    }
+  ]
+}

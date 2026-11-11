@@ -1,0 +1,7 @@
+{
+  "modes": ["replay", "demo", "live", "diagnostic"],
+  "statuses": ["idle", "connecting", "identifying", "identified", "reconnecting", "live", "error", "stopped"],
+  "freshness": ["fresh", "stale", "unavailable"],
+  "sources": ["live", "replay", "demo", "calculated", "unavailable"],
+  "required_fields": ["mode", "status", "source", "freshness", "values", "error"]
+}

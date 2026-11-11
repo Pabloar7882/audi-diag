@@ -1,0 +1,212 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#090C10">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AFN. TELEMETRY"
+            android:textColor="#F3F5F8"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="REPLAY · DADOS SINTÉTICOS"
+            android:textColor="#F3B769"
+            android:textSize="12sp" />
+        <TextView
+            android:id="@+id/ecu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="ECU: não identificada"
+            android:textColor="#96A3B3"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/values"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:lineSpacingExtra="8dp"
+            android:text="A aguardar amostras…"
+            android:textColor="#F3F5F8"
+            android:textSize="20sp" />
+        <TextView
+            android:id="@+id/sourceNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Dados sintéticos de replay. Leituras KW1281 surgirão como bytes brutos até validar a descodificação."
+            android:textColor="#96A3B3"
+            android:textSize="12sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="CATÁLOGO OFFLINE"
+            android:textColor="#D62C38"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/catalogStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="#1B2023"
+            android:padding="12dp"
+            android:text="A carregar definições locais…"
+            android:textColor="#A7B0B2"
+            android:textSize="13sp" />
+        <Button
+            android:id="@+id/replay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Reproduzir sessão de teste" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="LIGAÇÃO USB OTG"
+            android:textColor="#D94B43"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+        <Spinner
+            android:id="@+id/usbDevice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+        <Spinner
+            android:id="@+id/baudRate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+        <Switch
+            android:id="@+id/localEcho"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Eco local do cabo K-Line"
+            android:textColor="#F3F5F8" />
+        <Button
+            android:id="@+id/usbConnect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Identificar ECU pelo cabo USB" />
+        <Button
+            android:id="@+id/usbOpenOnly"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Abrir adaptador sem identificar ECU" />
+        <Button
+            android:id="@+id/usbClose"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="Fechar adaptador USB" />
+        <Spinner
+            android:id="@+id/groupSelect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" />
+        <Button
+            android:id="@+id/readGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="Ler apenas o grupo selecionado" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="MONITORIZAÇÃO CONTÍNUA · OPCIONAL"
+            android:textColor="#D62C38"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Ciclo sequencial 001 → 003 → 011 · uma leitura de cada vez · nunca inicia automaticamente"
+            android:textColor="#A7B0B2"
+            android:textSize="12sp" />
+        <Spinner
+            android:id="@+id/monitorInterval"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/startMonitor"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:enabled="false"
+                android:text="Iniciar monitor" />
+            <Button
+                android:id="@+id/stopMonitor"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:enabled="false"
+                android:text="Parar monitor" />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/usb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="USB OTG: nenhum adaptador FTDI detetado."
+            android:textColor="#96A3B3"
+            android:textSize="12sp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="TRACE LOCAL · EXPORTAÇÃO MANUAL"
+            android:textColor="#D62C38"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Até 2.000 eventos em memória · os bytes brutos podem conter identificação do veículo."
+            android:textColor="#A7B0B2"
+            android:textSize="12sp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/exportTraceJson"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Exportar JSON" />
+            <Button
+                android:id="@+id/exportTraceCsv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="Exportar CSV" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

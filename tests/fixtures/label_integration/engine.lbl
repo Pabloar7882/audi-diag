@@ -1,0 +1,5 @@
+; Component: 1.9 TDI AGR
+001,0,Engine speed group
+001,1,Engine Speed (G28),0...6500 RPM
+002,1,Manifold pressure,Specification: 900...2200 mbar
+002,1,Duplicate candidate,100...200 mbar

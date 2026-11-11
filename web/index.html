@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-PT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#111416"><title>FIS AFN · Audi A4 B5</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/style.css"></head>
+<body>
+<div class="app">
+ <header class="topbar">
+  <div class="identity"><div class="brandmark">AFN<span class="branddot">.</span></div><div class="brandtext"><strong>TELEMETRY</strong><span>A4 B5 AVANT <span class="sep">/</span> 1.9 TDI <span class="sep">/</span> 1999</span></div></div>
+  <div class="header-right"><span class="readonly">Somente leitura</span><div class="connection"><i id="connection-dot" class="connection-dot"></i><span id="connection-status">A ligar à aplicação…</span></div></div>
+ </header>
+ <section class="modebar" aria-label="Controlos da sessão">
+  <div class="mode-summary"><div class="mode-text"><strong id="mode-title">Sem ligação</strong><span id="mode-desc">Aguarda seleção da fonte</span></div><span class="read-only-note">Interface de diagnóstico somente leitura</span></div>
+  <div class="live-controls" aria-label="Ligação de diagnóstico K-Line">
+   <label class="control-field diagnostic-port">Porta série<select id="diagnostic-port" aria-label="Porta série K-Line"><option value="">A procurar…</option></select></label>
+   <label class="control-field diagnostic-baud">Baud pós-inicialização<select id="diagnostic-baud" aria-label="Baud pós-inicialização"><option value="9600" selected>9600 · predefinido AFN</option><option value="10400">10400</option><option value="4800">4800</option></select></label>
+   <button class="icon-control" id="refresh-ports" type="button" aria-label="Atualizar portas série" title="Atualizar portas série"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5M6.1 9A7 7 0 0 1 18 6.5L20 12M4 12l2 5.5A7 7 0 0 0 17.9 15"/></svg></button>
+   <button class="connect-btn" data-mode="diagnostic" type="button">Identificar ECU</button>
+   <label class="control-field diagnostic-groups">Grupo · leitura única<select id="diagnostic-groups" aria-label="Grupo de medição para leitura única"><option value="">Escolher após identificação</option></select></label>
+   <button class="read-group-btn" id="diagnostic-read-group" type="button" disabled>Ler grupo</button>
+  </div>
+  <div class="monitor-controls" aria-label="Monitorização contínua opcional">
+   <div class="monitor-heading"><strong>Monitorização contínua</strong><span id="monitor-status">Inativa</span></div>
+   <fieldset id="monitor-groups" class="monitor-group-set" disabled>
+    <legend>Grupos autorizados · ordem de leitura</legend>
+    <label><input type="checkbox" value="1" checked>001 · Motor</label>
+    <label><input type="checkbox" value="3" checked>003 · Massa de ar</label>
+    <label><input type="checkbox" value="11" checked>011 · Turbo</label>
+   </fieldset>
+   <label class="control-field monitor-interval">Intervalo mínimo após resposta<select id="monitor-interval" disabled><option value="1" selected>1 segundo</option><option value="2">2 segundos</option><option value="5">5 segundos</option><option value="10">10 segundos</option></select></label>
+   <button id="monitor-start" class="monitor-button start" type="button" disabled>Iniciar monitorização</button>
+   <button id="monitor-stop" class="monitor-button stop" type="button" disabled>Parar monitorização</button>
+   <p id="monitor-freshness" class="monitor-freshness" role="status">As leituras manuais são únicas. A monitorização só começa após ativação explícita.</p>
+  </div>
+  <nav class="mode-switches" aria-label="Origem dos dados"><span>Escolher fonte</span><button class="mode-btn" data-mode="demo" type="button">Demonstração</button><button class="mode-btn" data-mode="replay" type="button">Reproduzir CSV</button><button class="mode-btn" data-mode="bridge" type="button" title="Requer ponte KWPBridge local configurada">Ponte K-Line · experimental</button><button class="mode-btn subtle" data-mode="idle" type="button">Parar</button></nav>
+ </section>
+ <div id="telemetry-empty" class="telemetry-empty" role="status">Sem amostras. Escolhe uma demonstração, reproduz um CSV ou identifica a ECU.</div>
+ <div id="demo-banner" class="demo-banner hidden" role="status">Demonstração — estes valores são fictícios e não vêm do carro.</div>
+ <main>
+  <section class="primary-grid">
+   <article class="boost-panel">
+    <div class="panel-heading"><h1>Pressão do turbo</h1><span class="unit-pill">bar absolutos</span></div>
+    <div class="boost-readout"><div class="actual-value"><span class="reading-label">Real</span><span class="value" id="boost-actual">—</span><span class="measure">bar abs.</span></div><div class="boost-secondary"><div class="secondary-line"><span>Pedida</span><div><strong id="boost-requested">—</strong><small>bar abs.</small></div></div><div class="secondary-line"><span>Desvio</span><div><strong id="boost-delta">—</strong><small>mbar</small></div></div></div></div>
+    <div class="boost-range"><div class="range-track"><span id="range-fill"></span><span id="target-marker" class="range-marker"></span></div><div class="range-ticks"><span>0,0</span><span>1,0</span><span>2,0</span><span>3,0 bar</span></div></div>
+   </article>
+   <article class="rpm-panel"><div class="panel-heading compact"><h2>Rotações do motor</h2><span class="metric-code">G28</span></div><div class="rpm-digits"><span id="rpm">—</span><small>RPM</small></div><div class="rpm-bars" id="rpm-bars" aria-label="Nível aproximado de rotação"></div><div class="rpm-footer"><span>0</span><span>2 000</span><span>4 000</span><span>6 000</span></div></article>
+  </section>
+  <section class="metrics-grid" aria-label="Outros parâmetros do motor">
+   <article class="metric"><div class="metric-top"><span>Massa de ar</span><span class="metric-code">MAF</span></div><div class="metric-main"><strong id="maf">—</strong><small>mg/str</small></div><div class="metric-foot">Pedida <span id="maf-requested">—</span> mg/str</div></article>
+   <article class="metric"><div class="metric-top"><span>Injeção</span><span class="metric-code">IQ</span></div><div class="metric-main"><strong id="iq">—</strong><small>mg/str</small></div><div class="metric-foot">Quantidade injetada</div></article>
+   <article class="metric"><div class="metric-top"><span>Temperatura do líquido</span><span class="metric-code">G62</span></div><div class="metric-main"><strong id="coolant">—</strong><small>°C</small></div><div class="metric-foot">Refrigeração do motor</div></article>
+   <article class="metric"><div class="metric-top"><span>Controlo do turbo</span><span class="metric-code">N75</span></div><div class="metric-main"><strong id="n75">—</strong><small>%</small></div><div class="metric-foot">Ciclo de controlo</div></article>
+  </section>
+  <section class="bottom-grid">
+   <article class="chart-panel"><div class="chart-head"><h2>Pressão ao longo da sessão</h2><div class="chart-legend"><span><i class="legend-dot real"></i>Real</span><span><i class="legend-dot req"></i>Pedida</span></div></div><div class="chart-area"><svg id="chart" viewBox="0 0 840 212" preserveAspectRatio="none" role="img" aria-label="Evolução da pressão em bar absolutos"><g id="chart-grid"></g><path id="chart-target" class="line target" d=""></path><path id="chart-real" class="line real" d=""></path></svg><div class="chart-empty" id="chart-empty">Sem amostras disponíveis</div></div><div class="chart-bottom"><span>Últimas 150 amostras</span><span id="chart-range">—</span></div></article>
+   <aside class="session-panel"><div><h2>Sessão</h2></div><div class="session-list"><div><span>Fonte</span><strong id="session-source">—</strong></div><div><span>Ficheiro</span><strong id="session-file" class="filename">Nenhum</strong></div><div><span>Amostras</span><strong id="session-samples">0</strong></div><div><span>Última leitura</span><strong id="session-last">—</strong></div><div><span>ECU</span><strong id="ecu-part">Não identificada</strong></div><div><span>Dados</span><strong id="ecu-freshness">Indisponíveis</strong></div></div><div id="diagnostic-details" class="diagnostic-details" role="status"><span>Diagnóstico</span><strong id="diagnostic-status">Não iniciado</strong><small id="diagnostic-error">Sem erros</small><code id="diagnostic-raw" class="diagnostic-raw" aria-label="Bytes brutos do último grupo recebido da ECU">Sem grupo lido</code></div><div class="session-controls"><label for="csv-file" class="action-file">Carregar CSV VCDS <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0-12 4 4m-4-4-4 4M4 16v4h16v-4"/></svg></label><input id="csv-file" type="file" accept=".csv,text/csv" hidden><button type="button" id="record-btn" class="action secondary">Iniciar gravação</button><button type="button" id="export-btn" class="action secondary">Exportar registo CSV</button><button type="button" id="trace-btn" class="action secondary">Exportar trace técnico</button></div><p class="side-note">O Android usa a app nativa e o transporte USB FTDI experimental. OTG e comunicação ainda não foram validados fisicamente.</p></aside>
+  </section>
+  <section class="parameter-catalog" aria-labelledby="catalog-title">
+   <div class="catalog-heading">
+    <div><h2 id="catalog-title">Catálogo de parâmetros</h2><p id="catalog-summary">A carregar labels locais…</p></div>
+    <button id="catalog-refresh" class="catalog-refresh" type="button">Atualizar labels</button>
+   </div>
+   <p class="catalog-disclaimer">Os labels são documentação de várias variantes e não confirmam compatibilidade AFN nem escala KW1281. Os campos abaixo são metadados; não são valores live e não autorizam leitura de grupos.</p>
+   <div class="catalog-filters">
+    <label class="catalog-search">Pesquisar parâmetros<input id="catalog-search" type="search" maxlength="128" autocomplete="off" placeholder="Nome, unidade, ECU ou ficheiro"></label>
+    <label>Grupo<select id="catalog-group"><option value="">Todos os grupos</option></select></label>
+    <label>Estado do grupo<select id="catalog-status"><option value="">Todos os estados</option><option value="ACTIVE_ALLOWED">Acesso permitido · 001/003/011</option><option value="METADATA_ONLY">Apenas metadados</option><option value="UNKNOWN">Desconhecido</option></select></label>
+   </div>
+   <div id="catalog-message" class="catalog-message" role="status">A preparar o catálogo local…</div>
+   <div class="catalog-table-wrap">
+    <table class="catalog-table">
+     <thead><tr><th>Grupo / campo</th><th>Parâmetro</th><th>Unidade / intervalo</th><th>Estado / compatibilidade</th><th>Origem</th></tr></thead>
+     <tbody id="catalog-results"></tbody>
+    </table>
+   </div>
+   <div class="catalog-pagination"><span id="catalog-page">Página 1</span><div><button id="catalog-prev" type="button" disabled>Página anterior</button><button id="catalog-next" type="button" disabled>Página seguinte</button></div></div>
+  </section>
+ </main>
+ <footer><span>FIS AFN Universal <span class="foot-divider">/</span> v0.4</span><span>Diagnóstico experimental · não substitui instrumentação profissional</span></footer>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="/diagnostic-raw.js"></script>
+<script src="/diagnostic-catalog.js"></script>
+<script src="/app.js"></script>
+</body></html>

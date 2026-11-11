@@ -1,0 +1,14 @@
+{
+  "modes": {
+    "demo": "SIMULAÇÃO",
+    "replay": "CSV EM REPRODUÇÃO",
+    "bridge": "PONTE EM TESTE",
+    "diagnostic": "DIAGNÓSTICO K-LINE",
+    "idle": "SEM LIGAÇÃO"
+  },
+  "freshness": {
+    "fresh": "DADOS RECENTES",
+    "stale": "DADOS DESATUALIZADOS",
+    "unavailable": "DADOS INDISPONÍVEIS"
+  }
+}
